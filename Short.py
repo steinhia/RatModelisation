@@ -1,0 +1,183 @@
+# raccourcis pour fonctions longues a ecrire comme position, valeur de slider etc
+
+from functools import partial
+import maya.cmds as cmds
+import maya.mel as mel
+import math
+import time
+import sys
+
+sys.path.append("C:/Users/alexandra/Documents/alexandra/scripts")
+
+path="C:/Users/alexandra/Documents/alexandra/scripts/"
+
+
+    #pointOnCurveList=map(n2J,['L6','L3','T12','T8','T2','C4','C1'])
+def n2J(name):
+    dico={'L6':'joint1', 'L5':'joint2','L4':'joint3','L3':'joint4','L2':'joint5','L1':'joint6','T13':'joint7', \
+        'T12':'joint8','T11':'joint9','T10':'joint10','T9':'joint11','T8':'joint12','T7':'joint13','T6':'joint14', \
+        'T5':'joint15','T4':'joint16','T3':'joint17','T2':'joint18','T1':'joint19','C7':'joint20','C6':'joint21',\
+        'C5':'joint22','C4':'joint23','C3':'joint24','C2':'joint25','C1':'joint26','C0':'joint27'}
+    if name in dico :
+        return dico[name]
+    else :
+        return -1
+
+def n2N(name):
+    dico={'L6':0, 'L5':0,'L4':1,'L3':1,'L2':1,'L1':2,'T13':2, \
+        'T12':2,'T11':2,'T10':2,'T9':3,'T8':3,'T7':3,'T6':3, \
+        'T5':3,'T4':4,'T3':4,'T2':4,'T1':4,'C7':4,'C6':4,\
+        'C5':5,'C4':5,'C3':5,'C2':6,'C1':6,'C0':6}
+    if name in dico :
+        return dico[name]
+    else :
+        return -1
+
+def num2Name(num):
+    if num==0:
+        return 'L6'
+    elif num==1:
+        return 'L3'
+    elif num==2:
+        return 'T8'
+    elif num==3:
+        return 'T2'
+    elif num==4:
+        return 'C0'
+
+# select a vertebre
+def select(name):
+    pos=position(n2J(name))
+    param=getParameter(pos)
+    maya.mel.eval("doMenuNURBComponentSelection(\"curve1\", \"curveParameterPoint\");")
+    cmds.select('curve1.u['+str(param)+']',r=1)
+
+def nCurveToJoint(num):
+    dico={0:'joint1',1:'joint4',2:'joint7',3:'joint13',4:'joint19',5:'joint23',6:'joint26'}
+
+def curvei(i):
+    return 'curve1.cv['+str(i)+']'
+
+def position(name):
+    joint=n2J(name)
+    if joint !=-1 :
+        return cmds.xform(joint,q=1,t=1,ws=1)
+    return cmds.xform(name,q=1,t=1,ws=1)
+    # nom de la vertebre (objet existe pas)       
+
+def norm(vect) : 
+    norm=0.0
+    for i in vect:
+        norm+=i*i
+    return math.sqrt(norm)
+
+def normalize(vect):
+    norme=norm(vect)
+    if norme!=0 :
+        return pdt(1/norme,vect) 
+    else : 
+        return vect
+
+def dotProduct(vect1,vect2):
+    res=0
+    for i in range(len(vect1)):
+        res+=vect1[i]*vect2[i]
+    return res   
+
+def pdt(scalaire,vect):
+    return [vect[i]*scalaire for i in range(len(vect))]
+
+def sum(vect1,vect2):
+    return [vect1[i]+vect2[i] for i in range(len(vect1))]
+    
+def sub(vect1,vect2):
+    return [vect1[i]-vect2[i] for i in range(len(vect1))]
+
+def distance(v1,v2):
+    if(isinstance(v1,str)):
+        v1=position(v1)
+        v2=position(v2)
+    v=sub(v1,v2)
+    return norm(v)  
+
+def pi():
+    return 3.14159265359
+
+def RadToDeg(theta):
+    return theta*180.0/3.14159265359
+
+def DegToRad(theta):
+    return theta/180.0*3.14159265359
+
+def valPrinc(theta):
+    bool = (theta<0)
+    theta2=theta%(2*pi())
+    if bool :
+        theta2 -= 2*pi()
+    return theta2
+
+def valPrincDeg(theta):
+    theta2=theta%(360.0)
+    bool = (theta2>180)
+    if bool :
+        theta2 -= 360.0
+    return theta2
+
+def getPoint(parameter):
+    return cmds.pointOnCurve( 'curve1', pr=parameter, p=True )
+    
+def getParameter(location):
+    cmds.setAttr("nearestPointOnCurveGetParam.inPosition", location[0], location[1], location[2], type="double3") 
+    uParam = cmds.getAttr("nearestPointOnCurveGetParam.parameter")
+    return uParam
+
+def defPivot():
+    # les points extremes sont toujours sur la courbe
+    pos1=position(curvei(n2N('L6')))
+    pos2=position(curvei(n2N('T2')))
+    pt=getMilieu(pos1,pos2)
+    pt=getCurvePosition()
+    cmds.setAttr('curve1.scalePivot',pt[0],pt[1],pt[2])
+    cmds.setAttr('curve1.rotatePivot',pt[0],pt[1],pt[2])
+
+def maxDiff(val1,val2):
+    max=-1
+    for i,val in enumerate(val1):
+        diff=abs(val-val2[i])
+        if(diff>max):
+            max=diff
+    return max
+
+def p(string,value1=[],value2=[],value3=[],value4=[],value5=[],value6=[]):
+    print string
+    if value1!=[]:
+        print value1
+    if value2!=[]:
+        print value2
+    if value3!=[]:
+        print value3
+    if value4!=[]:
+        print value4
+    if value5!=[]:
+        print value5
+    if value6!=[]:
+        print value6
+
+def getMilieu(name1,name2):
+    if isinstance(name1,str):
+        pt1=position(name1)
+        pt2=position(name2)
+        return (pdt(0.5,sum(pt1,pt2)))
+    else:
+        return (pdt(0.5,sum(name1,name2)))
+
+def getBarycentre(name1,name2,poids1):
+    pt1=position(name1)
+    pt2=position(name2)
+    return (sum(pdt(poids1,pt1),pdt(1-poids1,pt2)))
+
+def prec(a,n):
+    return float(format(a, '.'+str(n)+'f'))
+    
+        
+
