@@ -83,7 +83,7 @@ class Test(object):
             min=button.slider2.minValue
             max=button.slider2.maxValue
             seq=[]
-            for j in range(5):
+            for j in range(2):
                 seq.append(min+random()*max)
             testUnit=UnitTest(button,sliderGrp.buttonList,seq)
             res2=testUnit.execute2()
@@ -105,7 +105,7 @@ class Test(object):
             min=button.slider2.minValue
             max=button.slider2.maxValue
             seq=[]
-            for j in range(5):
+            for j in range(2):
                 seq.append(min+random()*max)
             testUnit=UnitTest(button,sliderGrp.buttonList,seq)
             res=testUnit.execute2()
@@ -178,7 +178,7 @@ class Test(object):
             fMax=setOneRot(0,max2,[slider,button.sliderList[button.indiceText].fct,button.sliderList[button.indiceText].args,[]])          
             seq=[]
             res=True
-            for j in range(5):
+            for j in range(2):
                 button.slider2.setValue(min2+random()*max2)
                 button.slider2.update()
             button.reset()

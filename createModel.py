@@ -99,12 +99,12 @@ def createJointChain2(nameList,tailList):
     for name in nameList:
         posList.append(calcCentroid(name))
     # dernier joint (L6)
-    createJoint2([-2.50, 5.35, 5.25])
+    createJoint2([-2.50, 5.3, 5.25])
     for i in range(25):
         center=pdt(0.5,sum(posList[i],posList[i+1]))
         createJoint2(center)
         cmds.parent('joint'+str(i+2),'joint'+str(i+1))
-    createJoint2([-2.241516596632577, 5.10, -4.65])
+    createJoint2([-2.20, 5.10, -4.65])
     cmds.parent('joint27','joint26')
         
         

@@ -26,6 +26,7 @@ class Action(object):
 
 
     def execute(self,ajust=True,*_):
+        cmds.select(clear=True)
         self.executeAction(self)
         if self.mvt and ajust:
             newPos=getCurvePosition()
@@ -43,7 +44,8 @@ class Action(object):
                setPosture(self.crvInfos[2],self.crvInfos)
             else:
                 self.crvInfos[2]=newPosture
-            setCurvePosition(self.crvInfos[1])
+            if self.keepPosition:        
+                setCurvePosition(self.crvInfos[1])
 
 
 

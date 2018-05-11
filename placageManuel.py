@@ -28,17 +28,22 @@ def placageManuel():
     pos=getLocatorCurvePosition()
     p("duree main",time.time()-t,posture)
 
+
+    sliderGrp.do("courbure c",55)
+
     for i in range(5):
-        sliderGrp.do("posture",posture,True) 
+        sliderGrp.do("posture",posture,True)
         sliderGrp.do("compression",compression,True)
-        #print "angleD",angleDorsales
+        # #print "angleD",angleDorsales
         sliderGrp.do("rot dorsale",angleDorsales,True)
         sliderGrp.do("rot dorsale GD",angleDorsalesGD,True)
         sliderGrp.do("rot cervicale",angleCervicales,True)  
         sliderGrp.do("rot cervicale GD",angleCervicalesGD,True)  
         sliderGrp.do("rot lombaire",angleLombaires,True) 
         sliderGrp.do("rot lombaire GD",angleLombairesGD,True) 
-        sliderGrp.do("courbure c",45)
+        #sliderGrp.do("courbure c",85)
+
+    #sliderGrp.do("courbure c",70)
 
 
     sliderGrp.do("x",pos[0])

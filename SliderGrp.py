@@ -91,11 +91,11 @@ def clearSliderVariables():
              
 
 
-def courbureButton(sliderList,crvInfos,i,sliderName,nameAfter,min,max,min2,max2,value,step,influence,valueReset=0,getFunction=0,setOneFunction=setOneRot,keepPosture=True,keepPosition=True):
+def courbureButton(sliderList,crvInfos,i,sliderName,nameAfter,min,max,min2,max2,value,step,influence,valueReset=0,getFunction=0,setOneFunction=setOneRot,keepPosture=True,keepPosition=True,keepCurveLength=True):
     getValue=getFunction()
-    action = SimpleAction(0,crvInfos,"t",0,1,0,influence,keepPosture=keepPosture,keepPosition=keepPosition)
+    action = SimpleAction(0,crvInfos,"t",0,1,0,influence,keepPosture=keepPosture,keepPosition=False,keepCurveLength=keepCurveLength)
     slider=SliderOffset(sliderName,action,min,max,value,step,sliderList)
-    action2 = FunctionAction(getValue,crvInfos,setRot,args=[slider,getFunction,[],min,max,crvInfos],keepPosture=True,keepPosition=True,mvt=True)
+    action2 = FunctionAction(getValue,crvInfos,setRot,args=[slider,getFunction,[],min,max,crvInfos],keepPosture=keepPosition,keepPosition=False,mvt=True,keepCurveLength=False)
     slider2=SliderAbs(sliderName,action2,-90,90,getValue,step,sliderList)
     return Button("reset","set to 0",nameAfter,slider,sliderList,i,getValue,0,slider2,setOneFunction)
 
@@ -137,9 +137,9 @@ def createWindows(nameList,pointOnCurveList):
         sliderList.append(SliderDuo(name,fcts[i],crvInfos))
     buttonList=[]
     # courbures cervicale, dorsale et lombaire
-    buttonList.append(courbureButton(sliderList,crvInfos,0,names[0],namesAfter[0],-1,1,-3,3,0,0.00001,['ClusterCHandle'],getFunction=fcts[0],keepPosture=False,keepPosition=True))
-    buttonList.append(courbureButton(sliderList,crvInfos,1,names[1],namesAfter[1],-2,2,-3,3,0,0.00001,['ClusterDHandle'],getFunction=fcts[1],keepPosture=False,keepPosition=True))
-    buttonList.append(courbureButton(sliderList,crvInfos,2,names[2],namesAfter[2],-3,3,-3,3,0,0.00001,['ClusterLHandle'],getFunction=fcts[2],keepPosture=False,keepPosition=True))
+    buttonList.append(courbureButton(sliderList,crvInfos,0,names[0],namesAfter[0],-1,1,-3,3,0,0.00001,['ClusterCHandle'],getFunction=fcts[0],keepPosture=False,keepPosition=False,keepCurveLength=False))
+    buttonList.append(courbureButton(sliderList,crvInfos,1,names[1],namesAfter[1],-2,2,-3,3,0,0.00001,['ClusterDHandle'],getFunction=fcts[1],keepPosture=False,keepPosition=False,keepCurveLength=False))
+    buttonList.append(courbureButton(sliderList,crvInfos,2,names[2],namesAfter[2],-3,3,-3,3,0,0.00001,['ClusterLHandle'],getFunction=fcts[2],keepPosture=False,keepPosition=False,keepCurveLength=False))
 
     # TODO garder les 2 keep=False fait planter les tests
     # tete GD HB TODO position tete par rapport  au sol ou aux dorsales (tenir tete droite) -> 2 fonctions align with et setstraight ?
@@ -171,7 +171,7 @@ def createWindows(nameList,pointOnCurveList):
     checkBoxList=[]
     checkBoxList.append(functionCheckBox('Hide circles',crvInfos,HideCircles,ShowCircles,True))
     checkBoxList.append(functionCheckBox('Hide rest of skeleton',crvInfos,HideRestOfSkeleton,ShowRestOfSkeleton,True))
-    checkBoxList.append(functionCheckBox('Hide head and tail',crvInfos,HideHeadAndTail,ShowHeadAndTail,False))
+    checkBoxList.append(functionCheckBox('Hide head and tail',crvInfos,HideHeadAndTail,ShowHeadAndTail,True))
     checkBoxList.append(functionCheckBox('Hide joints',crvInfos,HideSkeletonJoints,ShowSkeletonJoints,True))
     checkBoxList.append(functionCheckBox('Hide polygons',crvInfos,HidePolygons,ShowPolygons,True)) 
     # on cree le sliderGrp a partir de tous les sliders

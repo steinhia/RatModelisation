@@ -37,7 +37,7 @@ def mainFct():
     ShowPolygons()
     clearVariables(nameList)
     # position des points sur la courbe
-    pointOnCurveList=map(n2J,['L6','L3','T11','T8','T2','C3','C0'])
+    pointOnCurveList=map(n2J,['L6','L3','T11','T8','T2','C4','C0'])
     createJointChain2(nameList,tailList)
     bindSkeleton(nameList,tailList)
     createCurve(pointOnCurveList,nameList)

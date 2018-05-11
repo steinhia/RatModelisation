@@ -101,7 +101,6 @@ def ShowSkeletonJoints(args=[]):
 
 
 def colorSkeleton(nameList):
-    cmds.select( clear=True )
     mel.eval("shadingNode -asShader blinn -n blinn1;")
     mel.eval("sets -renderable true -noSurfaceShader true -empty -name blinn1SG;")
     mel.eval("connectAttr -f blinn1.outColor blinn1SG.surfaceShader;")

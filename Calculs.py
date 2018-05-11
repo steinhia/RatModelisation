@@ -86,7 +86,8 @@ def calcCourbure(L):
     [v1,v2]=L
     rot1=getTangent(n2J(v1)) #n2J
     rot2=getTangent(n2J(v2))
-    return RadToDeg(rot1[1]-rot2[1])
+    return angleHB(rot2,rot1)
+    return RadToDeg(rot2[1]-rot1[1])
 
 # en deg
 def calcLordoseC(L=[]):
