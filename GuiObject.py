@@ -62,17 +62,19 @@ class Button(GuiObject):
         valInit=slider.value
         x=[]
         y=[]
-        for i in range(0,21):
+        for i in range(0,20):
             val=min+i*(max-min)/20.0
             slider.setValue(val)
-            slider.update(True,True)
+            slider.update(False,True) # attention False necessaire
             x.append(val)
-            y.append(self.slider2.sliderValue()) # TODO comparer tps apres
-        slider.setValue(valInit)
-        slider.update(True,True)
+            # si ne veut pas actualiser, doit utiliser la fonction de calcul
+            val=self.sliderList[self.indiceText].fct(self.sliderList[self.indiceText].args)
+            y.append(val) # TODO comparer tps apres
         slider.dte=polyfit(x,y,1)
+        slider.setValue(valInit)
+        slider.update(False,True) # TODO le deuxieme false ?
 
-
+        #p("self droite",slider.dte)
 
     # reset -> valueReset=2.53...
     # set to 0 -> valueSetTo=0
@@ -80,19 +82,22 @@ class Button(GuiObject):
         currentValue=self.sliderValue()
         if(currentValue!=value):
             self.slider2.setValue(value)       
-            self.slider2.update(False)
+            self.slider2.update(True) # a changer
         if updateText:
             for i in self.sliderList :
-                i.update()
+                i.update(True)
 
     def reset(self):
-        self.update(self.valueReset)
+        self.update(self.valueReset,True)
 
     def setTo(self):
-        self.update(self.valueSetTo)
+        self.update(self.valueSetTo,True)
 
     def sliderValue(self):
         return self.slider2.sliderValue()
+
+    def calcValue(self):
+        return self.sliderList[self.indiceText].fct(self.sliderList[self.indiceText].args)
 
 class ButtonGlobal(GuiObject):
 
@@ -133,7 +138,7 @@ class SliderDuo(GuiObject):
         if self.slider2!=-1:
             self.slider2.setValue(value)
             self.slider2.value=value
-        if self.slider!=-1 :
+        if self.slider!=-1 and slider1Update: # TODO a verifier que sl1Upd pose pas de probleme
             a=self.slider.f(value)
             if a!=[]:
                 self.slider.setValue(a)
@@ -171,8 +176,10 @@ class Slider(GuiObject):
         if self.dte==[]:
             return []
         elif self.dte[0] !=0 :
-            return float(x-self.dte[1])/float(self.dte[0])
+            #print "res",(float(x)-float(self.dte[1]))/float(self.dte[0])
+            return (float(x)-float(self.dte[1]))/float(self.dte[0])
         else :
+            p("probleme polyfit",self.dte)
             return float(self.dte[1])
 
 
@@ -194,7 +201,10 @@ class SliderOffset(Slider):
             self.action.execute(ajust)
             if updateText:
                 for i in self.sliderList:
-                    i.update()
+                        if i.slider!=self:
+                            i.update(slider1Update=True)
+                        else:
+                            i.update(slider1Update=False)
 
 
     def sliderValue(self,*_):
@@ -224,7 +234,7 @@ class SliderAbs(Slider):
         self.action.execute(ajust)
         if updateText:
             for i in self.sliderList:
-                i.update()
+                    i.update(True)
 
     def setValue(self,val,*_):
         Slider.setValue(self,val)

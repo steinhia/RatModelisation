@@ -55,6 +55,7 @@ def getTangent(name):
 # orientation par rapport au corps et pas la tete
 def getCurvePosition(num=-1):
     pos=position(num2Name(2)) 
+    pos=getMilieu(position(num2Name(1)),position(num2Name(3)))
     if num==-1 or num>2:
         return pos
     else:
@@ -99,10 +100,10 @@ def calcCyphoseD(L=[]):
 
 # en deg
 def calcLordoseL(L=[]):
-    return calcCourbure(['L1','L6'])
+    return -calcCourbure(['L1','L6'])
 
 def PostureVector(L=[]):
-    v=SubVector(num2Name(1),num2Name(3))
+    v=SubVector(num2Name(0),num2Name(4))
     return v
 # en degres 
    

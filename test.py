@@ -1,14 +1,14 @@
-sliderGrp=mainFct()
-a=getCLen()
-sliderGrp.do("courbure c",45)
+import sys
+sys.path.append("C:/Users/alexandra/Documents/alexandra/scripts")
+path="C:/Users/alexandra/Documents/alexandra/scripts/"
 
-p=position(curvei(5))
+for i in range(1):
+    execfile(path+"TestClass.py")
 
-#b2=position(curvei(n2N('T1')))
-for i in range(10):
-    a2=getCLen()
-    sc=a/a2
-    cmds.select(curvei(4),curvei(5),curvei(6))
-    cmds.scale(sc,sc,sc,pivot=p)
-print getCLen()
-print a
+print "\n"
+
+#a=sliderGrp
+#liste=a.buttonList
+#n=len(liste)
+#for i in range(n):
+#    print liste[i].valueReset

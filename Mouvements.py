@@ -5,23 +5,21 @@ sys.path.append("C:/Users/alexandra/Documents/alexandra/scripts")
 path="C:/Users/alexandra/Documents/alexandra/scripts/"
 execfile(path+"Calculs.py")
 
-
+#TODO pos different
 def keepLengthValue(newLengthvalue,L=[]):
     defPivot()
-    if L!=[]:
-        Infos=L
-    else:
-        posInit=getCurvePosition()
+    posInit=getCurvePosition()
     Length=cmds.arclen('curve1')
     scaleValue=newLengthvalue/Length
     cmds.select('curve1','joint1',r=1)
-    cmds.scale(scaleValue,scaleValue,scaleValue,r=True)
+    cmds.scale(scaleValue,scaleValue,scaleValue,r=True,pivot=posInit)
 
 def keepChainLengthValue(newValue,L=[]):
     Length=getChainLength()
+    posInit=getCurvePosition()
     cmds.select('joint1',r=1)
     scaleValue=newValue/Length
-    cmds.scale(scaleValue,scaleValue,scaleValue,r=True)
+    cmds.scale(scaleValue,scaleValue,scaleValue,r=True,pivot=posInit)
     
 
 def keepCLen(newCLen):
@@ -90,7 +88,7 @@ def parabolicRotation(theta,list):
     nPivot=n2N(pivotName)
     pivot=position(curvei(nPivot))
     for i in range(n2N(end),n2N(begin)-1,-1):
-        dist=abs(i-nPivot)
+        dist=(abs(i-nPivot))**(1)
         angle=math.atan(dist)
         cmds.select(curvei(i))
         cmds.rotate(theta*angle*20.0,r=True,p=pivot,x=x,y=y,z=z)
@@ -104,53 +102,53 @@ def rotCHB(theta,L=[]):
 def rotCGD(theta,L=[]):
     parabolicRotation(theta,[num2Name(3),num2Name(3),num2Name(4),0,1,0])
 def rotDHB(theta,L=[]):
-    parabolicRotation(theta,['T12',num2Name(0),num2Name(1),1,0,0])
+    parabolicRotation(theta,[pointOnCurveList[2],num2Name(0),num2Name(1),1,0,0])
 def rotDGD(theta,L=[]):
-    parabolicRotation(theta,['T12',num2Name(0),num2Name(1),0,1,0])
+    parabolicRotation(theta,[pointOnCurveList[2],num2Name(0),num2Name(1),0,1,0])
 
-def getRatios(beginPD,endPD,beginPC,endPC):
-    [crvLengthNewD,distBeginD]=getLen(beginPD,endPD)
-    [crvLengthNewC,distBeginC]=getLen(beginPC,endPC)
-    return  [distBeginD,distBeginC,crvLengthNewD,crvLengthNewC]
+#def getRatios(beginPD,endPD,beginPC,endPC):
+#    [crvLengthNewD,distBeginD]=getLen(beginPD,endPD)
+#    [crvLengthNewC,distBeginC]=getLen(beginPC,endPC)
+#    return  [distBeginD,distBeginC,crvLengthNewD,crvLengthNewC]
 
-def keepGroupLen(Len2,Ncurve):
-    #for i in range(5):
-        #keepOneLen(curvei(2),curvei(5),Len1,Ncurve,beginPD,endPD)
-    beginPC=getParameter(position(curvei(n2N("C7"))))
-    endPC=getParameter(position(curvei(n2N("C1"))))
-    keepOneLen(curvei(4),curvei(6),Len2,Ncurve,beginPC,endPC)
-
-
-def keepOneLen(begin,end,crvLengthVoulu,Ncurve,beginP,endP):
-    [crvLengthNew,distBegin2]=getLen(beginP,endP)
-    if(crvLengthNew>0):
-        keepLengthValue(Ncurve)
-        for i in range(5):
-            scaleValue=crvLengthVoulu/crvLengthNew
-            pivot=getBarycentre(begin,end,0.5) 
-            cmds.select(clear=True )
-            for j in range(int(begin[-2]),int(end[-2])+1):
-                cmds.select(curvei(j),add=True)
-            cmds.scale(scaleValue,scaleValue,scaleValue,r=True,p=pivot)
-            keepLengthValue(Ncurve)
-            [crvLengthNew,distBegin2]=getLen(beginP,endP)
-        [crvLengthNew,distBegin2]=getLen(beginP,endP)
+#def keepGroupLen(Len2,Ncurve):
+#    #for i in range(5):
+#        #keepOneLen(curvei(2),curvei(5),Len1,Ncurve,beginPD,endPD)
+#    beginPC=getParameter(position(curvei(n2N("C7"))))
+#    endPC=getParameter(position(curvei(n2N("C1"))))
+#    keepOneLen(curvei(4),curvei(6),Len2,Ncurve,beginPC,endPC)
 
 
-# teste une valeur du premier slider pour obtenir la courbure voulue
+#def keepOneLen(begin,end,crvLengthVoulu,Ncurve,beginP,endP):
+#    [crvLengthNew,distBegin2]=getLen(beginP,endP)
+#    if(crvLengthNew>0):
+#        keepLengthValue(Ncurve)
+#        for i in range(5):
+#            scaleValue=crvLengthVoulu/crvLengthNew
+#            pivot=getBarycentre(begin,end,0.5) 
+#            cmds.select(clear=True )
+#            for j in range(int(begin[-2]),int(end[-2])+1):
+#                cmds.select(curvei(j),add=True)
+#            cmds.scale(scaleValue,scaleValue,scaleValue,r=True,p=pivot)
+#            keepLengthValue(Ncurve)
+#            [crvLengthNew,distBegin2]=getLen(beginP,endP)
+#        [crvLengthNew,distBegin2]=getLen(beginP,endP)
+
+
+# teste une valeur du premier slider pour obtenir la courbure voulue -> envoie premier slider dans la fonction
 def setOneRot(valeur,test,L):
     #t=time.time()
     [slider,getFunction,getFunctionArgs,crvInfos]=L
     fTest=setOneRotWithChangement(test,slider,getFunction,getFunctionArgs,crvInfos)
     slider.setValue(valeur) 
-    slider.update(False,True)  
+    slider.update(False,True)  # attention ne pas changer le false en true
     return fTest
 
 # applique le changement
 def setOneRotWithChangement(test,slider,getFunction,getFunctionArgs,crvInfos,ajust=False):
     slider.setValue(test)
     #t=time.time()
-    slider.update(False,True) # TODO regarder influence et resultat aux tests + difference de temps au niveau des sliderupdate
+    slider.update(False,True) # attention ne pas changer le false en true
     args=getFunctionArgs+[crvInfos] if getFunctionArgs!=[] else crvInfos
     fTest=getFunction(args)
     return fTest
@@ -159,14 +157,23 @@ def isInside(courbure,fMin,fMax):
     return (courbure >=fMin and courbure <=fMax) or (courbure >=fMax and courbure <=fMin)
 
 # cherche a atteindre une courbure par dichotomie
-# confusion test et fTest
+# slider envoye = slider1
 def setRot(courbure,L):
-    #p("setRot")
-    [slider,getFunction,getFunctionArgs,minSlider,maxSlider,crvInfos]=L
+    [slider,getFunction,getFunctionArgs,crvInfos,minSlider,maxSlider]=L
     fTest=100000.0
     fx=slider.f(courbure)
+    test=fx
+    #fx=[]
     val=slider.getValue()
-    if fx!=[]:
+    #print "fx",fx
+    #print "setR"
+    if fx==[] :
+        mini=minSlider
+        maxi=maxSlider
+        fMin=setOneRot(val,mini,[slider,getFunction,getFunctionArgs,crvInfos])
+        fMax=setOneRot(val,maxi,[slider,getFunction,getFunctionArgs,crvInfos])
+    else:
+        #fVal=setOneRot(val,fx,[slider,getFunction,getFunctionArgs,crvInfos])
         pas=(maxSlider-minSlider)/2000.0
         mini=fx-pas
         maxi=fx+pas
@@ -183,37 +190,39 @@ def setRot(courbure,L):
             fMax=setOneRot(val,maxi,[slider,getFunction,getFunctionArgs,crvInfos])
         mini=max(mini,minSlider)
         maxi=min(maxi,maxSlider)
-    else:
-        mini=minSlider
-        maxi=maxSlider
-        fMin=setOneRot(val,mini,[slider,getFunction,getFunctionArgs,crvInfos])
-        fMax=setOneRot(val,maxi,[slider,getFunction,getFunctionArgs,crvInfos])
+        #print "premiere boucle ",i
     if isInside(courbure,fMin,fMax):
         i=0
-        while abs(fTest-courbure)>0.001 and i<20:
+        while abs(fTest-courbure)>0.01 and i<20:
             i+=1
             test=float(mini+maxi)/2.0
             fTest=setOneRot(val,test,[slider,getFunction,getFunctionArgs,crvInfos])
             if i>15:
-                1#print "gde value",test,fTest,courbure
+                1#print "gde value",test,"fTest",fTest,"courbure",courbure
             if((fTest>courbure and fMin<fMax) or (fTest<courbure and fMin>fMax )):
                 maxi=test
             else :
                 mini=test
-
         setOneRotWithChangement(test,slider,getFunction,getFunctionArgs,crvInfos,True)
+        #print "boucle 2 ",  i
     elif (courbure <=fMin and fMin<=fMax) or (courbure>=fMin and fMin>=fMax) :
         setOneRotWithChangement(mini,slider,getFunction,getFunctionArgs,crvInfos,True)
+        test=mini
+        print "en dehors des bornes!",fMin,fMax,getFunction,courbure
     else:
         setOneRotWithChangement(maxi,slider,getFunction,getFunctionArgs,crvInfos,True)
-
+        test=maxi
+        print "en dehors des bornes!",fMin,fMax,getFunction,courbure
+    # TODO regarder ici si ca passe pas trop souvent -> TestClass Mini
+    if(abs(courbure-getFunction(getFunctionArgs))>0.01 and test!=mini and test!=maxi):
+        print "FAIL SETROT", getFunction,abs(courbure-getFunction(getFunctionArgs))
+    return test
     
 def compresseDorsales(value,crvInfos=[]):
-    #p("valComp",value)
-    nBegin=n2N('T8')
-    nEnd=n2N('T2')
+    nBegin=n2N(num2Name(2))
+    nEnd=n2N(num2Name(3))
     nMax= cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")-1
-    pivot=position(curvei(n2N('L1')))
+    pivot=position(curvei(n2N(pointOnCurveList[2])))
     posB=position(curvei(nEnd))
     posE=position(curvei(nMax))
     cmds.select(clear=True)

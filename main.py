@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-
-#import maya.cmds as cmds
-#import math      
+  
 import sys
 
 sys.path.append("C:/Users/alexandra/Documents/alexandra/scripts")
@@ -12,9 +10,7 @@ execfile(path+"createModel.py")
 execfile(path+"SliderGrp.py")
 execfile(path+"mesures.py")
 
-
-#TODO entre placage main et automatique, decalage du pivot ???? 
-def mainFct():
+def mainFct(pointOnCurveList=['L6','L3','T11','T8','T2','C4','C0'],locatorList=['L6','L3','T8','T2','C0']):
 
     nameList=['Rat:obj55_VertebreL6_Exterior','Rat:obj53_VertebreL5_Exterior','Rat:obj51_VertebreL4_Exterior','Rat:obj50_VertebreL3_Exterior',\
                'Rat:obj98_VerterbreL2_Exterior','Rat:obj100_VertebreL1_Exterior','Rat:obj48_VertebreT13_Exterior','Rat:obj43_VertebreT12_Exterior',\
@@ -33,22 +29,26 @@ def mainFct():
              'Rat:obj92_VertebreCaudale24_Exterior','Rat:obj93_VertebreCaudale25_Exterior','Rat:obj94_VertebreCaudale26_Exterior','Rat:obj95_VertebreCaudale27_Exterior',\
              'Rat:obj96_VertebreCaudale28_Exterior']
 
-    #cmds.file("C:/Users/alexandra/Documents/alexandra/ScenesMaya/SqueletteRat.mb", o=True,s=False,f=True)
     ShowPolygons()
     clearVariables(nameList)
+
     # position des points sur la courbe
-    pointOnCurveList=map(n2J,['L6','L3','T11','T8','T2','C4','C0'])
-    createJointChain2(nameList,tailList)
+    pointOnCurveList=map(n2J,pointOnCurveList)
+    createJointChain(nameList,tailList)
     bindSkeleton(nameList,tailList)
     createCurve(pointOnCurveList,nameList)
     createClusters(nameList)
-    defPivot()
-    setPosture(0)
     #cmds.window(title ="Modelisation de la colonne du rat",le=50,te=50,width=400,height=450)
-    sliderGrp=createWindows(nameList,tailList)
+    sliderGrp=createWindows(nameList,pointOnCurveList,locatorList)
     #cmds.showWindow(sliderGrp.window)
     return sliderGrp
-    
-#sliderGrp=mainFct()
+
+pointOnCurveList=['L6','L3','T11','T8','T2','C4','C0'] 
+locatorList=['L6','L3','T8','T2','C0'] 
+  
+#sliderGrp=mainFct(pointOnCurveList,locatorList)
+
+#del pointOnCurveList
+#del locatorList
 
 

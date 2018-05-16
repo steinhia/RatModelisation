@@ -12,7 +12,7 @@ sys.path.append("C:/Users/alexandra/Documents/alexandra/scripts")
 path="C:/Users/alexandra/Documents/alexandra/scripts/"
 
 
-    #pointOnCurveList=map(n2J,['L6','L3','T12','T8','T2','C4','C1'])
+#pointOnCurveList=map(n2J,['L6','L3','T11','T8','T2','C4','C1'])
 def n2J(name):
     dico={'L6':'joint1', 'L5':'joint2','L4':'joint3','L3':'joint4','L2':'joint5','L1':'joint6','T13':'joint7', \
         'T12':'joint8','T11':'joint9','T10':'joint10','T9':'joint11','T8':'joint12','T7':'joint13','T6':'joint14', \
@@ -34,6 +34,8 @@ def n2N(name):
         return -1
 
 def num2Name(num):
+    if 'sliderGrp' in globals() and hasattr(sliderGrp, 'locatorList'):
+        return sliderGrp.locatorList[num]
     if num==0:
         return 'L6'
     elif num==1:
@@ -132,36 +134,37 @@ def getParameter(location):
     return uParam
 
 def defPivot():
-    # les points extremes sont toujours sur la courbe
-    pos1=position(curvei(n2N('L6')))
-    pos2=position(curvei(n2N('T2')))
-    pt=getMilieu(pos1,pos2)
     pt=getCurvePosition()
     cmds.setAttr('curve1.scalePivot',pt[0],pt[1],pt[2])
     cmds.setAttr('curve1.rotatePivot',pt[0],pt[1],pt[2])
 
 def maxDiff(val1,val2):
-    max=-1
-    for i,val in enumerate(val1):
-        diff=abs(val-val2[i])
-        if(diff>max):
-            max=diff
-    return max
+    Sub=map(abs,sub(val1,val2))
+    maxi=max(Sub)
+    i=Sub.index(maxi)
+    return [i,maxi]
 
 def p(string,value1=[],value2=[],value3=[],value4=[],value5=[],value6=[]):
-    print string
+    res=string
     if value1!=[]:
-        print value1
+        res+=" "
+        res+=str(value1)
     if value2!=[]:
-        print value2
+        res+=" "
+        res+=str(value2)
     if value3!=[]:
-        print value3
+        res+=" "
+        res+=str(value3)
     if value4!=[]:
-        print value4
+        res+=" "
+        res+=str(value4)
     if value5!=[]:
-        print value5
+        res+=" "
+        res+=str(value5)
     if value6!=[]:
-        print value6
+        res+=" "
+        res+=str(value6)
+    print res
 
 def getMilieu(name1,name2):
     if isinstance(name1,str):

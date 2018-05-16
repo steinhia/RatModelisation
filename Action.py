@@ -81,7 +81,7 @@ class SimpleAction(Action):
             else :
                 cmds.rotate(self.offset,x=self.x,y=self.y,z=self.z,r=True,p=self.pivot)
         elif(self.type=='s'):
-            cmds.scale(self.offset,x=self.x,y=self.y,z=self.z,r=True) # pivot ? 
+            cmds.scale(self.offset,x=self.x,y=self.y,z=self.z,r=True,pivot=getCurvePosition()) # pivot ? 
     
 
 # les arguments de la fonction doivent etre une unique liste        

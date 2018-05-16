@@ -30,14 +30,14 @@ def locator(i):
     return 'locatorAngle'+str(i)
 
 def locatorPostureVector():
-    v=SubVector(locator(1),locator(3))
+    v=SubVector(locator(0),locator(4))
     return v
 
 def locatorPosture():
     return angleHB(locatorPostureVector(),[0,0,1]) # ou Hor()
 
 def locatorPostureGD():
-    return valPrincDeg(angleGD(locatorPostureVector(),[0,1,0])+90) # ou Hor()
+    return valPrincDeg(angleGD(locatorPostureVector(),[0,1,0])) # ou Hor()
 
 def angleC():
     return angleHB(SubVector(locator(3),locator(4)),[0,0,1])
@@ -77,8 +77,11 @@ def locatorLength():
     return length
 
 def getLocatorCurvePosition(num=-1):
+    pos=getMilieu(locator(1),locator(3))
     if num==-1:
+        return pos
         return position(locator(2))
     else:
+        return pos[num]
         return position(locator(2))[num]
     

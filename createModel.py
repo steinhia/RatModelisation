@@ -69,46 +69,28 @@ def clearVariables(nameList=[]):
     for i in a:
         cmds.delete(i)
 
-def createJoint(name):
-    center=calcCentroid(name)
-    cmds.select(clear=True)
-    cmds.joint( p=(center[0], center[1], center[2]),scale=(0.6,0.6,0.6),radius=0.3)
+#def createJoint(name):
+#    center=calcCentroid(name)
+#    cmds.select(clear=True)
+#    cmds.joint( p=(center[0], center[1], center[2]),scale=(0.6,0.6,0.6),radius=0.3)
  
-def createJointChain(nameList,tailList):
-    for i in range(len(nameList)):
-        createJoint(nameList[i])
-        #cmds.makeIdentity(a=1)
-        if(i>0):
-            cmds.parent('joint'+str(i+1),'joint'+str(i))
-    #on rajoute un joint pour la tete
-    createJoint('Rat:obj8_Crane_Exterior')
-    cmds.parent('joint27','joint26')
-    # # le reste de la queue est enfant de joint 1
-    createJoint(tailList[0])
-    cmds.parent('joint28','joint1')
-    for i in range(1,len(tailList)):
-        createJoint(tailList[i])
-        cmds.parent('joint'+str(i+1+27),'joint'+str(i+27))
-
-def createJoint2(center):
+def createJoint(center):
     cmds.select(clear=True)
     cmds.joint( p=(center[0], center[1], center[2]),scale=(0.6,0.6,0.6),radius=0.1)
 
-def createJointChain2(nameList,tailList):
+def createJointChain(nameList,tailList):
     posList=[]
     for name in nameList:
         posList.append(calcCentroid(name))
     # dernier joint (L6)
-    createJoint2([-2.50, 5.3, 5.25])
+    createJoint([-2.50, 5.3, 5.25])
     for i in range(25):
         center=pdt(0.5,sum(posList[i],posList[i+1]))
-        createJoint2(center)
+        createJoint(center)
         cmds.parent('joint'+str(i+2),'joint'+str(i+1))
-    createJoint2([-2.20, 5.10, -4.65])
+    createJoint([-2.20, 5.10, -4.65])
     cmds.parent('joint27','joint26')
         
-        
-
 def bindSkeleton(nameList,tailList):
     cmds.select('joint1')
     for i in range(len(nameList)):
@@ -148,9 +130,6 @@ def createCurve(pointOnCurveList,nameList):
         if(i not in KeepList):
             cmds.delete(curvei(i))
     cmds.delete('curve1.cv[1]')
-    cmds.cluster('curve1.cv[6]',n='ClusterEnd')
-    cmds.makeIdentity(a=1)
-    cmds.select('ClusterEndHandle')
     cmds.select("ikHandle")
     cmds.ikHandle(edit=True,curve="curve1",fj=True)
     cmds.parent("effector1","joint27")
@@ -171,10 +150,10 @@ def createClusters(nameList):
     cmds.cluster(curvei(n2N('C3')),n='ClusterC')
     cmds.makeIdentity(a=1)
 
-    cmds.cluster(curvei(n2N('T6')),n='ClusterD')
-    cmds.makeIdentity(a=1)
+    #cmds.cluster(curvei(n2N('T6')),n='ClusterD')
+    #cmds.makeIdentity(a=1)
     
-    cmds.cluster(curvei(n2N('L3')),curvei(n2N('T13')),curvei(n2N('T6')),n='ClusterL')
-    cmds.makeIdentity(a=1)
+    #cmds.cluster(curvei(n2N('L3')),curvei(n2N('T11')),n='ClusterL')
+    #cmds.makeIdentity(a=1)
 
 

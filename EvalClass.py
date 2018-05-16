@@ -47,12 +47,12 @@ class Evaluate(object):
         totalDiff=0
         for i,mesure in enumerate(L):
             if isinstance(mesure,list):
-                if norm(sub(mesure,l[i]))>0.001:
+                if norm(sub(mesure,l[i]))>0.005:
                     print names[i],mesure,l[i]
                 totalDiff+=norm(sub(mesure,l[i]))
             else:
                 totalDiff+=abs(mesure-l[i])
-                if abs(mesure-l[i])>0.001:
+                if abs(mesure-l[i])>0.005:
                     print names[i],abs(mesure-l[i])
 
         # position des differents locators / vertebres correspondantes
@@ -68,13 +68,14 @@ class Evaluate(object):
                 print i,val
        # print subPos
         p("TOTAL DIFF : ",totalDiff)
-        del l
-        del L
+        return totalDiff
         
         
         
 #a=Evaluate()
 #a.execute()
+
+#TODO essayer avec deuxieme image pour voir si fonctionne parametre optimal de courbure pour tutes les images ou rajout de locator a chaque image pour determiner la courbure
 
         
 
