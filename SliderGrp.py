@@ -130,7 +130,7 @@ def createWindows(nameList,pointOnCurveList,locatorList):
           "rot Dorsale G ","rot Dorsale B ","rot Lombaire G ","rot Lombaire B ","compression ","x ","y ","z ","scale ","posture GD"]
     namesAfter=["","","","H","D","H","D","H","D","H","forte","","","","",""]
     fcts=[calcLordoseC,calcCyphoseD,calcLordoseL,calcPosture,calcRotCGD,\
-              calcRotCHB,calcRotDGD,calcRotDHB,calcRotLGD,calcRotLHB,calcCompressionDorsales,\
+              calcRotCHB,calcRotDGD,calcRotDHB,calcRotLGD,calcRotLHB,calcComp,\
               getX,getY,getZ,getCurveLength,calcPostureGD]   
     setFcts=[rotCGD,rotCHB,rotDGD,rotDHB,rotLGD,rotLHB,compresseDorsales,setX,setY,setZ,keepLengthValue,setPosture,setPostureGD]
     
@@ -146,16 +146,16 @@ def createWindows(nameList,pointOnCurveList,locatorList):
 
     # TODO garder les 2 keep=False fait planter les tests
     # tete GD HB TODO position tete par rapport  au sol ou aux dorsales (tenir tete droite) -> 2 fonctions align with et setstraight ?
-    buttonList.append(functionButton(sliderList,crvInfos,4,names[4],namesAfter[4],-5,5,-30,50,0,0.00000001,setFcts[0],getFunction=fcts[4],keepPosture=False,keepPosition=False))
-    buttonList.append(functionButton(sliderList,crvInfos,5,names[5],namesAfter[5],-5,5,-30,50,0,0.00000001,setFcts[1],getFunction=fcts[5],keepPosture=False,keepPosition=False))
+    buttonList.append(functionButton(sliderList,crvInfos,4,names[4],namesAfter[4],-5,5,-30,50,0,0.00000001,setFcts[0],getFunction=fcts[4],keepPosture=False,keepPosition=True))
+    buttonList.append(functionButton(sliderList,crvInfos,5,names[5],namesAfter[5],-5,5,-30,50,0,0.00000001,setFcts[1],getFunction=fcts[5],keepPosture=False,keepPosition=True))
 
     # dorsales GD HB -> dorsales HB = dorsales + lombaires
-    buttonList.append(functionButton(sliderList,crvInfos,6,names[6],namesAfter[6],-5,5,-30,50,0,0.00000001,setFcts[2],getFunction=fcts[6],keepPosture=False,keepPosition=False))
-    buttonList.append(functionButton(sliderList,crvInfos,7,names[7],namesAfter[7],-5,5,-30,50,0,0.00000001,setFcts[3],getFunction=fcts[7],keepPosture=False,keepPosition=False))
+    buttonList.append(functionButton(sliderList,crvInfos,6,names[6],namesAfter[6],-5,5,-30,50,0,0.00000001,setFcts[2],getFunction=fcts[6],keepPosture=False,keepPosition=True))
+    buttonList.append(functionButton(sliderList,crvInfos,7,names[7],namesAfter[7],-5,5,-30,50,0,0.00000001,setFcts[3],getFunction=fcts[7],keepPosture=False,keepPosition=True))
 
     #lombaires
-    buttonList.append(functionButton(sliderList,crvInfos,8,names[8],namesAfter[8],-6,6,-60,50,0,0.00000001,setFcts[4],getFunction=fcts[8],keepPosture=False,keepPosition=False))
-    buttonList.append(functionButton(sliderList,crvInfos,9,names[9],namesAfter[9],-6,6,-60,50,0,0.00000001,setFcts[5],getFunction=fcts[9],keepPosture=False,keepPosition=False))
+    buttonList.append(functionButton(sliderList,crvInfos,8,names[8],namesAfter[8],-6,6,-60,50,0,0.00000001,setFcts[4],getFunction=fcts[8],keepPosture=False,keepPosition=True))
+    buttonList.append(functionButton(sliderList,crvInfos,9,names[9],namesAfter[9],-6,6,-60,50,0,0.00000001,setFcts[5],getFunction=fcts[9],keepPosture=False,keepPosition=True))
 
     # compression
     buttonList.append(functionButton(sliderList,crvInfos,10,names[10],namesAfter[10],-10,120,6,85,0,0.00000001,setFcts[6],crvInfos,getFunction=fcts[10],getFunctionArgs=crvInfos,keepPosture=False,keepPosition=True))

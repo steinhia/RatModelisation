@@ -1,6 +1,7 @@
 import sys
 sys.path.append("C:/Users/alexandra/Documents/alexandra/scripts")
-
+import time
+import maya.mel as mel
 
 path="C:/Users/alexandra/Documents/alexandra/scripts/"
 execfile(path+"main.py")
@@ -41,7 +42,6 @@ def ajustePos():
 #53 ou 83 selon pendant ou avant
 def placageManuel(nBoucles=3,courbureC=53,courbureL=5):
     t=time.time()
-    sliderGrp=mainFct(pointOnCurveList,locatorList)
     compression=angleComp()
 
     angleCervicales=angleC()
@@ -60,7 +60,6 @@ def placageManuel(nBoucles=3,courbureC=53,courbureL=5):
     #sliderGrp.do("courbure c",courbureC)
 
     for i in range(nBoucles):
-        print i
         sliderGrp.do("posture",posture)
         sliderGrp.do("compression",compression)
         sliderGrp.do("rot dorsale",angleDorsales)
@@ -77,20 +76,24 @@ def placageManuel(nBoucles=3,courbureC=53,courbureL=5):
     sliderGrp.do("y",pos[1])
     sliderGrp.do("z",pos[2])
 
-    
-
-       
+    #ajustePos()
     p("duree placage : "+str(time.time()-t))
         
     a=Evaluate()
     res=a.execute()
     return res
-
+   
 #iMin=placageOpti()
-placageManuel(1,40)
-#cmds.currentTime( query=True )
-cmds.currentTime( 2, edit=True )
-placageManuel(3,40)
+sliderGrp=mainFct(pointOnCurveList,locatorList)
+maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
+for i in range(1,2):
+    cmds.currentTime( i, edit=True )
+    placageManuel(1,40) 
+    for j in range(maxCV):
+        string='setKeyframe -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {"curve1.cv['+str(j)+']"};'
+        mel.eval(string)
+        
+EvalPositionLocator()
 
 
 

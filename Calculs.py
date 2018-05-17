@@ -7,7 +7,8 @@ sys.path.append("C:/Users/alexandra/Documents/alexandra/scripts")
 
 path="C:/Users/alexandra/Documents/alexandra/scripts/"
 execfile(path+"Short.py")
-
+execfile(path+"mesures.py")
+execfile(path+"GeneralCalculs.py")
 
 def vertexOm2():
  selectionLs = om2.MGlobal.getActiveSelectionList()
@@ -54,12 +55,8 @@ def getTangent(name):
 
 # orientation par rapport au corps et pas la tete
 def getCurvePosition(num=-1):
-    pos=position(num2Name(2)) 
-    pos=getMilieu(position(num2Name(1)),position(num2Name(3)))
-    if num==-1 or num>2:
-        return pos
-    else:
-        return pos[num]
+    positionList=[num2Name(i) for i in range(5)]
+    return GeneralCalculs(positionList).getPosition(num)
 
 def getX(L=[]):
     return getCurvePosition(0)
@@ -78,10 +75,85 @@ def getChainLength(L=[]):
     return len
 
 def locatorCurveLength():
-    x=0
-    for i in range(4):
-        x+=distance(num2Name(i),num2Name(i+1))
-    return x     
+    positionList=[num2Name(i) for i in range(5)]
+    return GeneralCalculs(positionList).getChainLength() 
+
+def HalfChainCurveLengthL():
+    positionList=[num2Name(i) for i in range(5)]
+    return GeneralCalculs(positionList).HalfChainLengthL()
+
+def HalfChainCurveLengthC():
+    positionList=[num2Name(i) for i in range(5)]
+    return GeneralCalculs(positionList).HalfChainLengthC()
+
+def RapportChainCurveLength():
+    positionList=[num2Name(i) for i in range(5)]
+    return GeneralCalculs(positionList).RapportChainLength()
+
+def RapportCurveLength():
+    return RapportChainCurveLength()/RapportChainLength()
+
+def LRapport():
+    crv=distance(num2Name(0),num2Name(1))/distance(num2Name(1),num2Name(2))
+    loc=distance(locator(0),locator(1))/distance(locator(1),locator(2))
+    return crv/loc
+
+
+def CRapport():
+    crv=distance(num2Name(3),num2Name(4))/distance(num2Name(2),num2Name(3))
+    loc=distance(locator(3),locator(4))/distance(locator(2),locator(3))
+    return crv/loc
+
+def EvalPositionLocator():
+    rapport=RapportCurveLength()
+    cr=CRapport()
+    lr=LRapport()
+    d1cr=abs(1-cr)
+    d1lr=abs(1-lr)
+    p("cr",cr,"lr",lr,"rapport",rapport)
+    if abs(1-rapport)<0.05:
+        if cr>1.1:
+            print "decaler T2 vers T8"
+        elif cr<0.9:
+            print "decaler T2 vers C1"
+        if lr>1.1:
+            print "decaler l3 vers T8" 
+        elif lr<0.9:
+            print "decaler l3 vers L6" 
+        if d1cr<0.1 and d1lr<0.1: 
+            print "placement ok " + str(rapport)
+    elif d1cr<d1lr :
+        if rapport>1:
+            print "rallonger lombaires"
+            if lr<1:
+                print "decaler T8 plus proche des cervicales " + str(lr)
+            else :
+                print "decaler L6 vers l'exterieur du squelette " + str(lr)
+
+        else:
+            print "raccourcir lombaires"
+            if lr<1:
+                print "decaler L6 vers l'interieur du squelette " + str(lr)
+            else :
+                print "decaler T8 plus proche des lombaires " + str(lr)
+    else:
+        if rapport<1:
+            print "rallonger cervicales"
+            if cr<1:
+                print "decaler t8 plus proche des lombaires " + str(cr)
+            else :
+                print "decaler c1 a l'exterieur du squelette " + str(cr)
+
+        else:
+            print "raccourcir cervicales"
+            if cr<1:
+                print "decaler C1 ver l'interieur du squelette " + str(cr)
+            else :
+                print "decaler T8 plus proche des cervicales " + str(cr)
+
+
+
+
    
 def calcCourbure(L):
     [v1,v2]=L
@@ -103,18 +175,16 @@ def calcLordoseL(L=[]):
     return -calcCourbure(['L1','L6'])
 
 def PostureVector(L=[]):
-    v=SubVector(num2Name(0),num2Name(4))
-    return v
-# en degres 
-   
-def calcPosture(L=[]):
-    #posT1=position(n2J(num2Name(3)))
-    #posL6=position(n2J(num2Name(1)))
-    #posColonne=sub(posL6,posT1)
-    return valPrincDeg(angleHB(PostureVector(),[0,0,1]))
+    positionList=[num2Name(i) for i in range(5)]
+    return GeneralCalculs(positionList).PostureVector()
 
-def calcPostureGD(L=[]):
-    return valPrincDeg(angleGD(PostureVector(),[1,0,0])+90.0)
+# en degres   
+def calcPosture(L=[]):
+    positionList=[num2Name(i) for i in range(5)]
+    return GeneralCalculs(positionList).getPosture()
+
+#def calcPostureGD(L=[]):
+#    return valPrincDeg(angleGD(PostureVector(),[1,0,0])+90.0)
 
 def calcAlign():
     posT1=position(n2J('C1'))
@@ -123,51 +193,29 @@ def calcAlign():
     res=valPrincDeg(RadToDeg(math.atan2(posColonne[2],posColonne[0]))+90)
     return res
 
-def SubVector(name1,name2):
-    pos1=position(name1)
-    pos2=position(name2)
-    return sub(pos1,pos2)
-
-def angleHB(v1,v2):
-    angle1=RadToDeg(math.atan2(v1[1],v1[2]))
-    angle2=RadToDeg(math.atan2(v2[1],v2[2]))
-    return valPrincDeg(angle1-angle2)
-
-def angleGD(v1,v2):
-    angle1=RadToDeg(math.atan2(v1[0],v1[2]))
-    angle2=RadToDeg(math.atan2(v2[0],v2[2]))
-    return valPrincDeg(angle1-angle2)
-
-def calcOrientationHB(L):
-    [debut,fin]=L
-    angle=angleHB(SubVector(debut,fin),[0,0,1])
-    #angle=angleHB(SubVector(debut,fin),locatorPostureVector())
-    return angle
-
-def calcOrientationGD(L): # peut etre re besoin de crvInfos
-    [debut,fin]=L
-    angle=angleGD(SubVector(debut,fin),[0,0,1])
-    #angle=angleGD(SubVector(debut,fin),locatorPostureVector())
-    return angle
-
-#TODO enregistrer postureVector a la place de posture au debut
-def calcRotDHB(L=[]):
-    return calcOrientationHB([num2Name(1),num2Name(2)])
-def calcRotDGD(L=[]):
-    return calcOrientationGD([num2Name(1),num2Name(2)])
 def calcRotCHB(L=[]):
-    return calcOrientationHB([num2Name(3),num2Name(4)])
+    positionList=[num2Name(i) for i in range(5)]
+    return GeneralCalculs(positionList).angleCHB()
 def calcRotCGD(L=[]):
-    return calcOrientationGD([num2Name(3),num2Name(4)])
+    positionList=[num2Name(i) for i in range(5)]
+    return GeneralCalculs(positionList).angleCGD()
+def calcRotDHB(L=[]):
+    positionList=[num2Name(i) for i in range(5)]
+    return GeneralCalculs(positionList).angleDHB()
+def calcRotDGD(L=[]):
+    positionList=[num2Name(i) for i in range(5)]
+    return GeneralCalculs(positionList).angleDGD()
 def calcRotLHB(L=[]):
-    return calcOrientationHB([num2Name(0),num2Name(1)])
+    positionList=[num2Name(i) for i in range(5)]
+    return GeneralCalculs(positionList).angleLHB()
 def calcRotLGD(L=[]):
-    return calcOrientationGD([num2Name(0),num2Name(1)])
+    positionList=[num2Name(i) for i in range(5)]
+    return GeneralCalculs(positionList).angleLGD()
 
 
-def calcCompressionDorsales(crvInfos=[]):
-    angle=valPrincDeg(angleHB(SubVector(num2Name(2),num2Name(3)),[0,0,1]))
-    return angle
+def calcComp(crvInfos=[]):
+    positionList=[num2Name(i) for i in range(5)]
+    return GeneralCalculs(positionList).angleComp()
 
 def getLen(beginP,endP):
     cmds.setAttr ('arcLengthDimension1.uParamValue', beginP)

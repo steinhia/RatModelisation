@@ -95,6 +95,11 @@ def sum(vect1,vect2):
 def sub(vect1,vect2):
     return [vect1[i]-vect2[i] for i in range(len(vect1))]
 
+def SubVector(name1,name2):
+    pos1=position(name1)
+    pos2=position(name2)
+    return sub(pos1,pos2)
+
 def distance(v1,v2):
     if(isinstance(v1,str)):
         v1=position(v1)
@@ -124,6 +129,16 @@ def valPrincDeg(theta):
     if bool :
         theta2 -= 360.0
     return theta2
+
+def angleHB(v1,v2):
+    angle1=RadToDeg(math.atan2(v1[1],v1[2]))
+    angle2=RadToDeg(math.atan2(v2[1],v2[2]))
+    return valPrincDeg(angle1-angle2)
+
+def angleGD(v1,v2):
+    angle1=RadToDeg(math.atan2(v1[0],v1[2]))
+    angle2=RadToDeg(math.atan2(v2[0],v2[2]))
+    return valPrincDeg(angle1-angle2)
 
 def getPoint(parameter):
     return cmds.pointOnCurve( 'curve1', pr=parameter, p=True )

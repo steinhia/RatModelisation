@@ -98,9 +98,9 @@ def rotLHB(theta,L=[]):
 def rotLGD(theta,L=[]):
     parabolicRotation(theta,[num2Name(1),num2Name(0),num2Name(0),0,1,0])
 def rotCHB(theta,L=[]):
-    parabolicRotation(theta,[num2Name(3),num2Name(3),num2Name(4),1,0,0]) # C7 C7 C0
+    parabolicRotation(theta,[num2Name(3),pointOnCurveList[5],num2Name(4),1,0,0]) # C7 C7 C0
 def rotCGD(theta,L=[]):
-    parabolicRotation(theta,[num2Name(3),num2Name(3),num2Name(4),0,1,0])
+    parabolicRotation(theta,[num2Name(3),pointOnCurveList[5],num2Name(4),0,1,0])
 def rotDHB(theta,L=[]):
     parabolicRotation(theta,[pointOnCurveList[2],num2Name(0),num2Name(1),1,0,0])
 def rotDGD(theta,L=[]):

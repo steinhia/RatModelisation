@@ -29,7 +29,7 @@ class Evaluate(object):
         L.append(calcRotDGD())
         L.append(calcRotLHB())
         L.append(calcRotLGD())
-        L.append(calcCompressionDorsales())
+        L.append(calcComp())
 
         # mesure avec les locators
         l=[]
