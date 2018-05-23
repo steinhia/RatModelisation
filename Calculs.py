@@ -42,9 +42,12 @@ def calcCentroid(name):
 #        return [tan[i]/math.sqrt(norm) for i in range(3)]
 #    return [0,0,0]
 
-def getTangent(name):
+def getTangent(name): # nom ou position directement
     # position du locator
-    pos=position(name)
+    if isinstance(name,str):
+        pos=position(name)
+    else:
+        pos=name
     # point le plus proche sur la courbe
     param=getParameter(pos)
     if(cmds.objExists('locator1')):
@@ -56,7 +59,7 @@ def getTangent(name):
 # orientation par rapport au corps et pas la tete
 def getCurvePosition(num=-1):
     positionList=[num2Name(i) for i in range(5)]
-    return GeneralCalculs(positionList).getPosition(num)
+    return GeneralCalculs.getPosition(positionList,num)
 
 def getX(L=[]):
     return getCurvePosition(0)
@@ -76,19 +79,19 @@ def getChainLength(L=[]):
 
 def locatorCurveLength():
     positionList=[num2Name(i) for i in range(5)]
-    return GeneralCalculs(positionList).getChainLength() 
+    return GeneralCalculs().getChainLength(positionList) 
 
 def HalfChainCurveLengthL():
     positionList=[num2Name(i) for i in range(5)]
-    return GeneralCalculs(positionList).HalfChainLengthL()
+    return GeneralCalculs.HalfChainLengthL(positionList)
 
 def HalfChainCurveLengthC():
     positionList=[num2Name(i) for i in range(5)]
-    return GeneralCalculs(positionList).HalfChainLengthC()
+    return GeneralCalculs.HalfChainLengthC(positionList)
 
 def RapportChainCurveLength():
     positionList=[num2Name(i) for i in range(5)]
-    return GeneralCalculs(positionList).RapportChainLength()
+    return GeneralCalculs.RapportChainLength(positionList)
 
 def RapportCurveLength():
     return RapportChainCurveLength()/RapportChainLength()
@@ -106,52 +109,101 @@ def CRapport():
 
 def EvalPositionLocator():
     rapport=RapportCurveLength()
+    d1r=abs(1-rapport)
     cr=CRapport()
     lr=LRapport()
     d1cr=abs(1-cr)
     d1lr=abs(1-lr)
     p("cr",cr,"lr",lr,"rapport",rapport)
-    if abs(1-rapport)<0.05:
+    if d1r<0.05:
         if cr>1.1:
-            print "decaler T2 vers T8"
+            print "decaler T2 vers T8 " + str(cr)
         elif cr<0.9:
-            print "decaler T2 vers C1"
+            print "decaler T2 vers C1 " + str(cr)
         if lr>1.1:
-            print "decaler l3 vers T8" 
+            print "decaler l3 vers T8 " +str(lr)
         elif lr<0.9:
-            print "decaler l3 vers L6" 
+            print "decaler l3 vers L6 " +str(lr)
         if d1cr<0.1 and d1lr<0.1: 
             print "placement ok " + str(rapport)
-    elif d1cr<d1lr :
-        if rapport>1:
-            print "rallonger lombaires"
-            if lr<1:
-                print "decaler T8 plus proche des cervicales " + str(lr)
-            else :
-                print "decaler L6 vers l'exterieur du squelette " + str(lr)
+    else: 
+        if d1lr>0.1 or d1lr>d1cr:
+            if rapport>1:
+                print "rallonger lombaires"
+                if lr<1:
+                    print "decaler T8 plus proche des cervicales " + str(lr)
+                else :
+                    print "decaler L6 vers l'exterieur du squelette " + str(lr)
 
-        else:
-            print "raccourcir lombaires"
-            if lr<1:
-                print "decaler L6 vers l'interieur du squelette " + str(lr)
-            else :
-                print "decaler T8 plus proche des lombaires " + str(lr)
-    else:
-        if rapport<1:
-            print "rallonger cervicales"
-            if cr<1:
-                print "decaler t8 plus proche des lombaires " + str(cr)
-            else :
-                print "decaler c1 a l'exterieur du squelette " + str(cr)
+            else:
+                print "raccourcir lombaires"
+                if lr<1:
+                    print "decaler L6 vers l'interieur du squelette " + str(lr)
+                else :
+                    print "decaler T8 plus proche des lombaires " + str(lr)
+        if d1cr>0.1 or d1cr>d1lr:
+            if rapport<1:
+                print "rallonger cervicales"
+                if cr<1:
+                    print "decaler t8 plus proche des lombaires " + str(cr)
+                else :
+                    print "decaler C1 a l'exterieur du squelette " + str(cr)
 
-        else:
-            print "raccourcir cervicales"
-            if cr<1:
-                print "decaler C1 ver l'interieur du squelette " + str(cr)
-            else :
-                print "decaler T8 plus proche des cervicales " + str(cr)
+            else:
+                print "raccourcir cervicales"
+                if cr<1:
+                    print "decaler C1 vers l'interieur du squelette " + str(cr)
+                else :
+                    print "decaler T8 plus proche des cervicales " + str(cr)
 
+def EvalPositionLocator2():
+    rapport=RapportCurveLength()
+    d1r=abs(1-rapport)
+    cr=CRapport()
+    lr=LRapport()
+    d1cr=abs(1-cr)
+    d1lr=abs(1-lr)
+    p("cr",cr,"lr",lr,"rapport",rapport)
+    if d1r<0.05:
+        if cr>1.1:
+            print "decaler T2 vers T8 " + str(cr)
+        elif cr<0.9:
+            print "decaler T2 vers C1 " + str(cr)
+        if lr>1.1:
+            print "decaler T8 vers les lombaires et C1 a l'interieur " +str(lr) #8 decaler T8 en gardant le rapport -> redecale C1
+        elif lr<0.9:
+            print "decaler T8 vers les cervicales et C1 a l'exterieur " +str(lr) # TODO a ameliorer, cervicales s'etendent ?
+        if d1cr<0.1 and d1lr<0.1: 
+            print "placement ok " + str(rapport)
+    else: 
+        if d1lr>0.1 or d1lr>d1cr:
+            if rapport>1:
+                print "rallonger lombaires"
+                if lr<1:
+                    print "decaler T8 plus proche des cervicales " + str(lr)
+                else :
+                    print "decaler T8 plus proche des cervicales " + str(lr)
 
+            else:
+                print "raccourcir lombaires"
+                if lr<1:
+                    print "decaler T8 plus proche des lombaires " + str(lr)
+                else :
+                    print "decaler T8 plus proche des lombaires " + str(lr)
+        if d1cr>0.1 or d1cr>d1lr:
+            if rapport<1:
+                print "rallonger cervicales"
+                if cr<1:
+                    print "decaler t8 plus proche des lombaires " + str(cr)
+                else :
+                    print "decaler C1 a l'exterieur du squelette " + str(cr)
+
+            else:
+                print "raccourcir cervicales"
+                if cr<1:
+                    print "decaler C1 vers l'interieur du squelette " + str(cr)
+                else :
+                    print "decaler T8 plus proche des cervicales " + str(cr)
 
 
    
@@ -168,23 +220,23 @@ def calcLordoseC(L=[]):
 
 # en deg
 def calcCyphoseD(L=[]):
-    return calcCourbure(['T2','L1'])
+    return calcCourbure(['T1','L1'])
 
 # en deg
 def calcLordoseL(L=[]):
-    return -calcCourbure(['L1','L6'])
+    return -calcCourbure(['T7','L3'])
 
 def PostureVector(L=[]):
     positionList=[num2Name(i) for i in range(5)]
-    return GeneralCalculs(positionList).PostureVector()
+    return GeneralCalculs.PostureVector(positionList)
 
 # en degres   
 def calcPosture(L=[]):
     positionList=[num2Name(i) for i in range(5)]
-    return GeneralCalculs(positionList).getPosture()
+    return GeneralCalculs.getPosture(positionList)
 
-#def calcPostureGD(L=[]):
-#    return valPrincDeg(angleGD(PostureVector(),[1,0,0])+90.0)
+def calcPostureGD(L=[]):
+    return valPrincDeg(angleGD(PostureVector(),[1,0,0])+90.0)
 
 def calcAlign():
     posT1=position(n2J('C1'))
@@ -195,27 +247,27 @@ def calcAlign():
 
 def calcRotCHB(L=[]):
     positionList=[num2Name(i) for i in range(5)]
-    return GeneralCalculs(positionList).angleCHB()
+    return GeneralCalculs.angleCHB(positionList)
 def calcRotCGD(L=[]):
     positionList=[num2Name(i) for i in range(5)]
-    return GeneralCalculs(positionList).angleCGD()
+    return GeneralCalculs.angleCGD(positionList)
 def calcRotDHB(L=[]):
     positionList=[num2Name(i) for i in range(5)]
-    return GeneralCalculs(positionList).angleDHB()
+    return GeneralCalculs.angleDHB(positionList)
 def calcRotDGD(L=[]):
     positionList=[num2Name(i) for i in range(5)]
-    return GeneralCalculs(positionList).angleDGD()
+    return GeneralCalculs.angleDGD(positionList)
 def calcRotLHB(L=[]):
     positionList=[num2Name(i) for i in range(5)]
-    return GeneralCalculs(positionList).angleLHB()
+    return GeneralCalculs.angleLHB(positionList)
 def calcRotLGD(L=[]):
     positionList=[num2Name(i) for i in range(5)]
-    return GeneralCalculs(positionList).angleLGD()
+    return GeneralCalculs.angleLGD(positionList)
 
 
 def calcComp(crvInfos=[]):
     positionList=[num2Name(i) for i in range(5)]
-    return GeneralCalculs(positionList).angleComp()
+    return GeneralCalculs.angleComp(positionList)
 
 def getLen(beginP,endP):
     cmds.setAttr ('arcLengthDimension1.uParamValue', beginP)

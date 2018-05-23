@@ -45,20 +45,22 @@ class Evaluate(object):
         l.append(angleComp())
 
         totalDiff=0
-        for i,mesure in enumerate(L):
-            if isinstance(mesure,list):
-                if norm(sub(mesure,l[i]))>0.005:
-                    print names[i],mesure,l[i]
-                totalDiff+=norm(sub(mesure,l[i]))
-            else:
-                totalDiff+=abs(mesure-l[i])
-                if abs(mesure-l[i])>0.005:
-                    print names[i],abs(mesure-l[i])
+        #for i,mesure in enumerate(L):
+        #    if isinstance(mesure,list):
+        #        if norm(sub(mesure,l[i]))>0.005:
+        #            print names[i],mesure,l[i]
+        #        totalDiff+=norm(sub(mesure,l[i]))
+        #    else:
+        #        totalDiff+=abs(mesure-l[i])
+        #        if abs(mesure-l[i])>0.005:
+        #            print names[i],abs(mesure-l[i])
 
         # position des differents locators / vertebres correspondantes
         posLoc=map(position,[locator(0),locator(1),locator(2),locator(3),locator(4)])
-        pos=map(num2Name,range(5))
-        pos=map(position,pos)
+        #pos=map(num2Name,range(5))
+        #pos=map(position,pos)
+        pos=map(getParameter,posLoc)
+        pos=map(getPoint,pos)
         subPos=[]
         for i,posi in enumerate(pos):
             val=norm(sub(posLoc[i],posi))
@@ -75,7 +77,6 @@ class Evaluate(object):
 #a=Evaluate()
 #a.execute()
 
-#TODO essayer avec deuxieme image pour voir si fonctionne parametre optimal de courbure pour tutes les images ou rajout de locator a chaque image pour determiner la courbure
 
         
 

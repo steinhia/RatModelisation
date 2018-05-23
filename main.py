@@ -43,8 +43,8 @@ def mainFct(pointOnCurveList=['L6','L3','T11','T8','T2','C4','C0'],locatorList=[
     #cmds.showWindow(sliderGrp.window)
     return sliderGrp
 
-pointOnCurveList=['L6','L3','T11','T8','T2','C4','C0'] 
-locatorList=['L6','L3','T8','T2','C0'] 
+pointOnCurveList=['L6','L2','T9','T2','C2','C0'] 
+locatorList=['L6','L2','T9','T2','C0'] 
   
 #sliderGrp=mainFct(pointOnCurveList,locatorList)
 

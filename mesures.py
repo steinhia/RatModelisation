@@ -17,65 +17,65 @@ def locator(i):
 
 def locatorPostureVector():
     locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs(locatorList).PostureVector()
+    return GeneralCalculs.PostureVector(locatorList)
 
 def locatorPosture():
     locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs(locatorList).getPosture()
+    return GeneralCalculs.getPosture(locatorList)
 
 #def locatorPostureGD():
 #    return valPrincDeg(angleGD(locatorPostureVector(),[0,1,0])) # ou Hor()
 
 def angleC():
     locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs(locatorList).angleCHB()
+    return GeneralCalculs.angleCHB(locatorList)
 
 def angleCGD():
     locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs(locatorList).angleCGD()
+    return GeneralCalculs.angleCGD(locatorList)
 
 def angleD():
     locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs(locatorList).angleDHB()
+    return GeneralCalculs.angleDHB(locatorList)
 
 def angleDGD():
     locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs(locatorList).angleDGD()
+    return GeneralCalculs.angleDGD(locatorList)
 
 def angleL():
     locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs(locatorList).angleLHB()
+    return GeneralCalculs.angleLHB(locatorList)
 
 def angleLGD():
     locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs(locatorList).angleLGD()
+    return GeneralCalculs.angleLGD(locatorList)
 
 def angleComp():
     locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs(locatorList).angleComp()
+    return GeneralCalculs.angleComp(locatorList)
 
 def angleCompGD():
     locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs(locatorList).angleCompGD()
+    return GeneralCalculs.angleCompGD(locatorList)
 
 
 def locatorLength():
     locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs(locatorList).getChainLength()
+    return GeneralCalculs.getChainLength(locatorList)
 
 def getLocatorCurvePosition(num=-1):
     locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs(locatorList).getPosition(num)
+    return GeneralCalculs.getPosition(locatorList,num)
 
 def HalfChainLengthC():
     locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs(locatorList).HalfChainLengthC()
+    return GeneralCalculs.HalfChainLengthC(locatorList)
 
 def HalfChainLengtL():
     locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs(locatorList).HalfChainLengthL()
+    return GeneralCalculs.HalfChainLengthL(locatorList)
 
 def RapportChainLength():
     locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs(locatorList).RapportChainLength()
+    return GeneralCalculs.RapportChainLength(locatorList)
     

@@ -153,7 +153,7 @@ def createClusters(nameList):
     #cmds.cluster(curvei(n2N('T6')),n='ClusterD')
     #cmds.makeIdentity(a=1)
     
-    #cmds.cluster(curvei(n2N('L3')),curvei(n2N('T11')),n='ClusterL')
-    #cmds.makeIdentity(a=1)
+    cmds.cluster(curvei(n2N('T11')),n='ClusterL')
+    cmds.makeIdentity(a=1)
 
 

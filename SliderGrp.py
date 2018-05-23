@@ -12,20 +12,20 @@ class SliderGrp(object):
         self.column = cmds.columnLayout()
         cmds.text("\nParametres de courbure ")
         cmds.rowColumnLayout(numberOfColumns=4,columnWidth=[(1,300),(2,300),(4,50),(5,50)])
-        for i in range(1):
+        for i in range(2):
             buttonList[i].create()
             #buttonList[i].calcDroite()
         cmds.setParent('..')
         cmds.text("\nMouvement de la colonne")
         cmds.rowColumnLayout(numberOfColumns=4,columnWidth=[(1,300),(2,300),(4,50),(5,50)])
-        for i in range(1,8):
+        for i in range(2,9):
             buttonList[i].create()
             buttonList[i].calcDroite()
 
         cmds.setParent('..')
         cmds.text("\nParametres de la courbe")
         cmds.rowColumnLayout(numberOfColumns=4,columnWidth=[(1,200),(2,300),(4,50),(5,50)])
-        for i in range(8,len(buttonList)):
+        for i in range(9,len(buttonList)):
             buttonList[i].create()
         cmds.setParent('..')
         cmds.rowColumnLayout(numberOfColumns=1,columnWidth=[(1,300)])
@@ -54,32 +54,32 @@ class SliderGrp(object):
             return self.buttonList[0]
         #if ("courbure d" in string) or ("courbure t" in string):
         #    return self.buttonList[1]
-        #if "courbure l" in string :
-        #    return self.buttonList[2]
-        if "rot cervicale g" in string :
+        if "courbure l" in string :
             return self.buttonList[1]
-        if "rot cervicale" in string :
+        if "rot cervicale g" in string :
             return self.buttonList[2]
-        if "rot dorsale g" in string :
+        if "rot cervicale" in string :
             return self.buttonList[3]
-        if "rot dorsale" in string :
+        if "rot dorsale g" in string :
             return self.buttonList[4]
-        if "rot lombaire g" in string :
+        if "rot dorsale" in string :
             return self.buttonList[5]
-        if "rot lombaire" in string :
+        if "rot lombaire g" in string :
             return self.buttonList[6]
-        if "compression" in string :
+        if "rot lombaire" in string :
             return self.buttonList[7]
-        if "x" in string :
+        if "compression" in string :
             return self.buttonList[8]
-        if "y" in string :
+        if "x" in string :
             return self.buttonList[9]
-        if "z" in string :
+        if "y" in string :
             return self.buttonList[10]
-        if "scale" in string :
+        if "z" in string :
             return self.buttonList[11]
-        if "posture" in string :
+        if "scale" in string :
             return self.buttonList[12]
+        if "posture" in string :
+            return self.buttonList[13]
 
 def clearSliderVariables(): 
     blinnList=cmds.ls('*blinn*')
@@ -96,10 +96,10 @@ def clearSliderVariables():
 
 def courbureButton(sliderList,crvInfos,i,sliderName,nameAfter,min,max,min2,max2,value,step,influence,valueReset=0,getFunction=0,setOneFunction=setOneRot,keepPosture=True,keepPosition=True,keepCurveLength=True):
     getValue=getFunction()
-    action = SimpleAction(0,crvInfos,"t",0,1,0,influence,keepPosture=keepPosture,keepPosition=keepPosition,keepCurveLength=keepCurveLength)
+    action = SimpleAction(0,crvInfos,"t",0,2,0,influence,keepPosture=keepPosture,keepPosition=keepPosition,keepCurveLength=keepCurveLength)
     slider=SliderOffset(sliderName,action,min,max,value,step,sliderList)
     action2 = FunctionAction(getValue,crvInfos,setRot,args=[slider,getFunction,[],crvInfos,min,max],keepPosture=keepPosition,keepPosition=keepPosition,mvt=True,keepCurveLength=False)
-    slider2=SliderAbs(sliderName,action2,0,74,getValue,step,sliderList)
+    slider2=SliderAbs(sliderName,action2,-100,100,getValue,step,sliderList)
     return Button("reset","set to 0",nameAfter,slider,sliderList,i,getValue,0,slider2,setOneFunction)
 
 def postureButton(sliderList,crvInfos,i,sliderName,nameAfter,min,max,step,influence,valueReset=0,pivot=-1,valueSetTo=0,functionSet=0,args=[],keepPosture=True,keepPosition=True,keepCurveLength=True,name2="set to 0"):
@@ -142,7 +142,7 @@ def createWindows(nameList,pointOnCurveList,locatorList):
     # courbures cervicale, dorsale et lombaire
     buttonList.append(courbureButton(sliderList,crvInfos,0,names[0],namesAfter[0],-1,1,-3,3,0,0.00000001,['ClusterCHandle'],getFunction=fcts[0],keepPosture=False,keepPosition=False,keepCurveLength=False))
     #buttonList.append(courbureButton(sliderList,crvInfos,1,names[1],namesAfter[1],-2,2,-3,3,0,0.00001,['ClusterDHandle'],getFunction=fcts[1],keepPosture=False,keepPosition=False,keepCurveLength=False))
-    #buttonList.append(courbureButton(sliderList,crvInfos,2,names[2],namesAfter[2],-3,3,-3,3,0,0.00001,['ClusterLHandle'],getFunction=fcts[2],keepPosture=False,keepPosition=False,keepCurveLength=False))
+    buttonList.append(courbureButton(sliderList,crvInfos,2,names[2],namesAfter[2],-3,3,-3,3,0,0.00001,['ClusterLHandle'],getFunction=fcts[2],keepPosture=False,keepPosition=False,keepCurveLength=False))
 
     # TODO garder les 2 keep=False fait planter les tests
     # tete GD HB TODO position tete par rapport  au sol ou aux dorsales (tenir tete droite) -> 2 fonctions align with et setstraight ?
@@ -165,7 +165,7 @@ def createWindows(nameList,pointOnCurveList,locatorList):
     buttonList.append(postureButton(sliderList,crvInfos,12,names[12],namesAfter[12],4,10,0.00000001,["curve1"],crvInfos[1][1],functionSet=setY,keepPosition=False,keepCurveLength=False,keepPosture=False))
     buttonList.append(postureButton(sliderList,crvInfos,13,names[13],namesAfter[13],-5,5,0.00000001,["curve1"],crvInfos[1][2],functionSet=setZ,keepPosition=False,keepCurveLength=False,keepPosture=False))
     # scaling
-    buttonList.append(postureButton(sliderList,crvInfos,14,names[14],namesAfter[14],3,15,0.00000001,["curve1"],valueReset=getCurveLength(),valueSetTo=1,functionSet=setFcts[10],keepCurveLength=False,keepPosition=False,args=[],name2="set to 1"))
+    buttonList.append(postureButton(sliderList,crvInfos,14,names[14],namesAfter[14],3,15,0.00000001,["curve1"],valueReset=getCurveLength(),valueSetTo=1,functionSet=setFcts[10],keepCurveLength=False,keepPosition=True,keepPosture=True,args=[],name2="set to 1"))
     # posture generale
     buttonList.append(postureButton(sliderList,crvInfos,3,names[3],namesAfter[3],-90,90,0.00000001,["curve1"],0,crvInfos[1],functionSet=setFcts[11],args=[],keepPosture=False,keepPosition=False,keepCurveLength=False))
     buttonList.append(postureButton(sliderList,crvInfos,15,names[15],namesAfter[15],-90,90,0.00000001,["curve1"],0,crvInfos[1],functionSet=setFcts[12],args=[],keepPosture=False,keepPosition=False,keepCurveLength=False))

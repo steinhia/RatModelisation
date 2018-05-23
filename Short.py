@@ -24,10 +24,10 @@ def n2J(name):
         return -1
 
 def n2N(name):
-    dico={'L6':0, 'L5':0,'L4':1,'L3':1,'L2':1,'L1':2,'T13':2, \
-        'T12':2,'T11':2,'T10':2,'T9':3,'T8':3,'T7':3,'T6':3, \
-        'T5':3,'T4':4,'T3':4,'T2':4,'T1':4,'C7':4,'C6':4,\
-        'C5':5,'C4':5,'C3':5,'C2':6,'C1':6,'C0':6}
+    dico={'L6':0, 'L5':0,'L4':0,'L3':1,'L2':1,'L1':1,'T13':1, \
+        'T12':1,'T11':1,'T10':2,'T9':2,'T8':2,'T7':2,'T6':2, \
+        'T5':2,'T4':2,'T3':3,'T2':3,'T1':3,'C7':3,'C6':3,\
+        'C5':4,'C4':4,'C3':4,'C2':5,'C1':5,'C0':5}
     if name in dico :
         return dico[name]
     else :
@@ -39,11 +39,11 @@ def num2Name(num):
     if num==0:
         return 'L6'
     elif num==1:
-        return 'L3'
+        return 'L2'
     elif num==2:
-        return 'T8'
+        return 'T7'
     elif num==3:
-        return 'T2'
+        return 'T1'
     elif num==4:
         return 'C0'
 
@@ -160,7 +160,7 @@ def maxDiff(val1,val2):
     return [i,maxi]
 
 def p(string,value1=[],value2=[],value3=[],value4=[],value5=[],value6=[]):
-    res=string
+    res=str(string)
     if value1!=[]:
         res+=" "
         res+=str(value1)
