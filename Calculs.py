@@ -10,6 +10,34 @@ execfile(path+"Short.py")
 execfile(path+"mesures.py")
 execfile(path+"GeneralCalculs.py")
 
+def getBoundingVolume(name):
+    size=cmds.getAttr(name+'.boundingBoxSize')[0]
+    return size[0]*size[1]*size[2] 
+
+def getBoundingVolumeList(nameList):
+    res=[]
+    ShowPolygons()
+    for i in nameList:
+        res.append(getBoundingVolume(i))
+    return res
+
+def checkVolumes(nameList,volumeList):
+    volumeList2=getBoundingVolumeList(nameList)
+    rapportList=[]
+    for i,vol in enumerate(volumeList):
+        rapportList.append(vol/volumeList2[i])
+    return rapportList
+        
+def getDistCVPoint():
+    maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
+    res=[]
+    for i in range(maxCV):
+        cvPos=getPoint(getParameter(position(curvei(i))))
+        vertPos=getPoint(getParameter(position(n2J(pointOnCurveList[i]))))
+        res.append(norm(sub(cvPos,vertPos)))
+    print res
+    return res
+
 def vertexOm2():
  selectionLs = om2.MGlobal.getActiveSelectionList()
  selObj = selectionLs.getDagPath(0)
@@ -216,7 +244,7 @@ def calcCourbure(L):
 
 # en deg
 def calcLordoseC(L=[]):
-    return calcCourbure(['C0','T2'])
+    return calcCourbure([pointOnCurveList[6],pointOnCurveList[4]])
 
 # en deg
 def calcCyphoseD(L=[]):
@@ -224,7 +252,7 @@ def calcCyphoseD(L=[]):
 
 # en deg
 def calcLordoseL(L=[]):
-    return -calcCourbure(['T7','L3'])
+    return -calcCourbure([pointOnCurveList[3],pointOnCurveList[5]])
 
 def PostureVector(L=[]):
     positionList=[num2Name(i) for i in range(5)]

@@ -30,6 +30,7 @@ def HideListRest(args=[]):
     HideList.append(cmds.ls('*Cluster*',r=True))
     HideList.append(cmds.ls('*Caudale*',r=True))
     HideList.append(cmds.ls('*Sacrum*',r=True)) 
+    HideList.append(['Rat:obj8_Crane_Exterior','Rat:obj181_Mandibule_Exterior','Rat:obj182_Mandibule_Crane','Rat:obj109_OsHyoide_Exterior'])
     return HideList
 
 def HideListHead(args=[]):

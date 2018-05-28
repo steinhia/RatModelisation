@@ -43,11 +43,18 @@ def mainFct(pointOnCurveList=['L6','L3','T11','T8','T2','C4','C0'],locatorList=[
     #cmds.showWindow(sliderGrp.window)
     return sliderGrp
 
-pointOnCurveList=['L6','L2','T9','T2','C2','C0'] 
-locatorList=['L6','L2','T9','T2','C0'] 
+nameList=['Rat:obj55_VertebreL6_Exterior','Rat:obj53_VertebreL5_Exterior','Rat:obj51_VertebreL4_Exterior','Rat:obj50_VertebreL3_Exterior',\
+            'Rat:obj98_VerterbreL2_Exterior','Rat:obj100_VertebreL1_Exterior','Rat:obj48_VertebreT13_Exterior','Rat:obj43_VertebreT12_Exterior',\
+            'Rat:obj42_VertebreT11_Exterior','Rat:obj40_VertebreT10_Exterior','Rat:obj38_VertebreT9_Exterior','Rat:obj37_VertebreT8_Exterior',\
+            'Rat:obj36_VertebreT7_Exterior','Rat:obj34_VertebreT6_Exterior','Rat:obj32_VertebreT5_Exterior','Rat:obj30_VertebreT4_Exterior',\
+            'Rat:obj29_VertebreT3_Exterior','Rat:obj74_VertebreT2_Exterior','Rat:obj72_VertebreT1_Exterior',\
+            'Rat:obj70_VertebreC7_Exterior','Rat:obj69_VertebreC6_Exterior','Rat:obj103_VertebreC5_Exterior','Rat:obj105_VertebreC4_Exterior', \
+            'Rat:obj107_VertebreC3_Exterior','Rat:obj47_VertebreC2_Axis_Exterior','Rat:obj45_VertebreC1_Atlas_Exterior']
+pointOnCurveList=['L6','L3','T10','T5','T1','C4','C0'] 
+locatorList=['L6','L3','T10','T1','C0'] 
   
 #sliderGrp=mainFct(pointOnCurveList,locatorList)
-
+#sliderGrp.do("scale",4.5)
 #del pointOnCurveList
 #del locatorList
 

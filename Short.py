@@ -25,9 +25,9 @@ def n2J(name):
 
 def n2N(name):
     dico={'L6':0, 'L5':0,'L4':0,'L3':1,'L2':1,'L1':1,'T13':1, \
-        'T12':1,'T11':1,'T10':2,'T9':2,'T8':2,'T7':2,'T6':2, \
-        'T5':2,'T4':2,'T3':3,'T2':3,'T1':3,'C7':3,'C6':3,\
-        'C5':4,'C4':4,'C3':4,'C2':5,'C1':5,'C0':5}
+        'T12':1,'T11':1,'T10':2,'T9':2,'T8':2,'T7':2,'T6':3, \
+        'T5':3,'T4':3,'T3':3,'T2':4,'T1':4,'C7':4,'C6':4,\
+        'C5':5,'C4':5,'C3':5,'C2':6,'C1':6,'C0':6}
     if name in dico :
         return dico[name]
     else :
@@ -41,9 +41,9 @@ def num2Name(num):
     elif num==1:
         return 'L2'
     elif num==2:
-        return 'T7'
+        return 'T9'
     elif num==3:
-        return 'T1'
+        return 'C7'
     elif num==4:
         return 'C0'
 
@@ -54,8 +54,8 @@ def select(name):
     maya.mel.eval("doMenuNURBComponentSelection(\"curve1\", \"curveParameterPoint\");")
     cmds.select('curve1.u['+str(param)+']',r=1)
 
-def nCurveToJoint(num):
-    dico={0:'joint1',1:'joint4',2:'joint7',3:'joint13',4:'joint19',5:'joint23',6:'joint26'}
+#def nCurveToJoint(num):
+#    dico={0:'joint1',1:'joint4',2:'joint7',3:'joint13',4:'joint19',5:'joint23',6:'joint26'}
 
 def curvei(i):
     return 'curve1.cv['+str(i)+']'
@@ -148,6 +148,13 @@ def getParameter(location):
     uParam = cmds.getAttr("nearestPointOnCurveGetParam.parameter")
     return uParam
 
+def nearestPoint(name): 
+    location=position(name)
+    cmds.setAttr("nearestPointOnCurveGetParam.inPosition", location[0], location[1], location[2], type="double3") 
+    wParam = cmds.getAttr("nearestPointOnCurveGetParam.position")
+    return wParam[0]
+    
+
 def defPivot():
     pt=getCurvePosition()
     cmds.setAttr('curve1.scalePivot',pt[0],pt[1],pt[2])
@@ -196,6 +203,10 @@ def getBarycentre(name1,name2,poids1):
 
 def prec(a,n):
     return float(format(a, '.'+str(n)+'f'))
+
+def calcCVParameters():
+    maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
+    return [getParameter(position(curvei(i))) for i in range(maxCV)]
     
         
 

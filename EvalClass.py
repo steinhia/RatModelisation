@@ -45,31 +45,41 @@ class Evaluate(object):
         l.append(angleComp())
 
         totalDiff=0
-        #for i,mesure in enumerate(L):
-        #    if isinstance(mesure,list):
-        #        if norm(sub(mesure,l[i]))>0.005:
-        #            print names[i],mesure,l[i]
-        #        totalDiff+=norm(sub(mesure,l[i]))
-        #    else:
-        #        totalDiff+=abs(mesure-l[i])
-        #        if abs(mesure-l[i])>0.005:
-        #            print names[i],abs(mesure-l[i])
+        totalDiffPrec=0
+        totalDiffAngles=0
+        for i,mesure in enumerate(L):
+            if isinstance(mesure,list):
+                if norm(sub(mesure,l[i]))>0.005:
+                    print names[i],mesure,l[i]
+                totalDiffAngles+=norm(sub(mesure,l[i]))
+            else:
+                totalDiffAngles+=abs(mesure-l[i])
+                if abs(mesure-l[i])>0.005:
+                    print names[i],abs(mesure-l[i])
 
         # position des differents locators / vertebres correspondantes
         posLoc=map(position,[locator(0),locator(1),locator(2),locator(3),locator(4)])
-        #pos=map(num2Name,range(5))
-        #pos=map(position,pos)
+        posPrec=map(num2Name,range(5))
+        posPrec=map(position,posPrec)
         pos=map(getParameter,posLoc)
         pos=map(getPoint,pos)
         subPos=[]
+        subPosPrec=[]
         for i,posi in enumerate(pos):
             val=norm(sub(posLoc[i],posi))
+            val2=norm(sub(posLoc[i],posPrec[i]))
             subPos.append(val)
+            subPosPrec.append(val2)
             totalDiff+=val
+            totalDiffPrec+=val2
             if(val)>0.005:
                 print i,val
+            if(val2)>0.005:
+                print i,val2
        # print subPos
-        p("TOTAL DIFF : ",totalDiff)
+        p("TOTAL DIFF locateurs a la courbe : ",totalDiff)
+        p("TOTAL DIFF locateurs au point correspondant : ",totalDiffPrec)
+        p("TOTAL DIFF angles : ",totalDiffAngles)
         return totalDiff
         
         

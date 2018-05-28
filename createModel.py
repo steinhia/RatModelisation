@@ -90,6 +90,7 @@ def createJointChain(nameList,tailList):
         cmds.parent('joint'+str(i+2),'joint'+str(i+1))
     createJoint([-2.20, 5.10, -4.65])
     cmds.parent('joint27','joint26')
+
         
 def bindSkeleton(nameList,tailList):
     cmds.select('joint1')
@@ -117,8 +118,8 @@ def ClosestPoint(curvePoint):
 
     
 def createCurve(pointOnCurveList,nameList):   
-    cmds.select(n2J('L6'),n2J('C0'), add=1)
-    handle=cmds.ikHandle(n='ikHandle',ns=90, sol='ikSplineSolver',simplifyCurve=False)
+    cmds.select('joint1','joint27', add=1)
+    handle=cmds.ikHandle(n='ikHandle',ns=95, sol='ikSplineSolver',simplifyCurve=False)
     if('curve1' in cmds.listRelatives('nurbsCircle1')):
         cmds.parent( 'curve1', world=True )
     cmds.delete('curve1' , ch = 1)
@@ -149,9 +150,6 @@ def createClusters(nameList):
     cmds.select('curve1',r=1)   
     cmds.cluster(curvei(n2N('C3')),n='ClusterC')
     cmds.makeIdentity(a=1)
-
-    #cmds.cluster(curvei(n2N('T6')),n='ClusterD')
-    #cmds.makeIdentity(a=1)
     
     cmds.cluster(curvei(n2N('T11')),n='ClusterL')
     cmds.makeIdentity(a=1)

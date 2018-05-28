@@ -26,9 +26,11 @@ class Action(object):
 
 
     def execute(self,ajust=True,*_):
+        param=calcCVParameters()
         cmds.select(clear=True)
         self.executeAction(self)
         if self.mvt and ajust:
+            #keepParameters(param)
             newPos=getCurvePosition()
             newPosture=calcPosture()
             if not self.keepPosition:
@@ -38,14 +40,17 @@ class Action(object):
                 keepLengthValue(self.crvInfos[0],[newPos])
                 keepChainLengthValue(self.crvInfos[3])
             else:
-                self.crvInfos[0]=getCurveLength()
+                cL=getCurveLength()
+                rapport=cL/self.crvInfos[0]
+                self.crvInfos[0]=cL
+                keepChainLengthValue(self.crvInfos[3]*rapport)
                 self.crvInfos[3]=getChainLength()
             if self.keepPosture :
                setPosture(self.crvInfos[2],self.crvInfos)
             else:
                 self.crvInfos[2]=newPosture
-            if self.keepPosition:        
-                setCurvePosition(self.crvInfos[1])
+            #if self.keepPosition:        
+            setCurvePosition(self.crvInfos[1])
 
 
 

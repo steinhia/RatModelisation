@@ -7,7 +7,7 @@ execfile(path+"Calculs.py")
 
 #TODO pos different
 def keepLengthValue(newLengthvalue,L=[]):
-    defPivot()
+    #defPivot()
     posInit=getCurvePosition()
     Length=cmds.arclen('curve1')
     scaleValue=newLengthvalue/Length
@@ -20,7 +20,33 @@ def keepChainLengthValue(newValue,L=[]):
     cmds.select('joint1',r=1)
     scaleValue=newValue/Length
     cmds.scale(scaleValue,scaleValue,scaleValue,r=True,pivot=posInit)
-    
+
+def recalageTangent(numLocator,numPoint):
+    for i in range(2):
+        posLocOnCurve=nearestPoint(locator(numLocator))
+        posCVOnCurve=getPoint(getParameter(position(curvei(numPoint))))
+        vect=sub(posLocOnCurve,posCVOnCurve)
+        cmds.select(curvei(numPoint))
+        cmds.move(vect[0],vect[1],vect[2],r=True)
+
+def recalageTangentSansLocator(oldParam,numPoint):
+    #for i in range(2):
+    #t=time.time()
+    pos1=getPoint(oldParam)
+    pos2=nearestPoint(curvei(numPoint))
+    v=sub(pos1,pos2)
+    cmds.select(curvei(numPoint))
+    cmds.move(v[0],v[1],v[2],r=True)
+    #p("duree ",time.time()-t)
+   
+def keepParameters(param):
+    t=time.time()
+    maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
+    for i,par in enumerate(param):
+        recalageTangentSansLocator(par,i)
+    p("duree ",time.time()-t)
+
+
 
 def keepCLen(newCLen):
     #p("keep")
@@ -85,8 +111,13 @@ def Align():
 
 def parabolicRotation(theta,list):
     [pivotName,begin,end,x,y,z]=list
-    nPivot=n2N(pivotName)
-    pivot=position(curvei(nPivot))
+    if isinstance(pivotName,str):
+        nPivot=n2N(pivotName)
+        pivot=position(curvei(nPivot))
+    else:
+        p("else")
+        nPivot=1
+        pivot=pivotName
     for i in range(n2N(end),n2N(begin)-1,-1):
         dist=(abs(i-nPivot))**(1)
         angle=math.atan(dist)
@@ -94,17 +125,19 @@ def parabolicRotation(theta,list):
         cmds.rotate(theta*angle*20.0,r=True,p=pivot,x=x,y=y,z=z)
 
 def rotLHB(theta,L=[]):
-    parabolicRotation(theta,[num2Name(1),num2Name(0),num2Name(0),1,0,0]) # L3 L6 L6
+    milieu=num2Name(1)#getPoint(getParameter(getMilieu(num2Name(1),num2Name(0))))
+    parabolicRotation(theta,[milieu,num2Name(0),num2Name(0),1,0,0]) # L3 L6 L6
 def rotLGD(theta,L=[]):
-    parabolicRotation(theta,[num2Name(1),num2Name(0),num2Name(0),0,1,0])
+    milieu=num2Name(1)#getPoint(getParameter(getMilieu(num2Name(1),num2Name(0))))
+    parabolicRotation(theta,[milieu,num2Name(0),num2Name(0),0,1,0]) # L3 L6 L6
 def rotCHB(theta,L=[]):
-    parabolicRotation(theta,[num2Name(3),pointOnCurveList[4],num2Name(4),1,0,0]) # C7 C7 C0
+    parabolicRotation(theta,[pointOnCurveList[5],num2Name(4),num2Name(4),1,0,0]) # C7 C7 C0
 def rotCGD(theta,L=[]):
-    parabolicRotation(theta,[num2Name(3),pointOnCurveList[4],num2Name(4),0,1,0])
+    parabolicRotation(theta,[pointOnCurveList[5],num2Name(4),num2Name(4),0,1,0])
 def rotDHB(theta,L=[]):
-    parabolicRotation(theta,[pointOnCurveList[2],num2Name(0),num2Name(1),1,0,0])
+    parabolicRotation(theta,[num2Name(2),num2Name(0),num2Name(1),1,0,0])
 def rotDGD(theta,L=[]):
-    parabolicRotation(theta,[pointOnCurveList[2],num2Name(0),num2Name(1),0,1,0])
+    parabolicRotation(theta,[num2Name(2),num2Name(0),num2Name(1),0,1,0])
 
 #def getRatios(beginPD,endPD,beginPC,endPC):
 #    [crvLengthNewD,distBeginD]=getLen(beginPD,endPD)
@@ -222,7 +255,7 @@ def compresseDorsales(value,crvInfos=[]):
     nBegin=n2N(num2Name(2))
     nEnd=n2N(num2Name(3))
     nMax= cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")-1
-    pivot=position(curvei(n2N(pointOnCurveList[2])))
+    pivot=position(curvei(n2N(num2Name(2))))
     posB=position(curvei(nEnd))
     posE=position(curvei(nMax))
     cmds.select(clear=True)

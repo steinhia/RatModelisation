@@ -2,11 +2,20 @@ import sys
 sys.path.append("C:/Users/alexandra/Documents/alexandra/scripts")
 path="C:/Users/alexandra/Documents/alexandra/scripts/"
 
-for i in range(1):
-    execfile(path+"TestClass.py")
+#for i in range(1):
+#    execfile(path+"TestClass.py")
 
-print "\n"
+#print "\n"
 
+#a=getBoundingVolumeList(nameList)
+#HidePolygons()
+#b=getBoundingVolumeList(nameList)
+
+#for i in range(len(a)):
+#    print a[i]/b[i]
+
+#getDistCVPoint()
+recalageTangent(2,2)
 #a=sliderGrp
 #liste=a.buttonList
 #n=len(liste)
