@@ -26,35 +26,35 @@ def locatorPosture():
 #def locatorPostureGD():
 #    return valPrincDeg(angleGD(locatorPostureVector(),[0,1,0])) # ou Hor()
 
-def angleC():
+def angleCHBLoc():
     locatorList=[locator(i) for i in range(5)]
     return GeneralCalculs.angleCHB(locatorList)
 
-def angleCGD():
+def angleCGDLoc():
     locatorList=[locator(i) for i in range(5)]
     return GeneralCalculs.angleCGD(locatorList)
 
-def angleD():
+def angleDHBLoc():
     locatorList=[locator(i) for i in range(5)]
     return GeneralCalculs.angleDHB(locatorList)
 
-def angleDGD():
+def angleDGDLoc():
     locatorList=[locator(i) for i in range(5)]
     return GeneralCalculs.angleDGD(locatorList)
 
-def angleL():
+def angleLHBLoc():
     locatorList=[locator(i) for i in range(5)]
     return GeneralCalculs.angleLHB(locatorList)
 
-def angleLGD():
+def angleLGDLoc():
     locatorList=[locator(i) for i in range(5)]
     return GeneralCalculs.angleLGD(locatorList)
 
-def angleComp():
+def angleCompLoc():
     locatorList=[locator(i) for i in range(5)]
     return GeneralCalculs.angleComp(locatorList)
 
-def angleCompGD():
+def angleCompGDLoc():
     locatorList=[locator(i) for i in range(5)]
     return GeneralCalculs.angleCompGD(locatorList)
 

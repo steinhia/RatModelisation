@@ -50,10 +50,10 @@ nameList=['Rat:obj55_VertebreL6_Exterior','Rat:obj53_VertebreL5_Exterior','Rat:o
             'Rat:obj29_VertebreT3_Exterior','Rat:obj74_VertebreT2_Exterior','Rat:obj72_VertebreT1_Exterior',\
             'Rat:obj70_VertebreC7_Exterior','Rat:obj69_VertebreC6_Exterior','Rat:obj103_VertebreC5_Exterior','Rat:obj105_VertebreC4_Exterior', \
             'Rat:obj107_VertebreC3_Exterior','Rat:obj47_VertebreC2_Axis_Exterior','Rat:obj45_VertebreC1_Atlas_Exterior']
-pointOnCurveList=['L6','L3','T10','T5','T1','C4','C0'] 
-locatorList=['L6','L3','T10','T1','C0'] 
+pointOnCurveList=['L6','L3','T10','T6','T2','C4','C0'] 
+locatorList=['L6','L3','T10','T2','C0'] 
   
-#sliderGrp=mainFct(pointOnCurveList,locatorList)
+sliderGrp=mainFct(pointOnCurveList,locatorList)
 #sliderGrp.do("scale",4.5)
 #del pointOnCurveList
 #del locatorList

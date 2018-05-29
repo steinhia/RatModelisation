@@ -111,9 +111,9 @@ def postureButton(sliderList,crvInfos,i,sliderName,nameAfter,min,max,step,influe
  
 def functionButton(sliderList,crvInfos,i,sliderName,nameAfter,min,max,min2,max2,value,step,function,valueReset=0,getFunction=0,getFunctionArgs=[],setOneFunction=setOneRot,keepPosition=True,keepPosture=True):
     getValue=getFunction(getFunctionArgs)
-    action=FunctionAction(value,crvInfos,function,keepPosture=False,keepPosition=False)
+    action=FunctionAction(value,crvInfos,function,keepPosture=False,keepPosition=True)
     slider=SliderOffset(sliderName,action,min,max,value,step,sliderList)
-    action2 = FunctionAction(getValue,crvInfos,setRot,args=[slider,getFunction,getFunctionArgs,crvInfos,min,max],mvt=True,keepPosture=False,keepPosition=False)
+    action2 = FunctionAction(getValue,crvInfos,setRot,args=[slider,getFunction,getFunctionArgs,crvInfos,min,max],mvt=True,keepPosture=False,keepPosition=True)
     slider2=SliderAbs(sliderName,action2,min2,max2,getValue,step,sliderList)
     return Button("reset","set to 0",nameAfter,slider,sliderList,i,getValue,0,slider2,setOneFunction)     
 
@@ -131,8 +131,8 @@ def createWindows(nameList,pointOnCurveList,locatorList):
     names=["courbure Cervicale ","courbure Dorsale ","courbure Lombaire ","posture ","rot Cervicale G ","rot Cervicale B ", \
           "rot Dorsale G ","rot Dorsale B ","rot Lombaire G ","rot Lombaire B ","compression ","x ","y ","z ","scale ","posture GD"]
     namesAfter=["","","","H","D","H","D","H","D","H","forte","","","","",""]
-    fcts=[calcLordoseC,calcCyphoseD,calcLordoseL,calcPosture,calcRotCGD,\
-              calcRotCHB,calcRotDGD,calcRotDHB,calcRotLGD,calcRotLHB,calcComp,\
+    fcts=[calcLordoseC,calcCyphoseD,calcLordoseL,calcPosture,angleCGD,\
+              angleCHB,angleDGD,angleDHB,angleLGD,angleLHB,angleComp,\
               getX,getY,getZ,getCurveLength,calcPostureGD]   
     setFcts=[rotCGD,rotCHB,rotDGD,rotDHB,rotLGD,rotLHB,compresseDorsales,setX,setY,setZ,keepLengthValue,setPosture,setPostureGD]
     

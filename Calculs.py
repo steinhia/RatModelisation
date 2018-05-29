@@ -252,7 +252,7 @@ def calcCyphoseD(L=[]):
 
 # en deg
 def calcLordoseL(L=[]):
-    return -calcCourbure([pointOnCurveList[3],pointOnCurveList[5]])
+    return -calcCourbure([pointOnCurveList[3],pointOnCurveList[1]])
 
 def PostureVector(L=[]):
     positionList=[num2Name(i) for i in range(5)]
@@ -273,27 +273,27 @@ def calcAlign():
     res=valPrincDeg(RadToDeg(math.atan2(posColonne[2],posColonne[0]))+90)
     return res
 
-def calcRotCHB(L=[]):
+def angleCHB(L=[]):
     positionList=[num2Name(i) for i in range(5)]
     return GeneralCalculs.angleCHB(positionList)
-def calcRotCGD(L=[]):
+def angleCGD(L=[]):
     positionList=[num2Name(i) for i in range(5)]
     return GeneralCalculs.angleCGD(positionList)
-def calcRotDHB(L=[]):
+def angleDHB(L=[]):
     positionList=[num2Name(i) for i in range(5)]
     return GeneralCalculs.angleDHB(positionList)
-def calcRotDGD(L=[]):
+def angleDGD(L=[]):
     positionList=[num2Name(i) for i in range(5)]
     return GeneralCalculs.angleDGD(positionList)
-def calcRotLHB(L=[]):
+def angleLHB(L=[]):
     positionList=[num2Name(i) for i in range(5)]
     return GeneralCalculs.angleLHB(positionList)
-def calcRotLGD(L=[]):
+def angleLGD(L=[]):
     positionList=[num2Name(i) for i in range(5)]
     return GeneralCalculs.angleLGD(positionList)
 
 
-def calcComp(crvInfos=[]):
+def angleComp(crvInfos=[]):
     positionList=[num2Name(i) for i in range(5)]
     return GeneralCalculs.angleComp(positionList)
 

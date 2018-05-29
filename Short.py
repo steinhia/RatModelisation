@@ -207,6 +207,9 @@ def prec(a,n):
 def calcCVParameters():
     maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
     return [getParameter(position(curvei(i))) for i in range(maxCV)]
+
+def CVParam(num):
+    return getParameter(position(curvei(num)))
     
         
 

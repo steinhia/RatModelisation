@@ -30,21 +30,31 @@ def recalageTangent(numLocator,numPoint):
         cmds.move(vect[0],vect[1],vect[2],r=True)
 
 def recalageTangentSansLocator(oldParam,numPoint):
-    #for i in range(2):
+    for i in range(2):
     #t=time.time()
-    pos1=getPoint(oldParam)
-    pos2=nearestPoint(curvei(numPoint))
-    v=sub(pos1,pos2)
-    cmds.select(curvei(numPoint))
-    cmds.move(v[0],v[1],v[2],r=True)
+        pos1=getPoint(oldParam)
+        pos2=nearestPoint(curvei(numPoint))
+        v=sub(pos1,pos2)
+        cmds.select(curvei(numPoint))
+        cmds.move(v[0],v[1],v[2],r=True)
     #p("duree ",time.time()-t)
    
 def keepParameters(param):
-    t=time.time()
+    #p("avant",calcCVParameters(),param)
     maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
-    for i,par in enumerate(param):
-        recalageTangentSansLocator(par,i)
-    p("duree ",time.time()-t)
+    for j in range(2):
+        for i in range(1,maxCV-1):
+            recalageTangentSansLocator(param[i],i)
+    #p("apres",calcCVParameters(),param)
+
+def replaceC():
+    for i in range(2):
+        posC5=nearestPoint('C5')
+        posCVOnCurve=nearestPoint(curvei(5))
+        trans=sub(posC5,posCVOnCurve)
+        cmds.select(curvei(5))
+        cmds.move(trans[0],trans[1],trans[2],r=True)
+    
 
 
 
@@ -131,13 +141,17 @@ def rotLGD(theta,L=[]):
     milieu=num2Name(1)#getPoint(getParameter(getMilieu(num2Name(1),num2Name(0))))
     parabolicRotation(theta,[milieu,num2Name(0),num2Name(0),0,1,0]) # L3 L6 L6
 def rotCHB(theta,L=[]):
-    parabolicRotation(theta,[pointOnCurveList[5],num2Name(4),num2Name(4),1,0,0]) # C7 C7 C0
+    parabolicRotation(theta,[pointOnCurveList[5],pointOnCurveList[6],pointOnCurveList[6],1,0,0]) # C7 C7 C0
 def rotCGD(theta,L=[]):
-    parabolicRotation(theta,[pointOnCurveList[5],num2Name(4),num2Name(4),0,1,0])
+    parabolicRotation(theta,[pointOnCurveList[5],pointOnCurveList[6],pointOnCurveList[6],0,1,0])
 def rotDHB(theta,L=[]):
     parabolicRotation(theta,[num2Name(2),num2Name(0),num2Name(1),1,0,0])
 def rotDGD(theta,L=[]):
     parabolicRotation(theta,[num2Name(2),num2Name(0),num2Name(1),0,1,0])
+def rotC2HB(theta,L=[]):
+    parabolicRotation(theta,[pointOnCurveList[3],pointOnCurveList[4],pointOnCurveList[6],1,0,0]) # C7 C7 C0
+def rotC2GD(theta,L=[]):
+    parabolicRotation(theta,[pointOnCurveList[3],pointOnCurveList[4],pointOnCurveList[6],0,1,0])
 
 #def getRatios(beginPD,endPD,beginPC,endPC):
 #    [crvLengthNewD,distBeginD]=getLen(beginPD,endPD)
@@ -226,7 +240,7 @@ def setRot(courbure,L):
         #print "premiere boucle ",i
     if isInside(courbure,fMin,fMax):
         i=0
-        while abs(fTest-courbure)>0.01 and i<20:
+        while abs(fTest-courbure)>1 and i<20:
             i+=1
             test=float(mini+maxi)/2.0
             fTest=setOneRot(val,test,[slider,getFunction,getFunctionArgs,crvInfos])
@@ -252,8 +266,10 @@ def setRot(courbure,L):
     return test
     
 def compresseDorsales(value,crvInfos=[]):
-    nBegin=n2N(num2Name(2))
-    nEnd=n2N(num2Name(3))
+
+    # premiere partie, rotation dans un sens
+    nBegin=n2N(pointOnCurveList[2])
+    nEnd=n2N(pointOnCurveList[4])
     nMax= cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")-1
     pivot=position(curvei(n2N(num2Name(2))))
     posB=position(curvei(nEnd))
@@ -275,6 +291,16 @@ def compresseDorsales(value,crvInfos=[]):
         cmds.select(curvei(i),add=True)
     cmds.move(tE[0],tE[1],tE[2],r=True)
     cmds.select(clear=True)
+
+    angle=angleComp()**3*0.00000001
+    tan=normalize(sub(position(locator(2)),position(locator(3))))
+    norm=[tan[0],-tan[2],tan[1]]
+    cmds.select(curvei(3))
+    cmds.move(0,norm[1]*angle,norm[2]*angle,r=True)
+    cmds.select(clear=True)
+
+
+
 
 
     

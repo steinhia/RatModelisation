@@ -13,7 +13,12 @@ path="C:/Users/alexandra/Documents/alexandra/scripts/"
 
 #for i in range(len(a)):
 #    print a[i]/b[i]
-
+cvParam=calcCVParameters()
+cvParam2=calcCVParameters()
+print cvParam
+print cvParam2
+keepParameters(cvParam)
+print calcCVParameters()
 #getDistCVPoint()
 recalageTangent(2,2)
 #a=sliderGrp

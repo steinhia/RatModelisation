@@ -104,16 +104,16 @@ def calcAngleDorsales():
 #53 ou 83 selon pendant ou avant
 def placageManuel(nBoucles=3,courbureC=53,courbureL=5):
     t=time.time()
-    compression=angleComp()
+    compression=angleCompLoc()
 
-    angleCervicales=angleC()
-    angleCervicalesGD=angleCGD()
+    angleCervicales=angleCHBLoc()
+    angleCervicalesGD=angleCGDLoc()
     
-    angleDorsales=angleD()
-    angleDorsalesGD=angleDGD()
+    angleDorsales=angleDHBLoc()
+    angleDorsalesGD=angleDGDLoc()
 
-    angleLombaires=angleL()
-    angleLombairesGD=angleLGD()
+    angleLombaires=angleLHBLoc()
+    angleLombairesGD=angleLGDLoc()
 
     posture=locatorPosture()
     #postureGD=locatorPostureGD()
@@ -122,23 +122,27 @@ def placageManuel(nBoucles=3,courbureC=53,courbureL=5):
     oldParamC=getParameter(position(curvei(5)))
     oldParamD=getParameter(position(curvei(3)))
     param=calcCVParameters()
+    print param
 
     for i in range(nBoucles):
-        p("deb")
         sliderGrp.do("posture",posture)
-        p("deb1")
+        print calcCVParameters()
         sliderGrp.do("compression",compression)
-        p("deb2")
+        print calcCVParameters()
+        keepParameters(param)
         sliderGrp.do("rot dorsale",angleDorsales)
-        p("deb3")
+        keepParameters(param)
         sliderGrp.do("rot dorsale GD",angleDorsalesGD)
-        p("deb4")
+        keepParameters(param)
         sliderGrp.do("rot cervicale",angleCervicales)  
+        keepParameters(param)
         sliderGrp.do("rot cervicale GD",angleCervicalesGD)  
-        p("deb5")
+        keepParameters(param)
         sliderGrp.do("rot lombaire",angleLombaires) 
+        keepParameters(param)
         sliderGrp.do("rot lombaire GD",angleLombairesGD) 
-        p("deb6")
+        keepParameters(param)
+
 
     scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
     sliderGrp.do("scale",scaleFactor)
@@ -148,68 +152,72 @@ def placageManuel(nBoucles=3,courbureC=53,courbureL=5):
 
     #ReplacePoints(pointOnCurveList,nameList)
 
-    # calcul des distances des locators a la courbe
-    #print inspect.getmembers(GeneralCalculs(), predicate=inspect.ismethod)
-    #locatorList=map(position,[locator(i) for i in range(5)])
-    #locatorOnCurveList=map(getPoint,map(getParameter,locatorList))
-    #diff=[sub(locatorList[i],locatorOnCurveList[i]) for i in range(5)]
-    #res=[]
-    #for i,posi in enumerate(diff):
-    #    if norm(posi)>0.03:
-    #        res.append(True)
-    #    else:
-    #        res.append(False)
-    #for i in range(2):
+     #calcul des distances des locators a la courbe
+    locatorList=map(position,[locator(i) for i in range(5)])
+    locatorOnCurveList=map(getPoint,map(getParameter,locatorList))
+    diff=[sub(locatorList[i],locatorOnCurveList[i]) for i in range(5)]
+    res=[]
+    for i,posi in enumerate(diff):
+        if norm(posi)>0.03:
+            res.append(True)
+        else:
+            res.append(False)
+
+    for i in range(5):
 
     #lordoseC=calcLordoseC()
     #p("lordoseL1",calcLordoseL())
     #sliderGrp.do("courbure l",lordoseC)
     #p("lordoseL2",calcLordoseL())
 
-        #if res[1]:
-        #    #dorsales
-        #    1#correctionRot(sliderGrp,5,locatorList[1])
-        #if res[0]:
-        #    #lombaires
-        #    correctionRot(sliderGrp,7,locatorList[0])
-        #if res[3]:
-        #    1#correctionRot(sliderGrp,8,locatorList[3])
-        #if res[4]:
-        #    #cervicales
-        #    correctionRot(sliderGrp,3,locatorList[4])
+        if res[1]:
+            #dorsales
+            correctionRot(sliderGrp,5,locatorList[1])
+        if res[0]:
+            #lombaires
+            correctionRot(sliderGrp,7,locatorList[0])
+        if res[3]:
+            correctionRot(sliderGrp,8,locatorList[3])
+        if res[4]:
+            #cervicales
+            correctionRot(sliderGrp,3,locatorList[4])
 
     #keepParameters(param)
      #pour que tous les locators passent exactement par la courbe
     for i in range(10):
     ##    correctionPos(sliderGrp,1,position("locatorAngle1"))
         1# position precise
-        #ajustePosCurvePoints()
-        ## position sur la courbe
-        #correctionPos(sliderGrp,2,position(locator(2)))
-        #correctionPos(sliderGrp,4,position(locator(3)))
-        #correctionPos(sliderGrp,1,position(locator(1)))
-        #correctionPos(sliderGrp,5,position("locatorC"))
+        ajustePosCurvePoints()
+        #### position sur la courbe
+        correctionPos(sliderGrp,2,position(locator(2)))
+        correctionPos(sliderGrp,1,position(locator(1)))
+        correctionPos(sliderGrp,5,position("locatorC"))
+        for i in range(5):
+            correctionPos(sliderGrp,4,position(locator(3)))
+        correctionPos(sliderGrp,0,position(locator(0)))
+        correctionPos(sliderGrp,6,position(locator(4)))
         #correctionPos(sliderGrp,3,position("locatorD"))
 
         # recale les 3 points hors extremites donc les cv se sont petit a petit decales
-        #recalageTangentSansLocator(oldParamC,5)
-        #recalageTangentSansLocator(oldParamD,3)
-        #recalageTangent(2,2)
-        #recalageTangent(1,1)
-        #recalageTangent(3,4)
+        recalageTangentSansLocator(oldParamC,5)
+        ##recalageTangentSansLocator(oldParamD,3)
+        recalageTangent(2,2)
+        recalageTangent(1,1)
+        recalageTangent(3,4)
 
     p("duree placage : "+str(time.time()-t))       
     a=Evaluate()
-    res=a.execute()
-    return res
+    evaluation=a.execute()
+    return evaluation
     
 #iMin=placageOpti()
 sliderGrp=mainFct(pointOnCurveList,locatorList)
+param=calcCVParameters()
 maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
 for i in range(2,3):
-    j=3
+    j=5
     cmds.currentTime( j, edit=True )
-    placageManuel(1,40) 
+    placageManuel(2,40) 
     string='setKeyframe -breakdown 0 -hierarchy none -controlPoints 1 -shape 0 {"curve1"};'
     #mel.eval(string)
     for j in range(maxCV):
@@ -218,6 +226,8 @@ for i in range(2,3):
 
         
 EvalPositionLocator2()
+print param
+print calcCVParameters()
 
 
 
