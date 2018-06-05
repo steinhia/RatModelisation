@@ -30,7 +30,7 @@ class GuiObject(object):
 # que des boutons reset
 class Button(GuiObject):
     
-    def __init__(self,label,label2,nameAfter,slider,sliderList,indiceText,valueReset,valueSetTo=0,slider2=-1,setOneFunction=-1,*_):
+    def __init__(self,label,label2,slider,sliderList,indiceText,valueReset,valueSetTo=0,slider2=-1,setOneFunction=-1,*_):
         GuiObject.__init__(self, label)
         self.label2=label2        
         self.slider=slider
@@ -40,7 +40,6 @@ class Button(GuiObject):
         self.valueReset=valueReset # pas 0 mais valeur du slider 2 au debut
         self.valueSetTo=valueSetTo # 0 ou autre
         self.setOneFunction=setOneFunction
-        #self.nameAfter=nameAfter
 
       
     def create(self,*_):
@@ -62,14 +61,17 @@ class Button(GuiObject):
         valInit=slider.value
         x=[]
         y=[]
-        for i in range(0,20):
-            val=min+i*(max-min)/20.0
+        for i in range(0,50):
+            val=min+i*(max-min)/50.0
             slider.setValue(val)
             slider.update(False,True) # attention False necessaire
             x.append(val)
             # si ne veut pas actualiser, doit utiliser la fonction de calcul
             val=self.sliderList[self.indiceText].fct(self.sliderList[self.indiceText].args)
             y.append(val) # TODO comparer tps apres
+        slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
+        if abs(1.0-abs(r_value))>0.01:
+            print "pas de droite pour ",slider.label, r_value
         slider.dte=polyfit(x,y,1)
         slider.setValue(valInit)
         slider.update(False,True) # TODO le deuxieme false ?
@@ -129,8 +131,7 @@ class SliderDuo(GuiObject):
         self.slider=slider
         self.slider2=slider2
 
-    def update(self,slider1Update=True,*_):
-        t=time.time()      
+    def update(self,slider1Update=True,*_):   
         if self.args==[]:
             value=self.fct()
         else :
@@ -202,9 +203,9 @@ class SliderOffset(Slider):
             if updateText:
                 for i in self.sliderList:
                         if i.slider!=self:
-                            i.update(slider1Update=True)
+                            i.update(True)
                         else:
-                            i.update(slider1Update=False)
+                            i.update(False)
 
 
     def sliderValue(self,*_):

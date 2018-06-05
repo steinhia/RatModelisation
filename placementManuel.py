@@ -10,34 +10,6 @@ execfile(path+"mesures.py")
 execfile(path+"EvalClass.py")
 
 
-def placeLocator(num=-1):
-    if num==-1:
-        result = cmds.promptDialog(message='Num of Locator:',button=['OK', 'Cancel'],\
-		defaultButton='OK',cancelButton='Cancel',dismissString='Cancel')
-        if result == 'OK' :
-            while ((num<0 or num>4) and i<10):
-	            num=int(cmds.promptDialog(query=True, text=True))
-        # ray1
-        posC=position('camX1|ptC')
-        posCam=position('camX1|cmrkX1')
-        # ray 2
-        posC2=position('camX2|ptC')
-        posCam2=position('camX2|cmrkX2')
-        
-        dir1=sub(posCam,posC)    
-        dir2=sub(posCam2,posC2)   
-        CD=sub(posC2,posC)   
-
-        q=norm(np.cross(dir2,CD))/norm(np.cross(dir2,dir1))
-        M=sum(posC,pdt(q,dir1))
-        p("num",num,M)
-        cmds.select(locator(num))
-        cmds.move(M[0],M[1],M[2],r=False)
-        #string='setKeyframe -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 -i {"locatorAngle'+str(num)+'"};'
-        #mel.eval(string)
-    return num
-
-
 def placageOpti():
     min=100000
     iMin=-1
@@ -72,10 +44,10 @@ def calcPosRelatifHB(locator):
     vect=sub(locatorOnCurve,locator)
     return [angleHB(tan,vect),norm(vect)]
 
-def calcPosRelatifGD(locator):
-    locatorOnCurve=getPoint(getParameter(locator))
+def calcPosRelatifGD(locatorPosition):
+    locatorOnCurve=getPoint(getParameter(locatorPosition))
     tan=getTangent(locatorOnCurve)
-    vect=sub(locatorOnCurve,locator)
+    vect=sub(locatorOnCurve,locatorPosition)
     return [angleGD(tan,vect),norm(vect)]
 
 def correctionRot(sliderGrp,nButton,locator,Croiss=True,precision=10):
@@ -142,7 +114,7 @@ def calcAngleDorsales():
     print angleHB(v1,v2)
 
 #53 ou 83 selon pendant ou avant
-def placageManuel(nBoucles=3,courbureC=53,courbureL=5):
+def placementManuel(nBoucles=3,courbureC=53,courbureL=5):
     t=time.time()
     compression=angleCompLoc()
     compressionGD=angleCompGDLoc()
@@ -189,6 +161,7 @@ def placageManuel(nBoucles=3,courbureC=53,courbureL=5):
         sliderGrp.do("rot lombaire GD",angleLombairesGD) 
         ##keepParameters(param)
     sliderGrp.do("orientation",orientation)
+    sliderGrp.do("posture",posture)
 
 
     scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
@@ -210,38 +183,33 @@ def placageManuel(nBoucles=3,courbureC=53,courbureL=5):
     #        res.append(True)
     #    else:
     #        res.append(False)
-    res=[0,0,0,0,0,0,0,0,0]
-    for i in range(1):
-        1
 
     #lordoseC=calcLordoseC()
     #p("lordoseL1",calcLordoseL())
     #sliderGrp.do("courbure l",lordoseC)        
     #p("lordoseL2",calcLordoseL())
-        scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
-        sliderGrp.do("scale",scaleFactor)
-        correctionPos(sliderGrp,5,position("locatorC"))
-        recalageTangent(2,2)
-        recalageTangent(1,1)
-        recalageTangent(3,4)
-        if res[3] or True:
-            1#compression
-            correctionRot(sliderGrp,sliderGrp.string2num("compression"),locatorList[3])
-            #correctionRot(sliderGrp,sliderGrp.string2num("compression gd"),locatorList[3],False,0)
-        if res[1] or True:
-            1#dorsales
-            correctionRot(sliderGrp,sliderGrp.string2num("rot dorsale"),locatorList[1])
-            correctionRot(sliderGrp,sliderGrp.string2num("rot dorsale gd"),locatorList[1],False)
-        if res[0] or True:
-            1#lombaires
-            correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire"),locatorList[0])
-            correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire gd"),locatorList[0],False)
-        if res[4] or True:
-            1#cervicales
-            correctionRot(sliderGrp,sliderGrp.string2num("rot c"),locatorList[4],False)
-            correctionRot(sliderGrp,sliderGrp.string2num("rot cervicale gd"),locatorList[4])
-
-
+    res=[0,0,0,0,0,0,0,0,0]
+    for i in range(1):
+        1
+        #scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
+        #sliderGrp.do("scale",scaleFactor)
+        ##correctionPos(sliderGrp,5,position("locatorC"))
+        #if res[3] or True: 
+        #    1#compression
+        #    correctionRot(sliderGrp,sliderGrp.string2num("compression"),locatorList[3])
+        #    correctionRot(sliderGrp,sliderGrp.string2num("compression gd"),locatorList[3],False,0)
+        #if res[1] or True:
+        #    1#dorsales
+        #    correctionRot(sliderGrp,sliderGrp.string2num("rot dorsale"),locatorList[1])
+        #    correctionRot(sliderGrp,sliderGrp.string2num("rot dorsale gd"),locatorList[1],False)
+        #if res[0] or True:
+        #    1#lombaires
+        #    correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire"),locatorList[0],True,3)
+        #    correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire gd"),locatorList[0],False)
+        #if res[4] or True:
+        #    1#cervicales
+        #    correctionRot(sliderGrp,sliderGrp.string2num("rot c"),locatorList[4],False)
+        #    correctionRot(sliderGrp,sliderGrp.string2num("rot cervicale gd"),locatorList[4])
 
     #keepParameters(param)
      #pour que tous les locators passent exactement par la courbe
@@ -262,7 +230,9 @@ def placageManuel(nBoucles=3,courbureC=53,courbureL=5):
         ## recale les 3 points hors extremites donc les cv se sont petit a petit decales
         #recalageTangentSansLocator(oldParamC,5)
         ###recalageTangentSansLocator(oldParamD,3)
-
+        #recalageTangent(2,2)
+        #recalageTangent(1,1)
+        #recalageTangent(3,4)
 
     p("duree placage : "+str(time.time()-t))      
     #p("param debut",param) 
@@ -274,9 +244,9 @@ def placageManuel(nBoucles=3,courbureC=53,courbureL=5):
 sliderGrp=mainFct(pointOnCurveList,locatorList)
 maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
 for i in range(2,3):
-    j=60
+    j=0
     cmds.currentTime( j, edit=True )
-    placageManuel(1,40) 
+    placementManuel(1,40) 
     string='setKeyframe -breakdown 0 -hierarchy none -controlPoints 1 -shape 0 {"curve1"};'
     #mel.eval(string)
     for j in range(maxCV):

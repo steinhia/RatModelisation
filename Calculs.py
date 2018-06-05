@@ -42,19 +42,34 @@ def vertexOm2():
  selectionLs = om2.MGlobal.getActiveSelectionList()
  selObj = selectionLs.getDagPath(0)
  mfnObject = om2.MFnMesh(selObj)
- a=mfnObject.getPoints()
+ a=mfnObject.getPoints(MSpace.kWorld)
  del selectionLs 
  del mfnObject
  del selObj
  return a
 
+
+def vertexCmds():
+ selTemp = str(cmds.ls(selection=True))
+ sel = selTemp.split("'")[1]
+ vertPosTemp = cmds.xform(sel + '.vtx[*]', q=True, ws=True, t=True)
+ vertPos = zip(*[iter(vertPosTemp)]*3)
+ return vertPos
+
+
+
 def calcCentroid(name):
+    cmds.select(clear=True)
     cmds.select(name)
-    vertPos=vertexOm2()
+    vertPos=vertexCmds()
+    #l=cmds.getAttr(name+".vtx")
+    #n=len(l)
+    #print vertPos
     n=len(vertPos)
     center=[0,0,0]
     for i in range(n):
         point=vertPos[i]
+        #point=l[i]
         center=[center[i]+point[i] for i in range(3)]
     center=[center[i]/(n) for i in range(3)]
     del vertPos
@@ -240,7 +255,7 @@ def calcCourbure(L):
     rot1=getTangent(n2J(v1)) #n2J
     rot2=getTangent(n2J(v2))
     return angleHB(rot2,rot1)
-    return RadToDeg(rot2[1]-rot1[1])
+    return np.degrees(rot2[1]-rot1[1])
 
 # en deg
 def calcLordoseC(L=[]):
@@ -263,22 +278,32 @@ def calcPosture(L=[]):
     positionList=[num2Name(i) for i in range(5)]
     return GeneralCalculs.getPosture(positionList)
 
-def calcPostureGD(L=[]):
-    return valPrincDeg(angleGD(PostureVector(),[1,0,0])+90.0)
+def calcOrientation(L=[]):
+    positionList=[num2Name(i) for i in range(5)]
+    return GeneralCalculs.getOrientation(positionList)
 
 def calcAlign():
     posT1=position(n2J('C1'))
     posL6=position(n2J('L6'))
     posColonne=sub(posT1,posL6)
-    res=valPrincDeg(RadToDeg(math.atan2(posColonne[2],posColonne[0]))+90)
+    res=valPrincDeg(np.degrees(math.atan2(posColonne[2],posColonne[0]))+90)
     return res
+
+def angleGD(v1,v2):
+    v=SubVector(v1,v2)
+    positionList=[num2Name(i) for i in range(5)]
+    return GeneralCalculs.angleGD2D(positionList,v)
+def angleHB(v1,v2):
+    v=SubVector(v1,v2)
+    positionList=[num2Name(i) for i in range(5)]
+    return GeneralCalculs.angleHB2D(positionList,v)
 
 def angleCHB(L=[]):
     positionList=[num2Name(i) for i in range(5)]
-    return GeneralCalculs.angleCHB(positionList)
+    return GeneralCalculs.angleCHB(positionList,pointOnCurveList)
 def angleCGD(L=[]):
     positionList=[num2Name(i) for i in range(5)]
-    return GeneralCalculs.angleCGD(positionList)
+    return GeneralCalculs.angleCGD(positionList,pointOnCurveList)
 def angleDHB(L=[]):
     positionList=[num2Name(i) for i in range(5)]
     return GeneralCalculs.angleDHB(positionList)
@@ -296,6 +321,9 @@ def angleLGD(L=[]):
 def angleComp(crvInfos=[]):
     positionList=[num2Name(i) for i in range(5)]
     return GeneralCalculs.angleComp(positionList)
+def angleCompGD(crvInfos=[]):
+    positionList=[num2Name(i) for i in range(5)]
+    return GeneralCalculs.angleCompGD(positionList)
 
 def getLen(beginP,endP):
     cmds.setAttr ('arcLengthDimension1.uParamValue', beginP)
@@ -328,6 +356,22 @@ def calcParameters():
         positions.append(pos)
         param.append(getParameter(pos))
     return [param,positions]
+
+def checkParameters(param):
+    [par,pos]=param
+    [par2,pos2]=calcParameters()
+    res=True
+    for i,pari in enumerate(par):
+        if abs(pari-par2[i])>0.02:
+            res=False
+    for i,posi in enumerate(pos):
+        if abs(norm(posi)-norm(pos2[i]))>0.02:
+            res=False
+    if not res:
+        print "Modele bouge avec le calcul"
+        print par,"\n",par2
+        print pos,"\n",pos2
+    
 
 
 

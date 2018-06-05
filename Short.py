@@ -64,7 +64,10 @@ def position(name):
     joint=n2J(name)
     if joint !=-1 :
         return cmds.xform(joint,q=1,t=1,ws=1)
-    return cmds.xform(name,q=1,t=1,ws=1)
+    if cmds.objExists(name):
+        return cmds.xform(name,q=1,t=1,ws=1)
+    else:
+        return -1
     # nom de la vertebre (objet existe pas)       
 
 def norm(vect) : 
@@ -110,7 +113,7 @@ def distance(v1,v2):
 def pi():
     return 3.14159265359
 
-def RadToDeg(theta):
+def degrees(theta):
     return theta*180.0/3.14159265359
 
 def DegToRad(theta):
@@ -131,13 +134,36 @@ def valPrincDeg(theta):
     return theta2
 
 def angleHB(v1,v2):
-    angle1=RadToDeg(math.atan2(v1[1],v1[2]))
-    angle2=RadToDeg(math.atan2(v2[1],v2[2]))
+    angle1=np.degrees(math.atan2(v1[1],v1[2]))
+    angle2=np.degrees(math.atan2(v2[1],v2[2]))
     return valPrincDeg(angle1-angle2)
 
+def angle_between(v1,v2):
+    dot=dotProduct(v1,v2)
+    if dot<-1:
+        dot=-1
+    if dot>1:
+        dot=1
+    return np.sign(np.cross(v1,v2))*np.degrees(math.acos(dot/(norm(v1)*norm(v2))))
+
+# projette sur le plan forme par la verticale et le vecteur de posture
+def angle2D(v1, v2):
+    v1_n=normalize(v1)
+    v2_n=normalize(v2)
+    C = (v1_n[0]*v2_n[0]+v1_n[1]*v2_n[1])
+    S = (v1[0]*v2[1]-v1[1]*v2[0]);
+    angle= np.sign(S)*np.arccos(C)
+    return np.degrees(angle)
+    #return np.degrees(np.arctan2(sinang, cosang))
+    #return np.degrees(np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0)))*np.sign(np.cross(v1,v2))
+
+def angle3DHB(v):
+    angle=angle3D(v,[0,0,1])
+    
+
 def angleGD(v1,v2):
-    angle1=RadToDeg(math.atan2(v1[0],v1[2]))
-    angle2=RadToDeg(math.atan2(v2[0],v2[2]))
+    angle1=np.degrees(math.atan2(v1[0],v1[2]))
+    angle2=np.degrees(math.atan2(v2[0],v2[2]))
     return valPrincDeg(angle1-angle2)
 
 def getPoint(parameter):

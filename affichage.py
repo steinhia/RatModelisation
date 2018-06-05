@@ -23,18 +23,18 @@ def HideListRest(args=[]):
     HideList.append(cmds.ls('*Manubrium*',r=True))
     HideList.append(cmds.ls('*Tissue*',r=True))
     HideList.append(cmds.ls('*Vertebre*Vertebre*',r=True))
-    HideList.append("Rat:obj58_Sacrum_VertebreL6")
-    HideList.append("Rat:obj99_VerterbreL2_VertebreL3")
-    HideList.append("Rat:obj102_VertebreL1_VerterbreL2")
-    HideList.append("Rat:obj46_VertebreC1_Atlas_Crane")
+    HideList.append("obj58_Sacrum_VertebreL6")
+    HideList.append("obj99_VerterbreL2_VertebreL3")
+    HideList.append("obj102_VertebreL1_VerterbreL2")
+    HideList.append("obj46_VertebreC1_Atlas_Crane")
     HideList.append(cmds.ls('*Cluster*',r=True))
     HideList.append(cmds.ls('*Caudale*',r=True))
     HideList.append(cmds.ls('*Sacrum*',r=True)) 
-    HideList.append(['Rat:obj8_Crane_Exterior','Rat:obj181_Mandibule_Exterior','Rat:obj182_Mandibule_Crane','Rat:obj109_OsHyoide_Exterior'])
+    HideList.append(['obj8_Crane_Exterior','obj181_Mandibule_Exterior','obj182_Mandibule_Crane','obj109_OsHyoide_Exterior'])
     return HideList
 
 def HideListHead(args=[]):
-    HideList=['Rat:obj8_Crane_Exterior','Rat:obj181_Mandibule_Exterior','Rat:obj182_Mandibule_Crane','Rat:obj109_OsHyoide_Exterior']
+    HideList=['obj8_Crane_Exterior','obj181_Mandibule_Exterior','obj182_Mandibule_Crane','obj109_OsHyoide_Exterior']
     #HideList.append(cmds.ls('*Caudale*',r=True))
     #HideList.append(cmds.ls('*Sacrum*',r=True)) 
     return HideList  
@@ -81,7 +81,7 @@ def HideCircles(args=[]):
     HideList=cmds.ls('*Circle*',r=True)
     for i in HideList :
         cmds.hide(i)
-    cmds.showHidden('nurbsCircle1',a=True)
+    cmds.showHidden('objGroup',a=True)
     
 def ShowCircles(args=[]):
     HideList=cmds.ls('*Circle*',r=True)
