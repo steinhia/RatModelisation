@@ -298,6 +298,16 @@ def angleHB(v1,v2):
     positionList=[num2Name(i) for i in range(5)]
     return GeneralCalculs.angleHB2D(positionList,v)
 
+def angleHBOld(v1,v2):
+    angle1=RadToDeg(math.atan2(v1[1],v1[2]))
+    angle2=RadToDeg(math.atan2(v2[1],v2[2]))
+    return valPrincDeg(angle1-angle2)
+
+def angleGDOld(v1,v2):
+    angle1=RadToDeg(math.atan2(v1[0],v1[2]))
+    angle2=RadToDeg(math.atan2(v2[0],v2[2]))
+    return valPrincDeg(angle1-angle2)
+
 def angleCHB(L=[]):
     positionList=[num2Name(i) for i in range(5)]
     return GeneralCalculs.angleCHB(positionList,pointOnCurveList)
@@ -371,6 +381,8 @@ def checkParameters(param):
         print "Modele bouge avec le calcul"
         print par,"\n",par2
         print pos,"\n",pos2
+    else : 
+        print "Modele stable apres premieres operations"
     
 
 

@@ -138,6 +138,7 @@ def angleHB(v1,v2):
     angle2=np.degrees(math.atan2(v2[1],v2[2]))
     return valPrincDeg(angle1-angle2)
 
+
 def angle_between(v1,v2):
     dot=dotProduct(v1,v2)
     if dot<-1:
@@ -233,6 +234,9 @@ def prec(a,n):
 def calcCVParameters():
     maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
     return [getParameter(position(curvei(i))) for i in range(maxCV)]
+
+def calcCVParameter(i):
+    return getParameter(position(curvei(i)))
 
 def CVParam(num):
     return getParameter(position(curvei(num)))

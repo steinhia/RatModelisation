@@ -31,9 +31,6 @@ class SliderGrp(object):
             buttonList[i].create()
         cmds.setParent('..')
         cmds.rowColumnLayout(numberOfColumns=1,columnWidth=[(1,300)])
-        # bouton reset all
-        ResetAll=ButtonGlobal("RESET ALL",nameList,pointOnCurveList)
-        Realign=ButtonGlobal("Realign",[])
    
         # CheckBox
         cmds.setParent('..')
@@ -44,7 +41,7 @@ class SliderGrp(object):
         cmds.showWindow(self.window)
 
 
-    def do(self,string,value,updateText=False):
+    def do(self,string,value,updateText=True):
         button=self.string2button(string)
         button.slider2.setValue(value)
         button.slider2.update(updateText)
@@ -163,7 +160,7 @@ def createWindows(nameList,pointOnCurveList,locatorList):
 
     # compression
     buttonList.append(functionButton(sliderList,crvInfos,8,names[8],-200,100,-50,85,0,0.00000001,setFcts[6],crvInfos,getFunction=fcts[8],getFunctionArgs=crvInfos))
-    buttonList.append(functionButton(sliderList,crvInfos,9,names[9],-10,100,6,80,0,0.00000001,setFcts[7],crvInfos,getFunction=fcts[9],getFunctionArgs=crvInfos))
+    buttonList.append(functionButton(sliderList,crvInfos,9,names[9],-10,70,0,80,0,0.00000001,setFcts[7],crvInfos,getFunction=fcts[9],getFunctionArgs=crvInfos))
  
     # position
     buttonList.append(postureButton(sliderList,crvInfos,10,names[10],-40,40,0.00000001,["curve1"],crvInfos[1][0],functionSet=setX,keepPosition=False,keepPosture=False,keepCurveLength=False))

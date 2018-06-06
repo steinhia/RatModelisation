@@ -42,7 +42,13 @@ def calcPosRelatifHB(locator):
     locatorOnCurve=getPoint(getParameter(locator))
     tan=getTangent(locatorOnCurve)
     vect=sub(locatorOnCurve,locator)
-    return [angleHB(tan,vect),norm(vect)]
+    if vect[1]>0:
+        print "au dessus"
+    else:
+        print "en dessous"
+    # angle de la tangente au vecteur
+    return [vect[1],norm(vect)]
+    #return [angleHB(tan,vect),norm(vect)]
 
 def calcPosRelatifGD(locatorPosition):
     locatorOnCurve=getPoint(getParameter(locatorPosition))
@@ -52,16 +58,27 @@ def calcPosRelatifGD(locatorPosition):
 
 def correctionRot(sliderGrp,nButton,locator,Croiss=True,precision=10):
     f = calcPosRelatifHB if nButton%2==sliderGrp.string2num("rot c")%2  else calcPosRelatifGD
-    [angle,dist]=f(locator)
-    slider=sliderGrp.buttonList[nButton].slider
+    [relatif,dist]=f(locator)
+    button=sliderGrp.buttonList[nButton]
+    slider=button.slider
     valInit=slider.sliderValue()
+    #fValInit=button.slider2.value
     minSlider=slider.minValue
     #p("minSlider",minSlider)
     maxSlider=slider.maxValue
+    #valCroiss=min(valInit+(maxSlider-minSlider)*0.1,maxSlider)
+    #slider.setValue(valCroiss)
+    #slider.update()
+    #fVal=button.slider2.value
+    slider.setValue(valInit)
+    slider.update()
+    #Croiss=fVal>fValInit
+    #Croiss= not Croiss
+    #p("Croiss",str(Croiss),str(fVal),str(fValInit),button.slider2.label)
     #p("maxSlider",maxSlider)
     #bool = nButton not in [3,8,0,1,4]
     # compression et cervicales dans l'autre sens
-    if (angle>0 and Croiss) or (angle<0 and (not Croiss)):
+    if (relatif<0 and Croiss) or (relatif>0 and (not Croiss)) :#or True: # courbe au dessus
         maxi=min(valInit,maxSlider)
         mini=max(valInit-3*dist*(slider.maxValue-slider.minValue),minSlider)
     else:
@@ -74,9 +91,9 @@ def correctionRot(sliderGrp,nButton,locator,Croiss=True,precision=10):
         test=(mini+maxi)/2
         slider.setValue(test)
         slider.update()
-        [angle,dist]=f(locator)
+        [relatif,dist]=f(locator)
         # cervicales et compression decroissant
-        if (angle>0 and Croiss) or (angle<0 and (not Croiss)):
+        if (relatif<0 and Croiss) or (relatif>0 and (not Croiss)):# or (relatif<0) :
             maxi=test
         else:
             mini=test   
@@ -114,7 +131,7 @@ def calcAngleDorsales():
     print angleHB(v1,v2)
 
 #53 ou 83 selon pendant ou avant
-def placementManuel(nBoucles=3,courbureC=53,courbureL=5):
+def placementManuel(nBoucles=3):
     t=time.time()
     compression=angleCompLoc()
     compressionGD=angleCompGDLoc()
@@ -135,7 +152,6 @@ def placementManuel(nBoucles=3,courbureC=53,courbureL=5):
     oldParamC=getParameter(position(curvei(5)))
     oldParamD=getParameter(position(curvei(3)))
     param=calcCVParameters()
-    print param
 
     for i in range(nBoucles):
         sliderGrp.do("posture",posture)
@@ -144,22 +160,24 @@ def placementManuel(nBoucles=3,courbureC=53,courbureL=5):
         sliderGrp.do("compression",compression)
         #print("orientation",orientation)
         #
-        sliderGrp.do("compression g",compressionGD)
+        #sliderGrp.do("compression g",compressionGD)
         #print("compression g",compressionGD)
         ##print calcCVParameters()
-        ##keepParameters(param)
+        #keepParameters(param)
         sliderGrp.do("rot dorsale",angleDorsales)
-        ##keepParameters(param)
+        #keepParameters(param)
         sliderGrp.do("rot dorsale g ",angleDorsalesGD)
-        ##keepParameters(param)
+        keepParameters(param)
         sliderGrp.do("rot cervicale",angleCervicales)  
-        ##keepParameters(param)
+        #keepParameters(param)
         sliderGrp.do("rot cervicale g",angleCervicalesGD)  
-        ##keepParameters(param)
+        #keepParameters(param)
         sliderGrp.do("rot lombaire",angleLombaires) 
-        ##keepParameters(param)
+        p("angleL",str(angleLHB()))
+        #keepParameters(param)
         sliderGrp.do("rot lombaire GD",angleLombairesGD) 
-        ##keepParameters(param)
+        p("angleL",str(angleLHB()))
+        #keepParameters(param)
     sliderGrp.do("orientation",orientation)
     sliderGrp.do("posture",posture)
 
@@ -191,25 +209,25 @@ def placementManuel(nBoucles=3,courbureC=53,courbureL=5):
     res=[0,0,0,0,0,0,0,0,0]
     for i in range(1):
         1
-        #scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
-        #sliderGrp.do("scale",scaleFactor)
-        ##correctionPos(sliderGrp,5,position("locatorC"))
-        #if res[3] or True: 
-        #    1#compression
-        #    correctionRot(sliderGrp,sliderGrp.string2num("compression"),locatorList[3])
-        #    correctionRot(sliderGrp,sliderGrp.string2num("compression gd"),locatorList[3],False,0)
-        #if res[1] or True:
-        #    1#dorsales
-        #    correctionRot(sliderGrp,sliderGrp.string2num("rot dorsale"),locatorList[1])
-        #    correctionRot(sliderGrp,sliderGrp.string2num("rot dorsale gd"),locatorList[1],False)
-        #if res[0] or True:
-        #    1#lombaires
-        #    correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire"),locatorList[0],True,3)
-        #    correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire gd"),locatorList[0],False)
-        #if res[4] or True:
-        #    1#cervicales
-        #    correctionRot(sliderGrp,sliderGrp.string2num("rot c"),locatorList[4],False)
-        #    correctionRot(sliderGrp,sliderGrp.string2num("rot cervicale gd"),locatorList[4])
+        scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
+        sliderGrp.do("scale",scaleFactor)
+        #correctionPos(sliderGrp,5,position("locatorC"))
+        if res[3] or True: 
+            1#compression
+            correctionRot(sliderGrp,sliderGrp.string2num("compression"),locatorList[3])
+            #correctionRot(sliderGrp,sliderGrp.string2num("compression gd"),locatorList[3],False,0)
+        if res[1] or True:
+            1#dorsales
+            correctionRot(sliderGrp,sliderGrp.string2num("rot dorsale"),locatorList[1])
+            #correctionRot(sliderGrp,sliderGrp.string2num("rot dorsale gd"),locatorList[1],False)
+        if res[0] or True:
+            1#lombaires
+            correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire"),locatorList[0])
+            #correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire gd"),locatorList[0],False)
+        if res[4] or True:
+            1#cervicales
+            correctionRot(sliderGrp,sliderGrp.string2num("rot c"),locatorList[4],False)
+            #correctionRot(sliderGrp,sliderGrp.string2num("rot cervicale gd"),locatorList[4])
 
     #keepParameters(param)
      #pour que tous les locators passent exactement par la courbe
@@ -230,9 +248,9 @@ def placementManuel(nBoucles=3,courbureC=53,courbureL=5):
         ## recale les 3 points hors extremites donc les cv se sont petit a petit decales
         #recalageTangentSansLocator(oldParamC,5)
         ###recalageTangentSansLocator(oldParamD,3)
-        #recalageTangent(2,2)
-        #recalageTangent(1,1)
-        #recalageTangent(3,4)
+        #recalageTangent(n2N('T10'),2)
+        #recalageTangent(n2N('L3'),1)
+        #recalageTangent(n2N('T2'),4)
 
     p("duree placage : "+str(time.time()-t))      
     #p("param debut",param) 
@@ -244,9 +262,9 @@ def placementManuel(nBoucles=3,courbureC=53,courbureL=5):
 sliderGrp=mainFct(pointOnCurveList,locatorList)
 maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
 for i in range(2,3):
-    j=0
+    j=160
     cmds.currentTime( j, edit=True )
-    placementManuel(1,40) 
+    placementManuel(1) 
     string='setKeyframe -breakdown 0 -hierarchy none -controlPoints 1 -shape 0 {"curve1"};'
     #mel.eval(string)
     for j in range(maxCV):

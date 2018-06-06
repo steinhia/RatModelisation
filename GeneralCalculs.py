@@ -103,7 +103,7 @@ class GeneralCalculs(object):
     @classmethod
     def angleCHB(cls,liste,pointOnCurveList=[],*_):
         #p("c",position(liste[3]),position(liste[4]),position(pointOnCurveList[5]))
-        if 'locator' in liste[0]:
+        if 'locator' in liste[0] :
             v=SubVector(liste[4],liste[3])
         else:
             v=SubVector(liste[4],pointOnCurveList[5])
@@ -115,7 +115,7 @@ class GeneralCalculs(object):
 
     @classmethod
     def angleCGD(cls,liste,pointOnCurveList=[],*_):
-        if 'locator' in liste[0]:
+        if 'locator' in liste[0] :
             v=SubVector(liste[4],liste[3])
         else:
             v=SubVector(liste[4],pointOnCurveList[4])
@@ -161,7 +161,7 @@ class GeneralCalculs(object):
     @classmethod
     def angleCompGD(cls,liste,*_):
         v=SubVector(liste[3],liste[2])
-        return -cls.angleHB2D(v)
+        return -cls.angleGD2D(liste,v)
         return -valPrincDeg(angleGD(cls.refVector(liste),SubVector(liste[3],liste[2])))
 
     @classmethod

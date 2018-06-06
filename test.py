@@ -2,8 +2,11 @@ import sys
 sys.path.append("C:/Users/alexandra/Documents/alexandra/scripts")
 path="C:/Users/alexandra/Documents/alexandra/scripts/"
 
-for i in range(1):
-    execfile(path+"Short.py")
+
+def test():
+
+    for i in range(1):
+        execfile(path+"Short.py")
 
 #print "\n"
 
@@ -28,20 +31,30 @@ for i in range(1):
 #    print liste[i].valueReset
 
 
-a=position(locator(2))
-b=position(locator(3))
-mil=getMilieu(a,b)
-cmds.locator()
-cmds.move(mil[0],mil[1],mil[2])
-
-a=cmds.ls('Rat5:obj*')
-for i in a:
-    if 'Shape' not in i:
-        newName=i[5:]
-        cmds.select(i)
-        cmds.rename(i,newName)
+   # a=position(locator(2))
+   # b=position(locator(3))
+   # mil=getMilieu(a,b)
+   # cmds.locator()
+   # cmds.move(mil[0],mil[1],mil[2])
+   # 
+   # a=cmds.ls('Rat5:obj*')
+   # for i in a:
+   #     if 'Shape' not in i:
+   #         newName=i[5:]
+   #         cmds.select(i)
+   #         cmds.rename(i,newName)
+   #       
+    param=calcCVParameters()
+    print param
+    
+    #recalageTangent(n2N('L3'),1)
+    
+    param2=calcCVParameters()
+    print param2
+    keepParameters(param)
+    print calcCVParameters()
         
 
-
+test()
 
 
