@@ -88,17 +88,16 @@ def createJointChain(nameList,tailList):
     for name in nameList:
         posList.append(calcCentroid(name))
     # dernier joint (L6)
-    #createJoint([-2.50, 5.3, 5.25])
-    createJoint([-21.0208216907929, 33.50008291188659, -7.981150812609334]) 
+    createJoint([-20.91, 33.43, -7.87]) 
     for i in range(25):
         center=pdt(0.5,sum(posList[i],posList[i+1]))
-        #p("center",center)
         createJoint(center)
         cmds.parent('joint'+str(i+2),'joint'+str(i+1))
-    #createJoint([-23.651676821358294, 33.50008291188659, 15.107349095775929])
-    createJoint([-21.654131612526008, 32.0136549917146, 11.8715522940664])
-    #createJoint([-2.20, 5.10, -4.65])
+    createJoint([-20.65, 31.59, 11.94])
     cmds.parent('joint27','joint26')
+    # tete
+    createJoint([-20.30, 30.94404965119671, 19.863081770756864])
+    cmds.parent('joint28','joint27')
 
 
         
@@ -128,22 +127,27 @@ def ClosestPoint(curvePoint):
 
     
 def createCurve(pointOnCurveList,nameList):   
-    cmds.select('joint1','joint27', add=1)
-    handle=cmds.ikHandle(n='ikHandle',ns=95, sol='ikSplineSolver',simplifyCurve=False)
+    cmds.select('joint1','joint28', add=1)
+    handle=cmds.ikHandle(n='ikHandle',ns=1, sol='ikSplineSolver',simplifyCurve=False)
     if('curve1' in cmds.listRelatives('objGroup')):
         cmds.parent( 'curve1', world=True )
     cmds.delete('curve1' , ch = 1)
+    # rajoute les points au bon parametre
+    #for i in range(len(pointOnCurveList)):
+        #p=getParameter
+    #cmds.insertKnotCurve( 'curve1', ch=True, p=(0.3, 0.5, 0.8) )
     KeepList=[]
     maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
     for curvePoint in pointOnCurveList :
         KeepList.append(ClosestPoint(curvePoint))
-    for i in range(maxCV-1,1,-1):
-        if(i not in KeepList):
+    for i in range(maxCV-2,1,-1):
+        newMaxCV=cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
+        if(i not in KeepList and i!= newMaxCV):
             cmds.delete(curvei(i))
     cmds.delete('curve1.cv[1]')
-    cmds.select("ikHandle")
-    cmds.ikHandle(edit=True,curve="curve1",fj=True)
-    cmds.parent("effector1","joint27")
+    ##cmds.select("ikHandle")
+    ##cmds.ikHandle(edit=True,curve="curve1",fj=True)
+    ##
     tmpArclenDim=cmds.arcLengthDimension( 'curveShape1.u[0]' )   
     npC = cmds.createNode("nearestPointOnCurve")
     cmds.connectAttr("curveShape1.worldSpace", npC + ".inputCurve")

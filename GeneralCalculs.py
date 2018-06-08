@@ -21,33 +21,56 @@ class GeneralCalculs(object):
     def angleGDOriente(cls,v1,v2):
         return abs(valPrincDeg(angleHB(v1,v2)))*np.sign(valPrincDeg(angleHB(v1,[0,0,1])))
 
+    # seuls les points de controle ne bougent pas, alors que le parametre des vertebres change, ainsi que leur position -> TODO pas normal
     @classmethod
-    def getPosition(cls,liste,num=-1,*_):
+    def getPosition(cls,liste,num=-1,Cote="",*_):
         milieu=getMilieu(position(liste[0]),position(liste[3]))
         if num<0 or num>2:
-            #return position(liste[1])
-            #return milieu
-            return position(liste[2])
+            if Cote=="C":
+                return position(curvei(n2N('C0')))
+            elif Cote=="L":
+                return position(curvei(n2N('L6')))
+            else:
+                return position(liste[2])
         else:
-            #return position(liste[1])[num]
-            #return milieu[num]
-            return position(liste[2])[num]
+            if Cote=="C":
+                return position(curvei(n2N('C0')))[num]
+            elif Cote=="L":
+                return position(curvei(n2N('L6')))[num]
+            else:
+                return position(liste[2])[num]
 
     @classmethod
-    def PostureVector(cls,liste,*_):
-        return normalize(SubVector(liste[3],liste[1]))
+    def PostureVector(cls,liste,Cote="",*_):
+        if Cote=="C":
+            return normalize(SubVector(curvei(n2N('C0')),curvei(n2N('T2'))))
+        elif Cote=="L":
+            return normalize(SubVector(curvei(n2N('L1')),curvei(n2N('L6'))))
+        else:
+            return normalize(SubVector(liste[3],liste[1]))
 
     @classmethod
-    def getPosture(cls,liste,*_):
-        p=cls.PostureVector(liste)
+    def getPosture(cls,liste,Cote="",*_):
+        if Cote=="C":
+            p=cls.PostureVector(liste,"C")
+        elif Cote=="L":
+            p=cls.PostureVector(liste,"L")
+        else:
+            p=cls.PostureVector(liste)
         return angle2D([math.sqrt(p[0]**2+p[2]**2),p[1]],[1,0])
-        return angle(cls.PostureVector(liste),cls.refVector(liste))
+        #return angle(cls.PostureVector(liste),cls.refVector(liste))
 
     @classmethod
-    def getOrientation(cls,liste,*_):
+    def getOrientation(cls,liste,Cote="",*_):
         #posture change orientation, pas l'inverse
-        p=cls.PostureVector(liste)
+        if Cote=="C":
+            p=cls.PostureVector(liste,"C")
+        elif Cote=="L":
+            p=cls.PostureVector(liste,"L")
+        else:
+            p=cls.PostureVector(liste)
         return angle2D([p[0],p[2]],[0,1])
+        
 
     @classmethod
     def getChainLength(cls,liste,*_):

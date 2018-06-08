@@ -38,7 +38,7 @@ def mainFct(pointOnCurveList=['L6','L3','T11','T8','T2','C4','C0'],locatorList=[
     createJointChain(nameList,tailList)
     bindSkeleton(nameList,tailList)
     createCurve(pointOnCurveList,nameList)
-    createClusters(nameList)
+    #createClusters(nameList)
     colorSkeleton(nameList)
     #cmds.window(title ="Modelisation de la colonne du rat",le=50,te=50,width=400,height=450)
     sliderGrp=createWindows(nameList,pointOnCurveList,locatorList)
@@ -52,8 +52,8 @@ nameList=['obj55_VertebreL6_Exterior','obj53_VertebreL5_Exterior','obj51_Vertebr
             'obj29_VertebreT3_Exterior','obj74_VertebreT2_Exterior','obj72_VertebreT1_Exterior',\
             'obj70_VertebreC7_Exterior','obj69_VertebreC6_Exterior','obj103_VertebreC5_Exterior','obj105_VertebreC4_Exterior', \
             'obj107_VertebreC3_Exterior','obj47_VertebreC2_Axis_Exterior','obj45_VertebreC1_Atlas_Exterior']
-pointOnCurveList=['L6','L3','T10','T6','T2','C5','C0'] 
-locatorList=['L6','L3','T10','T2','C0'] 
+pointOnCurveList=['L6','L3','T10','T6','T1','C5','C0','Tete'] 
+locatorList=['L6','L3','T10','T1','C0'] 
   
 #sliderGrp=mainFct(pointOnCurveList,locatorList)
 #sliderGrp.do("scale",10)

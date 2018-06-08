@@ -17,8 +17,8 @@ def n2J(name):
     dico={'L6':'joint1', 'L5':'joint2','L4':'joint3','L3':'joint4','L2':'joint5','L1':'joint6','T13':'joint7', \
         'T12':'joint8','T11':'joint9','T10':'joint10','T9':'joint11','T8':'joint12','T7':'joint13','T6':'joint14', \
         'T5':'joint15','T4':'joint16','T3':'joint17','T2':'joint18','T1':'joint19','C7':'joint20','C6':'joint21',\
-        'C5':'joint22','C4':'joint23','C3':'joint24','C2':'joint25','C1':'joint26','C0':'joint27'}
-    if name in dico :
+        'C5':'joint22','C4':'joint23','C3':'joint24','C2':'joint25','C1':'joint26','C0':'joint27','Tete':'joint28'}
+    if (not isinstance(name,list)) and name in dico :
         return dico[name]
     else :
         return -1
@@ -27,11 +27,19 @@ def n2N(name):
     dico={'L6':0, 'L5':0,'L4':0,'L3':1,'L2':1,'L1':1,'T13':1, \
         'T12':1,'T11':1,'T10':2,'T9':2,'T8':2,'T7':2,'T6':3, \
         'T5':3,'T4':3,'T3':3,'T2':4,'T1':4,'C7':4,'C6':4,\
-        'C5':5,'C4':5,'C3':5,'C2':6,'C1':6,'C0':6}
+        'C5':5,'C4':5,'C3':5,'C2':6,'C1':6,'C0':6,'Tete':7}
     if name in dico :
         return dico[name]
     else :
         return -1
+
+def nLoc2nCurve(num):
+    dico={0:0,1:1,2:2,3:4,4:6}
+    if num in dico :
+        return dico[name]
+    else :
+        return -1
+    
 
 def num2Name(num):
     if 'sliderGrp' in globals() and hasattr(sliderGrp, 'locatorList'):
@@ -136,7 +144,7 @@ def valPrincDeg(theta):
 def angleHB(v1,v2):
     angle1=np.degrees(math.atan2(v1[1],v1[2]))
     angle2=np.degrees(math.atan2(v2[1],v2[2]))
-    return valPrincDeg(angle1-angle2)
+    return valPrincDeg(angle2-angle1)
 
 
 def angle_between(v1,v2):

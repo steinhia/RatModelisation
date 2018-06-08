@@ -15,17 +15,25 @@ execfile(path+"GeneralCalculs.py")
 def locator(i):
     return 'locatorAngle'+str(i)
 
-def locatorPostureVector():
+def locatorPostureVector(Cote=""):
     locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs.PostureVector(locatorList)
+    return GeneralCalculs.PostureVector(locatorList,Cote)
 
-def locatorPosture():
+def locatorPosture(Cote=""):
     locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs.getPosture(locatorList)
+    return GeneralCalculs.getPosture(locatorList,Cote)
 
-def locatorOrientation():
+def locatorOrientation(Cote=""):
     locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs.getOrientation(locatorList)
+    return GeneralCalculs.getOrientation(locatorList,Cote)
+
+def getLocatorCurvePosition(num=-1,Cote=""):
+    locatorList=[locator(i) for i in range(5)]
+    return GeneralCalculs.getPosition(locatorList,num,Cote)
+
+def locatorLength():
+    locatorList=[locator(i) for i in range(5)]
+    return GeneralCalculs.getChainLength(locatorList)
 
 def angleCHBLoc():
     locatorList=[locator(i) for i in range(5)]
@@ -58,14 +66,6 @@ def angleCompLoc():
 def angleCompGDLoc():
     locatorList=[locator(i) for i in range(5)]
     return GeneralCalculs.angleCompGD(locatorList)
-
-def locatorLength():
-    locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs.getChainLength(locatorList)
-
-def getLocatorCurvePosition(num=-1):
-    locatorList=[locator(i) for i in range(5)]
-    return GeneralCalculs.getPosition(locatorList,num)
 
 def HalfChainLengthC():
     locatorList=[locator(i) for i in range(5)]

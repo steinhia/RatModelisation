@@ -81,44 +81,44 @@ def keepCLen(newCLen):
     #if abs(newCLen-getCLen())>0.001:
     #    print "Error CLen"
 
-def setCurvePosition(pos,L=[]):
-    posInit=L if L!=[] else getCurvePosition()
+def setCurvePosition(pos,Cote=""):
+    posInit=getCurvePosition(Cote=Cote)
     translation=[pos[i]-posInit[i] for i in range(3)]
     cmds.select("curve1")
     cmds.move(translation[0],translation[1],translation[2],'curve1',r=1)
 
 
-def setX(x,L=[]):
-    pos=L[1][0] if L!=[] else getCurvePosition(0)
+def setX(x,Cote=""):
+    pos=getCurvePosition(0,Cote)
     xTrans=x-pos
     cmds.select("curve1")
     cmds.move(xTrans,0,0,r=1)
 
-def setY(y,L=[]):
-    pos=L[1][1] if L!=[] else getCurvePosition(1)
+def setY(y,Cote=""):
+    pos=getCurvePosition(1,Cote)
     yTrans=y-pos
     cmds.select("curve1")
     cmds.move(0,yTrans,0,r=1)
 
-def setZ(z,L=[]):
-    pos=L[1][2] if L!=[] else getCurvePosition(2)
+def setZ(z,Cote=""):
+    pos=getCurvePosition(2,Cote)
     zTrans=z-pos
     cmds.select("curve1")
     cmds.move(0,0,zTrans,r=1)
 
-def setPosture(ThetaVoulu,crvInfos=[],):
+def setPosture(ThetaVoulu,Cote=""):
     # position du centre au depart
-    pos=crvInfos[1] if crvInfos!=[] else getCurvePosition()
+    pos=getCurvePosition(Cote=Cote)
     for i in range(5):
-        posture=calcPosture()
-        orient=PostureVector()
+        posture=calcPosture(Cote)
+        orient=PostureVector(Cote)
         angle=ThetaVoulu-posture
         cmds.select('curve1')
         cmds.rotate(angle*orient[2],0.0,angle*orient[0],r=True,pivot=pos)
 
-def setOrientation(ThetaVoulu,crvInfos=[],):
-    pos=crvInfos[1] if crvInfos!=[] else getCurvePosition()
-    orient=calcOrientation()
+def setOrientation(ThetaVoulu,Cote=""):
+    pos=getCurvePosition(Cote)
+    orient=calcOrientation(Cote)
     angle=ThetaVoulu-orient
     cmds.select('curve1')
     cmds.rotate(0.0,angle,0.0,r=True,pivot=pos)
@@ -143,14 +143,15 @@ def parabolicRotation(theta,list):
     tan=PostureVector()
     for i in range(n2N(end),n2N(begin)-1,-1):
         dist=(abs(i-nPivot))**(1)
-        angle=math.atan(dist)*10
+        angle=(math.atan(dist))*10
         cmds.select(curvei(i))
-        if x==1:
-            norm=[-tan[0],tan[2],-tan[1]]
-            cmds.rotate(theta*angle,r=True,p=pivot,x=x,y=y,z=z)
-            #cmds.rotate(theta*angle*norm[0],theta*angle*norm[1],theta*angle*norm[2],r=True,p=pivot)
-        else:
-            cmds.rotate(theta*angle,r=True,p=pivot,x=x,y=y,z=z)
+        cmds.rotate(theta*angle,r=True,p=pivot,x=x,y=y,z=z)
+        #if x==1:
+        #    norm=[-tan[0],tan[2],-tan[1]]
+        #    cmds.rotate(theta*angle,r=True,p=pivot,x=x,y=y,z=z)
+        #    #cmds.rotate(theta*angle*norm[0],theta*angle*norm[1],theta*angle*norm[2],r=True,p=pivot)
+        #else:
+        #    cmds.rotate(theta*angle,r=True,p=pivot,x=x,y=y,z=z)
 
 
 
@@ -188,9 +189,9 @@ def rotLGD(theta,L=[]):
     milieu=num2Name(1)#getPoint(getParameter(getMilieu(num2Name(1),num2Name(0))))
     parabolicRotation(theta,[milieu,num2Name(0),num2Name(0),0,1,0]) # L3 L6 L6
 def rotCHB(theta,L=[]):
-    parabolicRotation(theta,[pointOnCurveList[5],pointOnCurveList[5],pointOnCurveList[6],1,0,0]) # C7 C7 C0
+    parabolicRotation(theta,[pointOnCurveList[5],pointOnCurveList[5],pointOnCurveList[7],1,0,0]) # C7 C7 C0
 def rotCGD(theta,L=[]):
-    parabolicRotation(theta,[pointOnCurveList[5],pointOnCurveList[5],pointOnCurveList[6],0,1,0])
+    parabolicRotation(theta,[pointOnCurveList[5],pointOnCurveList[5],pointOnCurveList[7],0,1,0])
 def rotDHB(theta,L=[]):
     parabolicRotation(theta,[num2Name(2),num2Name(0),num2Name(1),1,0,0])
 def rotDGD(theta,L=[]):
@@ -287,7 +288,7 @@ def setRot(courbure,L):
             fMin=setOneRot(val,mini,[slider,getFunction,getFunctionArgs,crvInfos])
             fMax=setOneRot(val,maxi,[slider,getFunction,getFunctionArgs,crvInfos])
         if i==10 or (mini<minSlider or maxi>maxSlider):
-            print "tentative f-1 failed",getFunction,"calcMinMax",mini,maxi
+            print "tentative f-1 failed",getFunction,"calcMinMax",mini,maxi,fx,pas
             mini=minSlider
             maxi=maxSlider
             fMin=setOneRot(val,minSlider,[slider,getFunction,getFunctionArgs,crvInfos])
@@ -315,11 +316,11 @@ def setRot(courbure,L):
     elif (courbure <=fMin and fMin<=fMax) or (courbure>=fMin and fMin>=fMax) :
         setOneRotWithChangement(mini,slider,getFunction,getFunctionArgs,crvInfos,True)
         test=mini
-        print "en dehors des bornes! plus petit que le minimum",fMin,fMax,getFunction,courbure
+        #print "en dehors des bornes! plus petit que le minimum",fMin,fMax,getFunction,courbure
     else:
         setOneRotWithChangement(maxi,slider,getFunction,getFunctionArgs,crvInfos,True)
         test=maxi
-        print "en dehors des bornes! plus grand que le maximum",fMin,fMax,getFunction,courbure
+        #print "en dehors des bornes! plus grand que le maximum",fMin,fMax,getFunction,courbure
     # TODO regarder ici si ca passe pas trop souvent -> TestClass Mini
     if(abs(courbure-getFunction(getFunctionArgs))>0.01 and test!=mini and test!=maxi):
         print "FAIL SETROT", getFunction,abs(courbure-getFunction(getFunctionArgs))
@@ -352,6 +353,12 @@ def rotComp(value,crvInfos=[]):
         cmds.select(curvei(i),add=True)
     cmds.move(tE[0],tE[1],tE[2],r=True)
     cmds.select(clear=True)
+
+    #angle=(angleDHB()-angleComp())*0.0005
+    #tan=normalize(sub(position(locator(2)),position(locator(3))))
+    #cmds.select(curvei(3))
+    #cmds.move(0,0,angle,r=True)
+    #cmds.select(clear=True)
 
 
 def rotCompGD(value,L=[]):

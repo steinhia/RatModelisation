@@ -97,30 +97,30 @@ def clearSliderVariables():
     if(cmds.objExists('sliderGrp')):
         cmds.delete('sliderGrp')
 
-def courbureButton(sliderList,crvInfos,i,sliderName,min,max,min2,max2,value,step,influence,valueReset=0,getFunction=0,setOneFunction=setOneRot):
+def courbureButton(sliderList,crvInfos,i,sliderName,min,max,min2,max2,value,step,influence,valueReset=0,getFunction=0,setOneFunction=setOneRot,Cote=""):
     getValue=getFunction()
-    action = SimpleAction(0,crvInfos,"t",0,2,0,influence,keepPosture=False,keepPosition=False,keepCurveLength=False)
+    action = SimpleAction(0,crvInfos,"t",0,2,0,influence,Cote=Cote,keepPosture=False,keepPosition=False,keepCurveLength=False)
     slider=SliderOffset(sliderName,action,min,max,value,step,sliderList)
-    action2 = FunctionAction(getValue,crvInfos,setRot,args=[slider,getFunction,[],crvInfos,min,max],keepPosture=False,keepPosition=False,mvt=True,keepCurveLength=False)
+    action2 = FunctionAction(getValue,crvInfos,setRot,args=[slider,getFunction,[],crvInfos,min,max],Cote=Cote,keepPosture=False,keepPosition=False,mvt=True,keepCurveLength=False)
     slider2=SliderAbs(sliderName,action2,-100,100,getValue,step,sliderList)
     return Button("reset","set to 0",slider,sliderList,i,getValue,0,slider2,setOneFunction)
 
-def postureButton(sliderList,crvInfos,i,sliderName,min,max,step,influence,valueReset=0,pivot=-1,valueSetTo=0,functionSet=0,args=[],keepPosture=True,keepPosition=True,keepCurveLength=True,name2="set to 0"):
-    action2 = FunctionAction(valueReset,crvInfos,functionSet,keepPosture=keepPosture,keepPosition=keepPosition,keepCurveLength=keepCurveLength,args=crvInfos,mvt=True)
+def postureButton(sliderList,crvInfos,i,sliderName,min,max,step,influence,valueReset=0,pivot=-1,valueSetTo=0,functionSet=0,args=[],keepPosture=True,keepPosition=True,keepCurveLength=True,name2="set to 0",Cote=""):
+    action2 = FunctionAction(valueReset,crvInfos,functionSet,Cote=Cote,keepPosture=keepPosture,keepPosition=keepPosition,keepCurveLength=keepCurveLength,args=crvInfos,mvt=True)
     slider2=SliderAbs(sliderName,action2,min,max,valueReset,step,sliderList)
     return Button("reset",name2,-1,sliderList,i,valueReset,valueSetTo,slider2)
  
-def functionButton(sliderList,crvInfos,i,sliderName,min,max,min2,max2,value,step,function,valueReset=0,getFunction=0,getFunctionArgs=[],setOneFunction=setOneRot,keepPosition=True,keepPosture=True):
+def functionButton(sliderList,crvInfos,i,sliderName,min,max,min2,max2,value,step,function,valueReset=0,getFunction=0,getFunctionArgs=[],setOneFunction=setOneRot,keepPosition=True,keepPosture=True,Cote=""):
     getValue=getFunction(getFunctionArgs)
-    action=FunctionAction(value,crvInfos,function,keepPosture=False,keepPosition=True)
+    action=FunctionAction(value,crvInfos,function,keepPosture=False,keepPosition=True,Cote=Cote)
     slider=SliderOffset(sliderName,action,min,max,value,step,sliderList)
-    action2 = FunctionAction(getValue,crvInfos,setRot,args=[slider,getFunction,getFunctionArgs,crvInfos,min,max],mvt=True,keepPosture=False,keepPosition=True)
+    action2 = FunctionAction(getValue,crvInfos,setRot,args=[slider,getFunction,getFunctionArgs,crvInfos,min,max],mvt=True,keepPosture=False,keepPosition=True,Cote=Cote)
     slider2=SliderAbs(sliderName,action2,min2,max2,getValue,step,sliderList)
     return Button("reset","set to 0",slider,sliderList,i,getValue,0,slider2,setOneFunction)     
 
 def functionCheckBox(label,crvInfos,functionCheck,functionUnCheck,value,args=[]):
-    actionCheck=FunctionAction(value,crvInfos,functionCheck,keepPosture=False,keepPosition=True,args=args,mvt=False)
-    actionUnCheck=FunctionAction(not value,crvInfos,functionUnCheck,keepPosture=False,keepPosition=True,args=args,mvt=False)
+    actionCheck=FunctionAction(value,crvInfos,functionCheck,Cote="",keepPosture=False,keepPosition=True,args=args,mvt=False)
+    actionUnCheck=FunctionAction(not value,crvInfos,functionUnCheck,Cote="",keepPosture=False,keepPosition=True,args=args,mvt=False)
     return CheckBox(label,actionCheck,actionUnCheck,value)
 
        
@@ -147,20 +147,20 @@ def createWindows(nameList,pointOnCurveList,locatorList):
 
     # TODO garder les 2 keep=False fait planter les tests
     # tete GD HB TODO position tete par rapport  au sol ou aux dorsales (tenir tete droite) -> 2 fonctions align with et setstraight ?
-    buttonList.append(functionButton(sliderList,crvInfos,2,names[2],-10,10,-60,60,0,0.00000001,setFcts[0],getFunction=fcts[2]))
-    buttonList.append(functionButton(sliderList,crvInfos,3,names[3],-10,10,-60,60,0,0.00000001,setFcts[1],getFunction=fcts[3]))
+    buttonList.append(functionButton(sliderList,crvInfos,2,names[2],-10,10,-60,60,0,0.00000001,setFcts[0],getFunction=fcts[2],Cote="L"))
+    buttonList.append(functionButton(sliderList,crvInfos,3,names[3],-10,10,-60,60,0,0.00000001,setFcts[1],getFunction=fcts[3],Cote="L"))
 
     # dorsales GD HB -> dorsales HB = dorsales + lombaires
-    buttonList.append(functionButton(sliderList,crvInfos,4,names[4],-5,5,-30,50,0,0.00000001,setFcts[2],getFunction=fcts[4]))
-    buttonList.append(functionButton(sliderList,crvInfos,5,names[5],-5,5,-30,50,0,0.00000001,setFcts[3],getFunction=fcts[5]))
+    buttonList.append(functionButton(sliderList,crvInfos,4,names[4],-5,5,-30,50,0,0.00000001,setFcts[2],getFunction=fcts[4],Cote="C"))
+    buttonList.append(functionButton(sliderList,crvInfos,5,names[5],-5,5,-30,50,0,0.00000001,setFcts[3],getFunction=fcts[5],Cote="C"))
 
     #lombaires
-    buttonList.append(functionButton(sliderList,crvInfos,6,names[6],-8,8,-60,60,0,0.00000001,setFcts[4],getFunction=fcts[6]))
-    buttonList.append(functionButton(sliderList,crvInfos,7,names[7],-8,8,-60,60,0,0.00000001,setFcts[5],getFunction=fcts[7]))
+    buttonList.append(functionButton(sliderList,crvInfos,6,names[6],-8,8,-60,60,0,0.00000001,setFcts[4],getFunction=fcts[6],Cote="C"))
+    buttonList.append(functionButton(sliderList,crvInfos,7,names[7],-8,8,-60,60,0,0.00000001,setFcts[5],getFunction=fcts[7],Cote="C"))
 
     # compression
-    buttonList.append(functionButton(sliderList,crvInfos,8,names[8],-200,100,-50,85,0,0.00000001,setFcts[6],crvInfos,getFunction=fcts[8],getFunctionArgs=crvInfos))
-    buttonList.append(functionButton(sliderList,crvInfos,9,names[9],-10,70,0,80,0,0.00000001,setFcts[7],crvInfos,getFunction=fcts[9],getFunctionArgs=crvInfos))
+    buttonList.append(functionButton(sliderList,crvInfos,8,names[8],-200,100,-50,85,0,0.00000001,setFcts[6],crvInfos,getFunction=fcts[8],getFunctionArgs=crvInfos,Cote="L"))
+    buttonList.append(functionButton(sliderList,crvInfos,9,names[9],-10,70,0,80,0,0.00000001,setFcts[7],crvInfos,getFunction=fcts[9],getFunctionArgs=crvInfos,Cote="L"))
  
     # position
     buttonList.append(postureButton(sliderList,crvInfos,10,names[10],-40,40,0.00000001,["curve1"],crvInfos[1][0],functionSet=setX,keepPosition=False,keepPosture=False,keepCurveLength=False))

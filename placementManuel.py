@@ -42,13 +42,7 @@ def calcPosRelatifHB(locator):
     locatorOnCurve=getPoint(getParameter(locator))
     tan=getTangent(locatorOnCurve)
     vect=sub(locatorOnCurve,locator)
-    if vect[1]>0:
-        print "au dessus"
-    else:
-        print "en dessous"
-    # angle de la tangente au vecteur
     return [vect[1],norm(vect)]
-    #return [angleHB(tan,vect),norm(vect)]
 
 def calcPosRelatifGD(locatorPosition):
     locatorOnCurve=getPoint(getParameter(locatorPosition))
@@ -62,42 +56,25 @@ def correctionRot(sliderGrp,nButton,locator,Croiss=True,precision=10):
     button=sliderGrp.buttonList[nButton]
     slider=button.slider
     valInit=slider.sliderValue()
-    #fValInit=button.slider2.value
     minSlider=slider.minValue
-    #p("minSlider",minSlider)
     maxSlider=slider.maxValue
-    #valCroiss=min(valInit+(maxSlider-minSlider)*0.1,maxSlider)
-    #slider.setValue(valCroiss)
-    #slider.update()
-    #fVal=button.slider2.value
-    slider.setValue(valInit)
-    slider.update()
-    #Croiss=fVal>fValInit
-    #Croiss= not Croiss
-    #p("Croiss",str(Croiss),str(fVal),str(fValInit),button.slider2.label)
-    #p("maxSlider",maxSlider)
-    #bool = nButton not in [3,8,0,1,4]
-    # compression et cervicales dans l'autre sens
-    if (relatif<0 and Croiss) or (relatif>0 and (not Croiss)) :#or True: # courbe au dessus
+    if (relatif<0 and Croiss) or (relatif>0 and (not Croiss)) :
         maxi=min(valInit,maxSlider)
-        mini=max(valInit-3*dist*(slider.maxValue-slider.minValue),minSlider)
+        mini=max(valInit-5*dist*(slider.maxValue-slider.minValue),minSlider)
     else:
         mini=max(valInit,minSlider)
-        maxi=min(valInit+3*dist*(slider.maxValue-slider.minValue),maxSlider)
+        maxi=min(valInit+5*dist*(slider.maxValue-slider.minValue),maxSlider)
     i=0
-    #p("mi",mini,maxi)
     while dist>0.01 and i<precision:
         i+=1
         test=(mini+maxi)/2
         slider.setValue(test)
         slider.update()
         [relatif,dist]=f(locator)
-        # cervicales et compression decroissant
-        if (relatif<0 and Croiss) or (relatif>0 and (not Croiss)):# or (relatif<0) :
+        if (relatif<0 and Croiss) or (relatif>0 and (not Croiss)):
             maxi=test
         else:
             mini=test   
-    #print "i",i
 
 def correctionPos(sliderGrp,nPoint,locator):
     for i in range(10):
@@ -160,23 +137,21 @@ def placementManuel(nBoucles=3):
         sliderGrp.do("compression",compression)
         #print("orientation",orientation)
         #
-        #sliderGrp.do("compression g",compressionGD)
+        sliderGrp.do("compression g",compressionGD)
         #print("compression g",compressionGD)
         ##print calcCVParameters()
         #keepParameters(param)
         sliderGrp.do("rot dorsale",angleDorsales)
         #keepParameters(param)
         sliderGrp.do("rot dorsale g ",angleDorsalesGD)
-        keepParameters(param)
+        #keepParameters(param)
         sliderGrp.do("rot cervicale",angleCervicales)  
         #keepParameters(param)
         sliderGrp.do("rot cervicale g",angleCervicalesGD)  
         #keepParameters(param)
         sliderGrp.do("rot lombaire",angleLombaires) 
-        p("angleL",str(angleLHB()))
         #keepParameters(param)
         sliderGrp.do("rot lombaire GD",angleLombairesGD) 
-        p("angleL",str(angleLHB()))
         #keepParameters(param)
     sliderGrp.do("orientation",orientation)
     sliderGrp.do("posture",posture)
@@ -192,7 +167,7 @@ def placementManuel(nBoucles=3):
     #ReplacePoints(pointOnCurveList,nameList)
 
      #calcul des distances des locators a la courbe
-    locatorList=map(position,[locator(i) for i in range(5)])
+
     #locatorOnCurveList=map(getPoint,map(getParameter,locatorList))
     #diff=[sub(locatorList[i],locatorOnCurveList[i]) for i in range(5)]
     #res=[]
@@ -206,28 +181,28 @@ def placementManuel(nBoucles=3):
     #p("lordoseL1",calcLordoseL())
     #sliderGrp.do("courbure l",lordoseC)        
     #p("lordoseL2",calcLordoseL())
-    res=[0,0,0,0,0,0,0,0,0]
+
+    locatorList=map(position,[locator(i) for i in range(5)])
     for i in range(1):
-        1
         scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
         sliderGrp.do("scale",scaleFactor)
         #correctionPos(sliderGrp,5,position("locatorC"))
-        if res[3] or True: 
-            1#compression
-            correctionRot(sliderGrp,sliderGrp.string2num("compression"),locatorList[3])
-            #correctionRot(sliderGrp,sliderGrp.string2num("compression gd"),locatorList[3],False,0)
-        if res[1] or True:
-            1#dorsales
-            correctionRot(sliderGrp,sliderGrp.string2num("rot dorsale"),locatorList[1])
-            #correctionRot(sliderGrp,sliderGrp.string2num("rot dorsale gd"),locatorList[1],False)
-        if res[0] or True:
-            1#lombaires
-            correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire"),locatorList[0])
-            #correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire gd"),locatorList[0],False)
-        if res[4] or True:
-            1#cervicales
-            correctionRot(sliderGrp,sliderGrp.string2num("rot c"),locatorList[4],False)
-            #correctionRot(sliderGrp,sliderGrp.string2num("rot cervicale gd"),locatorList[4])
+
+        #compression
+        correctionRot(sliderGrp,sliderGrp.string2num("compression"),locatorList[3])
+        #correctionRot(sliderGrp,sliderGrp.string2num("compression gd"),locatorList[3])
+
+        #dorsales
+        correctionRot(sliderGrp,sliderGrp.string2num("rot dorsale"),locatorList[1])
+        correctionRot(sliderGrp,sliderGrp.string2num("rot dorsale gd"),locatorList[1])
+
+        #lombaires
+        correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire"),locatorList[0])
+        correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire gd"),locatorList[0])
+
+        #cervicales
+        correctionRot(sliderGrp,sliderGrp.string2num("rot c"),locatorList[4],False)
+        #correctionRot(sliderGrp,sliderGrp.string2num("rot cervicale gd"),locatorList[4],False)
 
     #keepParameters(param)
      #pour que tous les locators passent exactement par la courbe
@@ -238,9 +213,7 @@ def placementManuel(nBoucles=3):
         ##### position sur la courbe
         #correctionPos(sliderGrp,2,position(locator(2)))
         #correctionPos(sliderGrp,1,position(locator(1)))
-
-        #for i in range(5):
-        #    correctionPos(sliderGrp,4,position(locator(3)))
+        #correctionPos(sliderGrp,4,position(locator(3)))
         #correctionPos(sliderGrp,0,position(locator(0)))
         #correctionPos(sliderGrp,6,position(locator(4)))
         #correctionPos(sliderGrp,3,position("locatorD"))
@@ -259,18 +232,26 @@ def placementManuel(nBoucles=3):
     return evaluation
     
 
-sliderGrp=mainFct(pointOnCurveList,locatorList)
+
 maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
-for i in range(2,3):
-    j=160
-    cmds.currentTime( j, edit=True )
+for i in range(0,10,10):
+    j=0
+    sliderGrp=mainFct(pointOnCurveList,locatorList)
+    cmds.currentTime(j, edit=True )
     placementManuel(1) 
-    string='setKeyframe -breakdown 0 -hierarchy none -controlPoints 1 -shape 0 {"curve1"};'
-    #mel.eval(string)
-    for j in range(maxCV):
-        string='setKeyframe -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 -i {"curve1.cv['+str(j)+']"};'
-        mel.eval(string)
-param=calcCVParameters()
+#    string='setKeyframe -breakdown 0 -hierarchy none -controlPoints 1 -shape 0 {"curve1"};'
+#    #mel.eval(string)
+#    for j in range(maxCV):
+#        string='setKeyframe -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 -i {"curve1.cv['+str(j)+']"};'
+#        mel.eval(string)
+#param=calcCVParameters()
+    angleNames=['angleCHB','angleDHB','angleLHB','angleCGD','angleDGD','angleLGD','Posture','Orientation','x','y','z','angleComp','angleCompGD']
+    getFunctionNames=[angleCHB,angleDHB,angleLHB,angleCGD,angleDGD,angleLGD,calcPosture,calcOrientation,getX,getY,getZ,angleComp,angleCompGD]
+    for angleName,getFunctionName in zip(angleNames,getFunctionNames):
+        value=getFunctionName()
+        cmds.setAttr('ValeurAngles.'+angleName,value)
+        mel.eval('setKeyframe { "ValeurAngles.'+angleName+'" };')
+    
 #p("param fin",param)
         
 EvalPositionLocator2()

@@ -70,9 +70,10 @@ class Button(GuiObject):
             val=self.sliderList[self.indiceText].fct(self.sliderList[self.indiceText].args)
             y.append(val) # TODO comparer tps apres
         slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
-        if abs(1.0-abs(r_value))>0.01:
-            print "pas de droite pour ",slider.label, r_value
-        slider.dte=polyfit(x,y,1)
+        if abs(1.0-abs(r_value))>0.01 or abs(slope)<0.5:
+            print "pas de droite pour ",slider.label, r_value, slope, intercept
+        if abs(slope)>0.5:
+            slider.dte=[slope,intercept]
         slider.setValue(valInit)
         slider.update(False,True) # TODO le deuxieme false ?
 
