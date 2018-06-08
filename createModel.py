@@ -96,7 +96,8 @@ def createJointChain(nameList,tailList):
     createJoint([-20.65, 31.59, 11.94])
     cmds.parent('joint27','joint26')
     # tete
-    createJoint([-20.30, 30.94404965119671, 19.863081770756864])
+    #createJoint([-20.30, 30.94404965119671, 19.863081770756864])
+    createJoint([-21.193852471090896, 31.781764507358307, 20.037778075614554])
     cmds.parent('joint28','joint27')
 
 

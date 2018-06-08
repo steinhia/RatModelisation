@@ -142,8 +142,8 @@ def parabolicRotation(theta,list):
         pivot=pivotName
     tan=PostureVector()
     for i in range(n2N(end),n2N(begin)-1,-1):
-        dist=(abs(i-nPivot))**(1)
-        angle=(math.atan(dist))*10
+        dist=(abs(i-nPivot))
+        angle=(math.atan(dist))**1*5
         cmds.select(curvei(i))
         cmds.rotate(theta*angle,r=True,p=pivot,x=x,y=y,z=z)
         #if x==1:
@@ -184,18 +184,23 @@ def parabolicRotation(theta,list):
 
 def rotLHB(theta,L=[]):
     milieu=num2Name(1)#getPoint(getParameter(getMilieu(num2Name(1),num2Name(0))))
-    parabolicRotation(theta,[milieu,num2Name(0),num2Name(0),1,0,0]) # L3 L6 L6
+    parabolicRotation(theta,[num2Name(2),num2Name(0),num2Name(0),1,0,0]) # L3 L6 L6
 def rotLGD(theta,L=[]):
     milieu=num2Name(1)#getPoint(getParameter(getMilieu(num2Name(1),num2Name(0))))
-    parabolicRotation(theta,[milieu,num2Name(0),num2Name(0),0,1,0]) # L3 L6 L6
+    parabolicRotation(theta,[num2Name(2),num2Name(0),num2Name(0),0,1,0]) # L3 L6 L6
 def rotCHB(theta,L=[]):
-    parabolicRotation(theta,[pointOnCurveList[5],pointOnCurveList[5],pointOnCurveList[7],1,0,0]) # C7 C7 C0
+    parabolicRotation(theta,[pointOnCurveList[5],pointOnCurveList[6],pointOnCurveList[7],1,0,0]) # C7 C7 C0
 def rotCGD(theta,L=[]):
-    parabolicRotation(theta,[pointOnCurveList[5],pointOnCurveList[5],pointOnCurveList[7],0,1,0])
+    parabolicRotation(theta,[pointOnCurveList[5],pointOnCurveList[6],pointOnCurveList[7],0,1,0])
 def rotDHB(theta,L=[]):
-    parabolicRotation(theta,[num2Name(2),num2Name(0),num2Name(1),1,0,0])
+    parabolicRotation(theta,[num2Name(3),num2Name(0),num2Name(2),1,0,0])
 def rotDGD(theta,L=[]):
-    parabolicRotation(theta,[num2Name(2),num2Name(0),num2Name(1),0,1,0])
+    parabolicRotation(theta,[num2Name(3),num2Name(0),num2Name(2),0,1,0])
+def rotTHB(theta,L=[]):
+    parabolicRotation(theta,[pointOnCurveList[6],pointOnCurveList[7],pointOnCurveList[7],1,0,0])
+def rotTGD(theta,L=[]):
+    parabolicRotation(theta,[pointOnCurveList[6],pointOnCurveList[7],pointOnCurveList[7],0,1,0])
+
 
     
 
@@ -329,30 +334,33 @@ def setRot(courbure,L):
 def rotComp(value,crvInfos=[]):
 
     # premiere partie, rotation dans un sens
-    nBegin=n2N(pointOnCurveList[3])
-    nEnd=n2N(pointOnCurveList[4])
-    nMax= cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")-1
-    pivot=position(curvei(n2N(num2Name(2))))
-    nPivot=2
-    posB=position(curvei(nEnd))
-    posE=position(curvei(nMax))
-    cmds.select(clear=True)
-    for i in range(nEnd,nBegin-1,-1):
-        cmds.select(curvei(i),add=True)
-        cmds.rotate(-value*0.5,0.0,0.0,r=True,pivot=pivot)
-    posB2=position(curvei(nEnd))
-    posE2=position(curvei(nMax))
-    tB=sub(posB2,posB)
-    tE=sub(posE2,posE)
-    cmds.select(clear=True)
-    for i in range(nEnd+1,nMax+1):
-        cmds.select(curvei(i),add=True)
-    cmds.move(tB[0],tB[1],tB[2],r=True)
-    cmds.select(clear=True)
-    for i in range(0,nEnd-2):
-        cmds.select(curvei(i),add=True)
-    cmds.move(tE[0],tE[1],tE[2],r=True)
-    cmds.select(clear=True)
+    #nBegin=n2N(pointOnCurveList[2])
+    #nEnd=n2N(pointOnCurveList[4])
+    #nMax= cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")-1
+    #pivot=position(curvei(n2N(num2Name(2))))
+    #nPivot=2
+    #posB=position(curvei(nEnd))
+    #posE=position(curvei(nMax))
+    #cmds.select(clear=True)
+    #for i in range(nEnd,nBegin-1,-1):
+    #    cmds.select(curvei(i),add=True)
+    #    cmds.rotate(-value*0.5,0.0,0.0,r=True,pivot=pivot)
+    #posB2=position(curvei(nEnd))
+    #posE2=position(curvei(nMax))
+    #tB=sub(posB2,posB)
+    #tE=sub(posE2,posE)
+    #cmds.select(clear=True)
+    #for i in range(nEnd+1,nMax+1):
+    #    cmds.select(curvei(i),add=True)
+    #cmds.move(tB[0],tB[1],tB[2],r=True)
+    #cmds.select(clear=True)
+    #for i in range(0,nEnd-2):
+    #    cmds.select(curvei(i),add=True)
+    #cmds.move(tE[0],tE[1],tE[2],r=True)
+    #cmds.select(clear=True)
+    cmds.select(curvei(2),curvei(4))
+    pivot=position(curvei(3))
+    cmds.rotate(-value,0,0,pivot=pivot)
 
     #angle=(angleDHB()-angleComp())*0.0005
     #tan=normalize(sub(position(locator(2)),position(locator(3))))
@@ -362,7 +370,7 @@ def rotComp(value,crvInfos=[]):
 
 
 def rotCompGD(value,L=[]):
-    parabolicRotation(value*0.005,[num2Name(2),num2Name(2),num2Name(3),0,1,0])
+    parabolicRotation(value*0.05,[num2Name(2),num2Name(2),pointOnCurveList[7],0,1,0])
 
 
 

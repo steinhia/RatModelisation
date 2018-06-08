@@ -42,18 +42,20 @@ def nLoc2nCurve(num):
     
 
 def num2Name(num):
-    if 'sliderGrp' in globals() and hasattr(sliderGrp, 'locatorList'):
-        return sliderGrp.locatorList[num]
+    #if 'sliderGrp' in globals() and hasattr(sliderGrp, 'locatorList'):
+    #    return sliderGrp.locatorList[num]
     if num==0:
         return 'L6'
     elif num==1:
-        return 'L2'
+        return 'L3'
     elif num==2:
-        return 'T9'
+        return 'T10'
     elif num==3:
-        return 'C7'
+        return 'T1'
     elif num==4:
         return 'C0'
+    elif num==5:
+        return 'Tete'
 
 # select a vertebre
 def select(name):

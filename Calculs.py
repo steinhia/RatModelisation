@@ -75,7 +75,7 @@ def calcCentroid(name):
 
 # orientation par rapport au corps et pas la tete
 def getCurvePosition(num=-1,Cote=""):
-    positionList=[num2Name(i) for i in range(5)]
+    positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.getPosition(positionList,num,Cote=Cote)
 
 def getX(Cote=""):
@@ -89,16 +89,16 @@ def getCurveLength(L=[]):
     return cmds.arclen("curve1") 
 
 def PostureVector(Cote=""):
-    positionList=[num2Name(i) for i in range(5)]
+    positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.PostureVector(positionList,Cote=Cote)
 
 # en degres   
 def calcPosture(Cote=""):
-    positionList=[num2Name(i) for i in range(5)]
+    positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.getPosture(positionList,Cote=Cote)
 
 def calcOrientation(Cote=""):
-    positionList=[num2Name(i) for i in range(5)]
+    positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.getOrientation(positionList,Cote=Cote)
    
 def calcCourbure(L):
@@ -122,11 +122,11 @@ def calcLordoseL(L=[]):
 
 def angleGD(v1,v2):
     v=SubVector(v1,v2)
-    positionList=[num2Name(i) for i in range(5)]
+    positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleGD2D(positionList,v)
 def angleHB(v1,v2):
     v=SubVector(v1,v2)
-    positionList=[num2Name(i) for i in range(5)]
+    positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleHB2D(positionList,v)
 
 def angleHBOld(v1,v2):
@@ -140,30 +140,37 @@ def angleGDOld(v1,v2):
     return valPrincDeg(angle1-angle2)
 
 def angleCHB(L=[]):
-    positionList=[num2Name(i) for i in range(5)]
+    positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleCHB(positionList,pointOnCurveList)
 def angleCGD(L=[]):
-    positionList=[num2Name(i) for i in range(5)]
+    positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleCGD(positionList,pointOnCurveList)
 def angleDHB(L=[]):
-    positionList=[num2Name(i) for i in range(5)]
+    positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleDHB(positionList)
 def angleDGD(L=[]):
-    positionList=[num2Name(i) for i in range(5)]
+    positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleDGD(positionList)
 def angleLHB(L=[]):
-    positionList=[num2Name(i) for i in range(5)]
+    positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleLHB(positionList)
 def angleLGD(L=[]):
-    positionList=[num2Name(i) for i in range(5)]
+    positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleLGD(positionList)
+
+def angleTHB(L=[]):
+    positionList=[num2Name(i) for i in range(6)]
+    return GeneralCalculs.angleTHB(positionList)
+def angleTGD(L=[]):
+    positionList=[num2Name(i) for i in range(6)]
+    return GeneralCalculs.angleTGD(positionList)
 
 
 def angleComp(crvInfos=[]):
-    positionList=[num2Name(i) for i in range(5)]
+    positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleComp(positionList)
 def angleCompGD(crvInfos=[]):
-    positionList=[num2Name(i) for i in range(5)]
+    positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleCompGD(positionList)
 
 
@@ -251,19 +258,19 @@ def getChainLength(L=[]):
     return len
 
 def locatorCurveLength():
-    positionList=[num2Name(i) for i in range(5)]
+    positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs().getChainLength(positionList) 
 
 def HalfChainCurveLengthL():
-    positionList=[num2Name(i) for i in range(5)]
+    positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.HalfChainLengthL(positionList)
 
 def HalfChainCurveLengthC():
-    positionList=[num2Name(i) for i in range(5)]
+    positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.HalfChainLengthC(positionList)
 
 def RapportChainCurveLength():
-    positionList=[num2Name(i) for i in range(5)]
+    positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.RapportChainLength(positionList)
 
 def RapportCurveLength():

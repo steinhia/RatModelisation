@@ -45,6 +45,7 @@ def mainFct(pointOnCurveList=['L6','L3','T11','T8','T2','C4','C0'],locatorList=[
     #cmds.showWindow(sliderGrp.window)
     return sliderGrp
 
+
 nameList=['obj55_VertebreL6_Exterior','obj53_VertebreL5_Exterior','obj51_VertebreL4_Exterior','obj50_VertebreL3_Exterior',\
             'obj98_VerterbreL2_Exterior','obj100_VertebreL1_Exterior','obj48_VertebreT13_Exterior','obj43_VertebreT12_Exterior',\
             'obj42_VertebreT11_Exterior','obj40_VertebreT10_Exterior','obj38_VertebreT9_Exterior','obj37_VertebreT8_Exterior',\
@@ -52,12 +53,12 @@ nameList=['obj55_VertebreL6_Exterior','obj53_VertebreL5_Exterior','obj51_Vertebr
             'obj29_VertebreT3_Exterior','obj74_VertebreT2_Exterior','obj72_VertebreT1_Exterior',\
             'obj70_VertebreC7_Exterior','obj69_VertebreC6_Exterior','obj103_VertebreC5_Exterior','obj105_VertebreC4_Exterior', \
             'obj107_VertebreC3_Exterior','obj47_VertebreC2_Axis_Exterior','obj45_VertebreC1_Atlas_Exterior']
-pointOnCurveList=['L6','L3','T10','T6','T1','C5','C0','Tete'] 
-locatorList=['L6','L3','T10','T1','C0'] 
+pointOnCurveList=['L6','L3','T11','T5','T1','C5','C0','Tete'] 
+locatorList=['L6','L3','T11','T1','C0','Tete'] 
   
-#sliderGrp=mainFct(pointOnCurveList,locatorList)
-#sliderGrp.do("scale",10)
-#sliderGrp.do("z",-5)
+sliderGrp=mainFct(pointOnCurveList,locatorList)
+sliderGrp.do("scale",10)
+sliderGrp.do("z",-5)
 
 #del pointOnCurveList
 #del locatorList
