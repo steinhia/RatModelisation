@@ -129,7 +129,8 @@ class GeneralCalculs(object):
         if 'locator' in liste[0] :
             v=SubVector(liste[4],liste[3])
         else:
-            v=SubVector(liste[4],pointOnCurveList[5])
+            v=SubVector(liste[4],liste[3])
+            #v=SubVector(liste[4],pointOnCurveList[5])
         #p("finc")
         return cls.angleHB2D(v)
         #return angleHB(SubVector(liste[4],liste[3]),cls.refVector(liste))
@@ -141,7 +142,8 @@ class GeneralCalculs(object):
         if 'locator' in liste[0] :
             v=SubVector(liste[4],liste[3])
         else:
-            v=SubVector(liste[4],pointOnCurveList[4])
+            v=SubVector(liste[4],liste[3])
+            #v=SubVector(liste[4],pointOnCurveList[4])
         return cls.angleGD2D(liste,v)
         #return angleGD(SubVector(liste[4],liste[3]),cls.refVector(liste))
         #return cls.angleHBOriente(SubVector(liste[4],liste[3],cls.refVector(liste)))
@@ -177,6 +179,7 @@ class GeneralCalculs(object):
     @classmethod
     def angleTHB(cls,liste,*_):
         v=SubVector(liste[5],liste[4])
+        #p(position(liste[5]),position(liste[4]))
         return cls.angleHB2D(v)
 
     @classmethod
@@ -195,7 +198,7 @@ class GeneralCalculs(object):
     def angleCompGD(cls,liste,*_):
         v=SubVector(liste[3],liste[2])
         return -cls.angleGD2D(liste,v)
-        return -valPrincDeg(angleGD(cls.refVector(liste),SubVector(liste[3],liste[2])))
+        #return -valPrincDeg(angleGD(cls.refVector(liste),SubVector(liste[3],liste[2])))
 
     @classmethod
     def HalfChainLengthL(cls,liste,*_):

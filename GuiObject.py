@@ -43,6 +43,7 @@ class Button(GuiObject):
 
       
     def create(self,*_):
+        #p("debutcreate",self.slider,self.slider2)
         if self.slider!=-1:
             self.slider.create()
         else:
@@ -53,6 +54,7 @@ class Button(GuiObject):
             self.sliderList[self.indiceText].associate(self.slider,self.slider2)
         self.GuiButton=cmds.button(label=self.label,command=partial(self.update,self.valueReset,True)) 
         self.GuiButton=cmds.button(label=self.label2,command=partial(self.update,self.valueSetTo,True)) 
+
 
     def calcDroite(self,*_):
         slider=self.slider #slider1
@@ -145,6 +147,7 @@ class SliderDuo(GuiObject):
             if a!=[]:
                 self.slider.setValue(a)
                 self.slider.value=a
+
 
 class Slider(GuiObject):
 

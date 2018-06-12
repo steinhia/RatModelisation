@@ -41,11 +41,11 @@ class Action(object):
         if self.mvt and ajust:
             newPos=getCurvePosition(Cote=self.Cote)
             newPosture=calcPosture(Cote=self.Cote)
-            #keepParameters(param)
+        #    #keepParameters(param)
             if not self.keepPosition:
                 self.crvInfos[1]=newPos
             if self.keepCurveLength:
-                #keepCLen(self.crvInfos[4])
+                1#keepCLen(self.crvInfos[4])
                 keepLengthValue(self.crvInfos[0],[newPos])
                 keepChainLengthValue(self.crvInfos[3])
             else:

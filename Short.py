@@ -20,17 +20,21 @@ def n2J(name):
         'C5':'joint22','C4':'joint23','C3':'joint24','C2':'joint25','C1':'joint26','C0':'joint27','Tete':'joint28'}
     if (not isinstance(name,list)) and name in dico :
         return dico[name]
-    else :
+    elif name=='MilTete':
+        return 'joint28'
+    else:
         return -1
 
 def n2N(name):
     dico={'L6':0, 'L5':0,'L4':0,'L3':1,'L2':1,'L1':1,'T13':1, \
         'T12':1,'T11':1,'T10':2,'T9':2,'T8':2,'T7':2,'T6':3, \
         'T5':3,'T4':3,'T3':3,'T2':4,'T1':4,'C7':4,'C6':4,\
-        'C5':5,'C4':5,'C3':5,'C2':6,'C1':6,'C0':6,'Tete':7}
+        'C5':5,'C4':5,'C3':5,'C2':6,'C1':6,'C0':6,'MilTete':7,'Tete':8}
     if name in dico :
         return dico[name]
-    else :
+    elif isinstance(name,str) :
+        return name
+    else:
         return -1
 
 def nLoc2nCurve(num):
@@ -59,10 +63,14 @@ def num2Name(num):
 
 # select a vertebre
 def select(name):
-    pos=position(n2J(name))
-    param=getParameter(pos)
-    maya.mel.eval("doMenuNURBComponentSelection(\"curve1\", \"curveParameterPoint\");")
-    cmds.select('curve1.u['+str(param)+']',r=1)
+    if name=='curve1':
+        for i in range(MaxCV()):
+            cmds.select(curvei(i),add=True)
+    else:
+        pos=position(n2J(name))
+        param=getParameter(pos)
+        maya.mel.eval("doMenuNURBComponentSelection(\"curve1\", \"curveParameterPoint\");")
+        cmds.select('curve1.u['+str(param)+']',r=1)
 
 #def nCurveToJoint(num):
 #    dico={0:'joint1',1:'joint4',2:'joint7',3:'joint13',4:'joint19',5:'joint23',6:'joint26'}
@@ -76,6 +84,8 @@ def position(name):
         return cmds.xform(joint,q=1,t=1,ws=1)
     if cmds.objExists(name):
         return cmds.xform(name,q=1,t=1,ws=1)
+    elif name=="MilTete":
+        return getMilieu(position('C0'),position('Tete'))
     else:
         return -1
     # nom de la vertebre (objet existe pas)       
@@ -250,6 +260,9 @@ def calcCVParameter(i):
 
 def CVParam(num):
     return getParameter(position(curvei(num)))
+
+def MaxCV():
+    return cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
     
         
 

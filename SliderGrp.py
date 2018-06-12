@@ -39,7 +39,6 @@ class SliderGrp(object):
             checkbox.create() 
         cmds.textFieldGrp( label='Select', text='???',editable=True , cc=select)
         cmds.showWindow(self.window)
-        p("fin create")
 
 
     def do(self,string,value,updateText=True):
@@ -135,23 +134,25 @@ def createWindows(nameList,pointOnCurveList,locatorList):
 
     #liste des textes (courbures etc)
     names=["courbure Cervicale ","courbure Lombaire ","rot Cervicale G ","rot Cervicale B ", \
-          "rot Dorsale G ","rot Dorsale B ","rot Lombaire G ","rot Lombaire B ","compression gd","compression ","x ","y ","z ","scale ","posture ","orientation","rotTGD","rotTHB"]
+          "rot Dorsale G ","rot Dorsale B ","rot Lombaire G ","rot Lombaire B ","compression gd","compression ","rot TGD","rot THB","x ","y ","z ","scale ","posture ","orientation"]
     fcts=[calcLordoseC,calcLordoseL,angleCGD,\
-              angleCHB,angleDGD,angleDHB,angleLGD,angleLHB,angleCompGD,angleComp,\
-              getX,getY,getZ,getCurveLength,calcPosture,calcOrientation,angleTGD,angleTHB]   
-    setFcts=[rotCGD,rotCHB,rotDGD,rotDHB,rotLGD,rotLHB,rotCompGD,rotComp,setX,setY,setZ,keepLengthValue,setPosture,setOrientation]
+              angleCHB,angleDGD,angleDHB,angleLGD,angleLHB,angleCompGD,angleComp,angleTGD,angleTHB,\
+              getX,getY,getZ,getCurveLength,calcPosture,calcOrientation]   
+    setFcts=[rotCGD,rotCHB,rotDGD,rotDHB,rotLGD,rotLHB,rotCompGD,rotComp,rotTGD,rotTHB,setX,setY,setZ,keepLengthValue,setPosture,setOrientation]
     
     #liste mise a jour a chaque modification
     sliderList=[]
     for i,name in enumerate(names):
         sliderList.append(SliderDuo(name,fcts[i],crvInfos))
+
+
     buttonList=[]
     # courbures cervicale, dorsale et lombaire
     buttonList.append(courbureButton(sliderList,crvInfos,0,names[0],-1,1,-3,3,0,0.00000001,['ClusterCHandle'],getFunction=fcts[0]))
     buttonList.append(courbureButton(sliderList,crvInfos,1,names[1],-3,3,-3,3,0,0.00001,['ClusterLHandle'],getFunction=fcts[1]))
 
     # TODO garder les 2 keep=False fait planter les tests
-    # tete GD HB TODO position tete par rapport  au sol ou aux dorsales (tenir tete droite) -> 2 fonctions align with et setstraight ?
+    # cervicales GD HB TODO position tete par rapport  au sol ou aux dorsales (tenir tete droite) -> 2 fonctions align with et setstraight ?
     buttonList.append(functionButton(sliderList,crvInfos,2,names[2],-10,10,-60,60,0,0.00000001,setFcts[0],getFunction=fcts[2],Cote="L"))
     buttonList.append(functionButton(sliderList,crvInfos,3,names[3],-10,10,-60,60,0,0.00000001,setFcts[1],getFunction=fcts[3],Cote="L"))
 
@@ -168,19 +169,19 @@ def createWindows(nameList,pointOnCurveList,locatorList):
     buttonList.append(functionButton(sliderList,crvInfos,9,names[9],-10,70,0,80,0,0.00000001,setFcts[7],crvInfos,getFunction=fcts[9],getFunctionArgs=crvInfos,Cote="L"))
 
     #tete
-    buttonList.append(functionButton(sliderList,crvInfos,6,names[16],-18,18,-60,60,0,0.00000001,function=rotTGD,getFunction=angleTGD,Cote="L"))
-    buttonList.append(functionButton(sliderList,crvInfos,7,names[17],-18,18,-60,60,0,0.00000001,function=rotTHB,getFunction=angleTHB,Cote="L")) 
+    buttonList.append(functionButton(sliderList,crvInfos,10,names[10],-18,18,-60,60,0,0.00000001,setFcts[8],getFunction=angleTGD,Cote="L"))
+    buttonList.append(functionButton(sliderList,crvInfos,11,names[11],-18,18,-60,60,0,0.00000001,setFcts[9],getFunction=angleTHB,Cote="L")) 
 
 
     # position
-    buttonList.append(postureButton(sliderList,crvInfos,10,names[10],-40,40,0.00000001,["curve1"],crvInfos[1][0],functionSet=setX,keepPosition=False,keepPosture=False,keepCurveLength=False))
-    buttonList.append(postureButton(sliderList,crvInfos,11,names[11],-40,40,0.00000001,["curve1"],crvInfos[1][1],functionSet=setY,keepPosition=False,keepPosture=False,keepCurveLength=False))
-    buttonList.append(postureButton(sliderList,crvInfos,12,names[12],-40,40,0.00000001,["curve1"],crvInfos[1][2],functionSet=setZ,keepPosition=False,keepPosture=False,keepCurveLength=False))
+    buttonList.append(postureButton(sliderList,crvInfos,12,names[12],-40,40,0.00000001,["curve1"],crvInfos[1][0],functionSet=setFcts[10],keepPosition=False,keepPosture=False,keepCurveLength=False))
+    buttonList.append(postureButton(sliderList,crvInfos,13,names[13],-40,40,0.00000001,["curve1"],crvInfos[1][1],functionSet=setFcts[11],keepPosition=False,keepPosture=False,keepCurveLength=False))
+    buttonList.append(postureButton(sliderList,crvInfos,14,names[14],-40,40,0.00000001,["curve1"],crvInfos[1][2],functionSet=setFcts[12],keepPosition=False,keepPosture=False,keepCurveLength=False))
     # scaling
-    buttonList.append(postureButton(sliderList,crvInfos,13,names[13],1,30,0.00000001,["curve1"],valueReset=getCurveLength(),valueSetTo=1,functionSet=setFcts[11],keepCurveLength=False,keepPosition=True,keepPosture=True,args=[],name2="set to 1"))
+    buttonList.append(postureButton(sliderList,crvInfos,15,names[15],1,30,0.00000001,["curve1"],valueReset=getCurveLength(),valueSetTo=1,functionSet=setFcts[13],keepCurveLength=False,keepPosition=True,keepPosture=True,args=[],name2="set to 1"))
     # posture generale
-    buttonList.append(postureButton(sliderList,crvInfos,14,names[14],-90,90,0.00000001,["curve1"],0,crvInfos[1],functionSet=setPosture,args=[],keepPosture=False,keepPosition=True,keepCurveLength=True))
-    buttonList.append(postureButton(sliderList,crvInfos,15,names[15],-180,180,0.00000001,["curve1"],0,crvInfos[1],functionSet=setOrientation,args=[],keepPosture=False,keepPosition=True,keepCurveLength=True))
+    buttonList.append(postureButton(sliderList,crvInfos,16,names[16],-90,90,0.00000001,["curve1"],0,crvInfos[1],functionSet=setFcts[14],args=[],keepPosture=False,keepPosition=True,keepCurveLength=True))
+    buttonList.append(postureButton(sliderList,crvInfos,17,names[17],-180,180,0.00000001,["curve1"],0,crvInfos[1],functionSet=setFcts[15],args=[],keepPosture=False,keepPosition=True,keepCurveLength=True))
 
     # checkBox pour la gestion d'affichage
     checkBoxList=[]
