@@ -47,16 +47,16 @@ def nLoc2nCurve(num):
     
 
 def num2Name(num):
-    #if 'sliderGrp' in globals() and hasattr(sliderGrp, 'locatorList'):
-    #    return sliderGrp.locatorList[num]
+    if 'sliderGrp' in globals() and hasattr(sliderGrp, 'locatorList'):
+        return sliderGrp.locatorList[num]
     if num==0:
         return 'L6'
     elif num==1:
-        return 'L3'
+        return 'L4'
     elif num==2:
-        return 'T10'
+        return 'T12'
     elif num==3:
-        return 'T1'
+        return 'T2'
     elif num==4:
         return 'C0'
     elif num==5:
@@ -255,9 +255,6 @@ def prec(a,n):
 def calcCVParameters():
     maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
     return [getParameter(position(curvei(i))) for i in range(maxCV)]
-
-def calcCVParameter(i):
-    return getParameter(position(curvei(i)))
 
 def CVParam(num):
     return getParameter(position(curvei(num)))

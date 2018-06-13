@@ -235,22 +235,45 @@ def calcParameters():
     #print "pos apres reset",positions
     return [param,positions]
 
-def checkParameters(param):
-    [par,pos]=param
-    [par2,pos2]=calcParameters()
+def checkParameters(CVparam=[],CVpos=[],jtPos=[],jtParam=[],angles=[]):
     res=True
-    for i,pari in enumerate(par):
-        if abs(pari-par2[i])>0.02:
-            res=False
-    for i,posi in enumerate(pos):
-        if abs(norm(posi)-norm(pos2[i]))>0.02:
-            res=False
+    if CVparam!=[]:
+        newCVparam=calcCVParameters()
+        for (cvparam,cvparamnew) in zip(CVparam,newCVparam):
+            if abs(cvparam-cvparamnew)>0.00000001:
+                res=False
+                print "cv param bouge"
+    if CVpos!=[]:
+        newCVpos=calcCVPositions()
+        for (cvpos,cvposnew) in zip(CVpos,newCVpos):
+            if norm(sub(cvpos,cvposnew))>0.00000001:
+                res=False
+                print "cv position bouge"
+    if jtPos!=[]:
+        newJtpos=JointPositions()
+        for (jtpos,jtposnew) in zip(jtPos,newJtpos):
+            if norm(sub(jtpos,jtposnew))>0.00000001:
+                res=False
+                print "joint position bouge"
+    if jtParam!=[]:
+        newJtparam=JointParameters()
+        for (jtparam,jtparamnew) in zip(jtParam,newJtparam):
+            if abs(jtparam-jtparamnew)>0.00000001:
+                res=False
+                print "joint param bouge"      
+    if angles!=[]:
+        newAngles=calcAngles()
+        for(i,j) in zip(angles,newAngles):
+            if abs(i-j)>0.0000001:
+                res=False
+                print "angles ont bouge"
+     
     if not res:
         print "Modele bouge avec le calcul"
         print par,"\n",par2
         print pos,"\n",pos2
-    else :
-        print "Modele semble stable"
+    #else :
+    #    print "Modele semble stable"
 
 def getChainLength(L=[]):
     len=0

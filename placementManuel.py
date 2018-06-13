@@ -183,12 +183,10 @@ def placementManuel(nBoucles=3):
 
     for i in range(nBoucles):
         sliderGrp.do("posture",posture)
-
-        #print calcCVParameters() 
         sliderGrp.do("compression",compression)
         sliderGrp.do("compression g",compressionGD)
-        #sliderGrp.do("rot dorsale",angleDorsales)
-        #sliderGrp.do("rot dorsale g ",angleDorsalesGD)
+            #sliderGrp.do("rot dorsale",angleDorsales)
+            #sliderGrp.do("rot dorsale g ",angleDorsalesGD)
         sliderGrp.do("rot cervicale",angleCervicales)  
         sliderGrp.do("rot cervicale g",angleCervicalesGD)  
         #sliderGrp.do("rot t",angleTete)
@@ -251,7 +249,7 @@ def placementManuel(nBoucles=3):
 
     for i in range(1):
         scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
-        sliderGrp.do("scale",scaleFactor)
+        #sliderGrp.do("scale",scaleFactor)
     #    #translateToCV(4,3)    
     #    ##sliderGrp.do("compression",compression)
     #    ##correctionRot(sliderGrp,sliderGrp.string2num("compression"),locatorList[3])
@@ -308,15 +306,18 @@ def placementManuel(nBoucles=3):
 maxCV = MaxCV()
 
 sliderGrp=mainFct(pointOnCurveList,locatorList)
-par=calcParameters() 
+
+par=calcCVParameters() 
 CVpos=calcPosCV()
 jtPos=JointPositions()
-for i in range(0,10):
+jtParam=JointParameters()
+
+for i in range(0,1):
+    j=3
+    cmds.currentTime(j, edit=True )
     resetCurve(CVpos,jtPos)
-    sliderGrp=mainFct(pointOnCurveList,locatorList,True)
-    checkParameters(par)
-    j=9
-    cmds.currentTime(i, edit=True )
+    sliderGrp=mainFct(pointOnCurveList,locatorList,reset=True)
+    checkParameters(par,CVpos,jtPos,jtParam)
     placementManuel(1) 
 
 
@@ -334,8 +335,7 @@ for i in range(0,10):
         value=getFunctionName()
         cmds.setAttr('ValeurAngles.'+angleName,value)
         mel.eval('setKeyframe { "ValeurAngles.'+angleName+'" };')
-#resetCurve(par[1],jtPos)
-#sliderGrp=mainFct(pointOnCurveList,locatorList,True)
+
     
 #p("param fin",param)
         
