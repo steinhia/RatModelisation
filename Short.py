@@ -6,6 +6,7 @@ import maya.mel as mel
 import math
 import time
 import sys
+import inspect
 
 sys.path.append("C:/Users/alexandra/Documents/alexandra/scripts")
 
@@ -263,6 +264,39 @@ def CVParam(num):
 
 def MaxCV():
     return cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
+
+def calcAngles():
+    res=[]
+    res.append(getCurvePosition())
+    res.append(getCurveLength())
+    res.append(calcPosture())
+    res.append(calcOrientation())
+    res.append(angleCHB())
+    res.append(angleCGD())
+    res.append(angleLHB())
+    res.append(angleLGD())
+    res.append(angleTHB())
+    res.append(angleTGD())
+    res.append(angleComp())
+    res.append(angleCompGD())
+    return res
+
+def calcCVPositions():
+    res=[]
+    for i in range(MaxCV()):
+        res.append(position(curvei(i)))
+    return res
+
+def JointPositions():
+    res=[]
+    for i in range(29):
+        res.append(position('joint'+str(i+1)))
+    return res
+
+def JointParameters():
+    return map(getParameter,JointPositions())
+
+
     
         
 

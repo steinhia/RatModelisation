@@ -232,6 +232,7 @@ def calcParameters():
         pos=position(curvei(i))
         positions.append(pos)
         param.append(getParameter(pos))
+    #print "pos apres reset",positions
     return [param,positions]
 
 def checkParameters(param):

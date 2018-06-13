@@ -38,6 +38,21 @@ def ajustePos():
     select('curve1')
     cmds.move(subPos[0],subPos[1],subPos[2],r=True)
 
+def resetCurve(pos,jtPos):
+    for i,posi in enumerate(pos):
+        cmds.select(curvei(i))
+        cmds.move(posi[0],posi[1],posi[2])
+    for i,posj in enumerate(jtPos):
+        cmds.select('joint'+str(i+1))
+        cmds.move(posj[0],posj[1],posj[2])
+    #p("crv",calcParameters()[1])
+
+def calcPosCV():
+    pos=[]
+    for i in range(MaxCV()):
+        pos.append(position(curvei(i)))
+    return pos
+
 def calcPosRelatifHB(locator):
     locatorOnCurve=getPoint(getParameter(locator))
     tan=getTangent(locatorOnCurve)
@@ -209,20 +224,20 @@ def placementManuel(nBoucles=3):
 
     locatorList=map(position,[locator(i) for i in range(6)])
     for i in range(2):
-        scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
-        sliderGrp.do("scale",scaleFactor)
+        1#scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
+        #sliderGrp.do("scale",scaleFactor)
 
         #compression
-        correctionRot(sliderGrp,sliderGrp.string2num("compression"),locatorList[3])
-        correctionRot(sliderGrp,sliderGrp.string2num("compression gd"),locatorList[3],False)
+        #correctionRot(sliderGrp,sliderGrp.string2num("compression"),locatorList[3])
+        #correctionRot(sliderGrp,sliderGrp.string2num("compression gd"),locatorList[3],False)
 
         ##dorsales
         ##correctionRot(sliderGrp,sliderGrp.string2num("rot dorsale"),locatorList[1])
         ##correctionRot(sliderGrp,sliderGrp.string2num("rot dorsale gd"),locatorList[1])
 
         ##lombaires
-        correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire"),locatorList[0])
-        correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire gd"),locatorList[0])
+        #correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire"),locatorList[0])
+        #correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire gd"),locatorList[0])
 
         #cervicales
         #correctionRot(sliderGrp,sliderGrp.string2num("rot c"),locatorList[4],False)
@@ -291,54 +306,26 @@ def placementManuel(nBoucles=3):
     
 
 maxCV = MaxCV()
+
 sliderGrp=mainFct(pointOnCurveList,locatorList)
-for i in range(0,6):
-    j=160
+par=calcParameters() 
+CVpos=calcPosCV()
+jtPos=JointPositions()
+for i in range(0,10):
+    resetCurve(CVpos,jtPos)
+    sliderGrp=mainFct(pointOnCurveList,locatorList,True)
+    checkParameters(par)
+    j=9
     cmds.currentTime(i, edit=True )
     placementManuel(1) 
-    posC=getCurvePosition()
-    #sliderGrp.do("y",posC[1]+0.1*i)
-
-    #for i in range(27):
-        #mel.eval('setKeyframe { "joint'+str(i+1)+'.translateX" };')
-        #mel.eval('setKeyframe { "joint'+str(i+1)+'.translateY" };')
-        #mel.eval('setKeyframe { "joint'+str(i+1)+'.translateZ" };')
-    #mel.eval(string)
 
 
-    # setKey CV points
-    #select('curve1')
+   
+
+    # setKey 
     cmds.setKeyframe("curve1",breakdown=False,hierarchy="None",controlPoints=True,shape=False)
-    #print "keycrv1",cmds.keyframe( 'curve1', time=(0,60), query=True, valueChange=True, timeChange=True);
-    #print "position courbe",position('curve1'),getCurvePosition()
     for k in range(0,MaxCV()):
-        #cmds.setKeyframe("|curve1|curveShape1.controlPoints["+str(k)+"]",breakdown=False)
         maya.mel.eval('setKeyframe -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {"curve1.cv['+str(k)+']"};')
-        #pos=position(curvei(k))
-        #print "keyframe",cmds.keyframe( 'curve1.cv['+str(k)+']', time=(0,60), query=True, valueChange=True, timeChange=True);
-
-
-
-
-        # xValue n'est pas la position ws
-        #cmds.setKeyframe( "curve1.cv["+str(k)+"]",breakdown=False, hierarchy="none",controlPoints=False,shape=False)
-    ##    cmds.setKeyframe("|curve1|curveShape1.controlPoints["+str(k)+"]",breakdown=False,at="yValue")
-    ##    cmds.setKeyframe( "curve1.cv["+str(k)+"]",breakdown=False, hierarchy="none",controlPoints=True,shape=True,at="yValue")
-    ##    cmds.setKeyframe("|curve1|curveShape1.controlPoints["+str(k)+"]",breakdown=False,at="zValue")
-    ##    cmds.setKeyframe( "curve1.cv["+str(k)+"]",breakdown=False, hierarchy="none",controlPoints=True,shape=True,at="zValue")
-
-    #    pos=position(curvei(k))
-    #    cmds.connectAttr('curve1.controlPoints['+str(k)+'].xValue','cv'+str(k)+'.translateX',f=1)
-    #    cmds.connectAttr('curve1.controlPoints['+str(k)+'].yValue','cv'+str(k)+'.translateY',f=1)
-    #    cmds.connectAttr('curve1.controlPoints['+str(k)+'].zValue','cv'+str(k)+'.translateZ',f=1)
-    #    #print "setKeyframe {'curve1.controlPoints["+str(i)+"].xValue'};"
-    #    cmds.setKeyframe("cv"+str(k)+".translateX")
-    #    cmds.setKeyframe("cv"+str(k)+".translateY")
-    #    cmds.setKeyframe("cv"+str(k)+".translateZ")
-
-        #mel.eval('setKeyframe -breakdown 1 -hierarchy none -controlPoints 1 -shape 1 -attribute "translateX" curve1.cv['+str(i)+'];')
-
-
 
     # on enregistre les valeurs des angles
     angleNames=['angleCHB','angleDHB','angleLHB','angleCGD','angleDGD','angleLGD','Posture','Orientation','x','y','z','angleComp','angleCompGD']
@@ -347,6 +334,8 @@ for i in range(0,6):
         value=getFunctionName()
         cmds.setAttr('ValeurAngles.'+angleName,value)
         mel.eval('setKeyframe { "ValeurAngles.'+angleName+'" };')
+#resetCurve(par[1],jtPos)
+#sliderGrp=mainFct(pointOnCurveList,locatorList,True)
     
 #p("param fin",param)
         

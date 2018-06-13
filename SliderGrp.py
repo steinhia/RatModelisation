@@ -6,12 +6,14 @@ execfile(path+"affichage.py")
 class SliderGrp(object):
     def __init__(self,title,buttonList,checkBoxList,nameList,pointOnCurveList,locatorList):
         self.buttonList=buttonList
+        self.nameList=nameList
         self.pointOnCurveList=list(pointOnCurveList)
         self.locatorList=list(locatorList)
-        self.window = cmds.window(title =title,le=50,te=50,width=400,height=450)
+        self.window = cmds.window('window1',title =title,le=50,te=50,width=400,height=450)
         self.column = cmds.columnLayout()
         cmds.text("\nParametres de courbure ")
         cmds.rowColumnLayout(numberOfColumns=4,columnWidth=[(1,300),(2,300),(4,50),(5,50)])
+
         for i in range(2):
             buttonList[i].create()
             #buttonList[i].calcDroite()
@@ -19,6 +21,7 @@ class SliderGrp(object):
         cmds.text("\nMouvement de la colonne")
         cmds.rowColumnLayout(numberOfColumns=4,columnWidth=[(1,300),(2,300),(4,50),(5,50)])
         #param=calcParameters()
+
         for i in range(2,12):
             buttonList[i].create()
             #buttonList[i].calcDroite()
@@ -31,7 +34,7 @@ class SliderGrp(object):
             buttonList[i].create()
         cmds.setParent('..')
         cmds.rowColumnLayout(numberOfColumns=1,columnWidth=[(1,300)])
-   
+
         # CheckBox
         cmds.setParent('..')
         cmds.rowColumnLayout( numberOfColumns=2,columnWidth=[(1, 200),(2,200),(3,200)])
@@ -39,6 +42,8 @@ class SliderGrp(object):
             checkbox.create() 
         cmds.textFieldGrp( label='Select', text='???',editable=True , cc=select)
         cmds.showWindow(self.window)
+        for sliderDuo in self.buttonList[0].sliderList:
+            sliderDuo.update(True)
 
 
     def do(self,string,value,updateText=True):
@@ -89,6 +94,12 @@ class SliderGrp(object):
 
     def string2button(self,string):
         return self.buttonList[self.string2num(string)]
+
+    #def Reset(self):
+    #    for button in self.buttonList[:12]:
+    #        button.slider.setValue(0)
+    #    for sliderDuo in self.buttonList[0].sliderList:
+    #        sliderDuo.update(True)
 
 
 def clearSliderVariables(): 
@@ -145,7 +156,6 @@ def createWindows(nameList,pointOnCurveList,locatorList):
     for i,name in enumerate(names):
         sliderList.append(SliderDuo(name,fcts[i],crvInfos))
 
-
     buttonList=[]
     # courbures cervicale, dorsale et lombaire
     buttonList.append(courbureButton(sliderList,crvInfos,0,names[0],-1,1,-3,3,0,0.00000001,['ClusterCHandle'],getFunction=fcts[0]))
@@ -192,6 +202,7 @@ def createWindows(nameList,pointOnCurveList,locatorList):
     checkBoxList.append(functionCheckBox('Hide polygons',crvInfos,HidePolygons,ShowPolygons,True)) 
     # on cree le sliderGrp a partir de tous les sliders
     sliderGrp1=SliderGrp("Modelisation de la colonne du rat",buttonList,checkBoxList,nameList,pointOnCurveList,locatorList)
+
     colorSkeleton(nameList)
     return sliderGrp1
 

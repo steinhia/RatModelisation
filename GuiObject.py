@@ -262,11 +262,12 @@ class CheckBox(GuiObject):
         self.value=value
 
     def create(self):
+
         self.CheckBox=cmds.checkBox(label=self.label,onc=self.CheckFunction,ofc=self.UnCheckFunction,value=self.value)
         if(self.value):
-            self.actionCheck.execute()
+            self.actionCheck.execute(ajust=False)
         else:
-            self.actionUnCheck.execute()
+            self.actionUnCheck.execute(ajust=False)
             
     def update(self,*_):
         # rien a faire

@@ -21,7 +21,9 @@ class GeneralCalculs(object):
     def angleGDOriente(cls,v1,v2):
         return abs(valPrincDeg(angleHB(v1,v2)))*np.sign(valPrincDeg(angleHB(v1,[0,0,1])))
 
-    # seuls les points de controle ne bougent pas, alors que le parametre des vertebres change, ainsi que leur position -> TODO pas normal
+    # seuls les points de controle ne bougent pas, alors que le parametre des vertebres change
+    # donc positions C et L ont besoin d'etre tres stables -> points de controle et pas position de la vertebre
+    # pour la position de la courbe, besoin d'un point sur la courbe (scaling etc) -> plutot joint que cv point
     @classmethod
     def getPosition(cls,liste,num=-1,Cote="",*_):
         milieu=getMilieu(position(liste[0]),position(liste[3]))
@@ -31,6 +33,7 @@ class GeneralCalculs(object):
             elif Cote=="L":
                 return position(curvei(n2N('L6')))
             else:
+                #p("liste2",position(liste[2]),liste[2])
                 return position(liste[2])
         else:
             if Cote=="C":
@@ -74,7 +77,7 @@ class GeneralCalculs(object):
 
     @classmethod
     def getChainLength(cls,liste,*_):
-        posList=map(position,liste[:-1])
+        posList=map(position,liste)
         length=0
         for i in range(len(posList)-1):
             length+=distance(posList[i],posList[i+1])

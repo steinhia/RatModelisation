@@ -59,6 +59,14 @@ def keepParameters(param):
             if abs(param[i]-par)>0.0001:
                 recalageTangentWithName(param[i],par,i)
 
+def keepJointParameters(jtParam):
+    for i,paramJ in enumerate(jtParam):
+        oldJtPos=getPoint(paramJ)
+        newPoint=nearestPoint('joint'+str(i+1))
+        trans=sub(oldJtPos,newPoint)
+        cmds.select('joint'+str(i+1))
+        cmds.move(trans[0],trans[1],trans[2],r=True)
+
 
 def replaceC():
     for i in range(2):
@@ -86,7 +94,7 @@ def setCurvePosition(pos,Cote=""):
     posInit=getCurvePosition(Cote=Cote)
     translation=[pos[i]-posInit[i] for i in range(3)]
     select('curve1')
-    cmds.move(translation[0],translation[1],translation[2],'curve1',r=1)
+    cmds.move(translation[0],translation[1],translation[2],r=1)
 
 
 def setX(x,Cote=""):
@@ -144,7 +152,7 @@ def parabolicRotation(theta,list):
     tan=PostureVector()
     for i in range(n2N(end),n2N(begin)-1,-1):
         dist=(abs(i-nPivot))
-        angle=(math.atan(dist))**1*5
+        angle=(math.atan(dist))**2*5
         cmds.select(curvei(i))
         cmds.rotate(theta*angle,r=True,p=pivot,x=x,y=y,z=z)
         #if x==1:

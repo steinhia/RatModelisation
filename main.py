@@ -11,7 +11,15 @@ execfile(path+"createModel.py")
 execfile(path+"SliderGrp.py")
 execfile(path+"mesures.py")
 
-def mainFct(pointOnCurveList=['L6','L3','T11','T8','T2','C4','C0'],locatorList=['L6','L3','T8','T2','C0']):
+def createGraphicalElements(pointOnCurveList,nameList,tailList):
+    # position des points sur la courbe
+    pointOnCurveList=map(n2J,pointOnCurveList)
+    createJointChain(nameList,tailList)
+    bindSkeleton(nameList,tailList)
+    createCurve(pointOnCurveList,nameList)
+    colorSkeleton(nameList)
+
+def mainFct(pointOnCurveList=['L6','L3','T11','T8','T2','C4','C0'],locatorList=['L6','L3','T8','T2','C0'],reset=False):
 
     nameList=['obj55_VertebreL6_Exterior','obj53_VertebreL5_Exterior','obj51_VertebreL4_Exterior','obj50_VertebreL3_Exterior',\
                'obj98_VerterbreL2_Exterior','obj100_VertebreL1_Exterior','obj48_VertebreT13_Exterior','obj43_VertebreT12_Exterior',\
@@ -30,15 +38,10 @@ def mainFct(pointOnCurveList=['L6','L3','T11','T8','T2','C4','C0'],locatorList=[
              'obj92_VertebreCaudale24_Exterior','obj93_VertebreCaudale25_Exterior','obj94_VertebreCaudale26_Exterior','obj95_VertebreCaudale27_Exterior',\
              'obj96_VertebreCaudale28_Exterior']
 
-    ShowPolygons()
-    clearVariables(nameList)
-
-    # position des points sur la courbe
-    pointOnCurveList=map(n2J,pointOnCurveList)
-    createJointChain(nameList,tailList)
-    bindSkeleton(nameList,tailList)
-    createCurve(pointOnCurveList,nameList)
-    colorSkeleton(nameList)
+    if not reset:
+        ShowPolygons()
+        clearVariables(nameList)
+        createGraphicalElements(pointOnCurveList,nameList,tailList)
     sliderGrp=createWindows(nameList,pointOnCurveList,locatorList)
     return sliderGrp
 
@@ -53,7 +56,7 @@ nameList=['obj55_VertebreL6_Exterior','obj53_VertebreL5_Exterior','obj51_Vertebr
 pointOnCurveList=['L6','L4','T12','T7','T2','C5','C0','MilTete','Tete'] 
 locatorList=['L6','L4','T12','T2','C0','Tete'] 
   
-#sliderGrp=mainFct(pointOnCurveList,locatorList)
+sliderGrp=mainFct(pointOnCurveList,locatorList)
 #sliderGrp.do("scale",10)
 #sliderGrp.do("z",-5)
 

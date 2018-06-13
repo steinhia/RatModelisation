@@ -119,8 +119,7 @@ def ClosestPoint(curvePoint):
     posi=position(curvePoint)
     distMax=10000
     indiceMax=-1
-    maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
-    for i in range(maxCV):
+    for i in range(MaxCV()):
         temp=[position(curvei(i))[j]-posi[j] for j in range(3)]
         distTemp=math.sqrt(temp[0]**2+temp[1]**2+temp[2]**2)
         if (distTemp<distMax):

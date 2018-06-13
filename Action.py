@@ -33,15 +33,18 @@ class Action(object):
         orientation=calcOrientation(Cote=self.Cote)
         pos=getCurvePosition(Cote=self.Cote)
         posture=calcPosture(Cote=self.Cote)
-        setOrientation(0)
+        jtParam=JointParameters()
+        if self.mvt and ajust:
+            setOrientation(0)
         cmds.select(clear=True)
         self.executeAction(self)
-        if self.function!=setOrientation:
+        if self.function!=setOrientation and self.mvt and ajust:
             setOrientation(orientation,Cote=self.Cote)
         if self.mvt and ajust:
+            #keepJointParameters(jtParam)
             newPos=getCurvePosition(Cote=self.Cote)
             newPosture=calcPosture(Cote=self.Cote)
-        #    #keepParameters(param)
+        ##    #keepParameters(param)
             if not self.keepPosition:
                 self.crvInfos[1]=newPos
             if self.keepCurveLength:
@@ -60,6 +63,7 @@ class Action(object):
                 self.crvInfos[2]=newPosture
             if self.keepPosition:        
                 setCurvePosition(pos,Cote=self.Cote)
+        cmds.select(clear=True)
 
 
 
