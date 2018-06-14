@@ -270,8 +270,6 @@ def checkParameters(CVparam=[],CVpos=[],jtPos=[],jtParam=[],angles=[]):
      
     if not res:
         print "Modele bouge avec le calcul"
-        print par,"\n",par2
-        print pos,"\n",pos2
     #else :
     #    print "Modele semble stable"
 

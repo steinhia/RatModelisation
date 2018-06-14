@@ -79,7 +79,7 @@ class GeneralCalculs(object):
     def getChainLength(cls,liste,*_):
         posList=map(position,liste)
         length=0
-        for i in range(len(posList)-1):
+        for i in range(len(posList)-2):
             length+=distance(posList[i],posList[i+1])
             #p("dist",distance(posList[i],posList[i+1]),liste)
         return length
@@ -169,13 +169,13 @@ class GeneralCalculs(object):
 
     @classmethod
     def angleLHB(cls,liste,*_):
-        v=SubVector(liste[1],liste[0])
+        v=SubVector(liste[2],liste[0])
         return cls.angleHB2D(v)
         #return angleHB(SubVector(liste[1],liste[0]),cls.refVector(liste))
 
     @classmethod
     def angleLGD(cls,liste,*_):
-        v=SubVector(liste[1],liste[0])
+        v=SubVector(liste[2],liste[0])
         return cls.angleGD2D(liste,v)
         #return angleGD(SubVector(liste[1],liste[0]),cls.refVector(liste))
 

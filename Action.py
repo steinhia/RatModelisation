@@ -29,40 +29,43 @@ class Action(object):
 
 
     def execute(self,ajust=True,*_):
-        #param=calcCVParameters()
-        #orientation=calcOrientation(Cote=self.Cote)
-        #pos=getCurvePosition(Cote=self.Cote)
-        #posture=calcPosture(Cote=self.Cote)
-        #jtParam=JointParameters()
-        #if self.mvt and ajust:
-        #    setOrientation(0)
+        param=calcCVParameters()
+        orientation=calcOrientation(Cote=self.Cote)
+        pos=getCurvePosition(Cote=self.Cote)
+        posture=calcPosture(Cote=self.Cote)
+        lenC=getCurveLength()
+        lenChain=getChainLength()
+        jtParam=JointParameters()
+        if self.mvt and ajust:
+            setOrientation(0)
         cmds.select(clear=True)
         self.executeAction(self)
-        #if self.function!=setOrientation and self.mvt and ajust:
-        #    setOrientation(orientation,Cote=self.Cote)
-        #if self.mvt and ajust:
-        #    #keepJointParameters(jtParam)
-        #    newPos=getCurvePosition(Cote=self.Cote)
-        #    newPosture=calcPosture(Cote=self.Cote)
+        if self.function!=setOrientation and self.mvt and ajust:
+            setOrientation(orientation,Cote=self.Cote)
+        if self.mvt and ajust:
+            #keepJointParameters(jtParam)
+            newPos=getCurvePosition(Cote=self.Cote)
+            newPosture=calcPosture(Cote=self.Cote)
+            newLen=getCurveLength()
         ###    #keepParameters(param)
-        #    if not self.keepPosition:
-        #        self.crvInfos[1]=newPos
-        #    if self.keepCurveLength:
-        #        1#keepCLen(self.crvInfos[4])
-        #        keepLengthValue(self.crvInfos[0],[newPos])
-        #        keepChainLengthValue(self.crvInfos[3])
-        #    else:
-        #        cL=getCurveLength()
-        #        rapport=cL/self.crvInfos[0]
-        #        self.crvInfos[0]=cL
-        #        keepChainLengthValue(self.crvInfos[3]*rapport)
-        #        self.crvInfos[3]=getChainLength()
-        #    if self.keepPosture :
-        #       setPosture(posture,Cote=self.Cote)
-        #    else:
-        #        self.crvInfos[2]=newPosture
-        #    if self.keepPosition:        
-        #        setCurvePosition(pos,Cote=self.Cote)
+            #if not self.keepPosition:
+            #    self.crvInfos[1]=newPos
+            if self.keepCurveLength:
+                1#keepCLen(self.crvInfos[4])
+                keepLengthValue(lenC,getCurvePosition())
+                #keepChainLengthValue(lenChain)
+            else:
+                cL=getCurveLength()
+                rapport=cL/lenC
+                #self.crvInfos[0]=cL
+                #keepChainLengthValue(lenChain*rapport)
+                #self.crvInfos[3]=getChainLength()
+            if self.keepPosture :
+               setPosture(posture,Cote=self.Cote)
+            else:
+                1#self.crvInfos[2]=newPosture
+            if self.keepPosition:        
+                setCurvePosition(pos,Cote=self.Cote)
         cmds.select(clear=True)
 
 

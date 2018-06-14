@@ -38,13 +38,19 @@ def ajustePos():
     select('curve1')
     cmds.move(subPos[0],subPos[1],subPos[2],r=True)
 
-def resetCurve(pos,jtPos):
+def resetCurve(sliderGrp,length,pos,jtPos):
+    keepLengthValue(length)
+    #for button in sliderGrp.buttonList[:12]:
+    #    button.slider.setValue(0)
+    #    button.slider.update(True)
+        
     for i,posi in enumerate(pos):
         cmds.select(curvei(i))
         cmds.move(posi[0],posi[1],posi[2])
     for i,posj in enumerate(jtPos):
         cmds.select('joint'+str(i+1))
         cmds.move(posj[0],posj[1],posj[2])
+
     #p("crv",calcParameters()[1])
 
 def calcPosCV():
@@ -53,6 +59,8 @@ def calcPosCV():
         pos.append(position(curvei(i)))
     return pos
 
+# c'etait mieux quand on calculait l'angle
+# angle marche au bout -> mais pas bon avec l'orientation
 def calcPosRelatifHB(locator):
     locatorOnCurve=getPoint(getParameter(locator))
     tan=getTangent(locatorOnCurve)
@@ -62,7 +70,9 @@ def calcPosRelatifHB(locator):
     #    p("courbe dessous")
     #else:
     #    p("courbe dessus")
-    return [vect[1],norm(vect)]
+    #return [vect[1],norm(vect)]
+    #s= 1 if abs(calcOrientation())>90 else 1
+    return [angleHB(tan,vect),norm(vect)]
 
 def calcPosRelatifGD(locatorPosition):
     locatorOnCurve=getPoint(getParameter(locatorPosition))
@@ -81,13 +91,13 @@ def correctionRot(sliderGrp,nButton,locator,Croiss=True,precision=10):
     maxSlider=slider.maxValue
     if (relatif<0 and Croiss) or (relatif>0 and (not Croiss)) :
         maxi=min(valInit,maxSlider)
-        mini=max(valInit-dist*(slider.maxValue-slider.minValue),minSlider)
+        mini=max(valInit-dist*2*(slider.maxValue-slider.minValue),minSlider)
     else:
         mini=max(valInit,minSlider)
-        maxi=min(valInit+dist*(slider.maxValue-slider.minValue),maxSlider)
+        maxi=min(valInit+dist*2*(slider.maxValue-slider.minValue),maxSlider)
     i=0
     #p("mini",mini,maxi,relatif)
-    while abs(relatif)>0.0001 and i<precision:
+    while abs(relatif)>0.01 and i<precision:
         #p("i",i,relatif)
         i+=1
         test=(mini+maxi)/2
@@ -99,9 +109,9 @@ def correctionRot(sliderGrp,nButton,locator,Croiss=True,precision=10):
             maxi=test
         else:
             mini=test   
-    if distI<dist:
-        slider.setValue(valInit)
-        slider.update()
+    #if distI<dist:
+    #    slider.setValue(valInit)
+    #    slider.update()
         #p("correctionRot failed",slider.label)
     
 
@@ -182,25 +192,32 @@ def placementManuel(nBoucles=3):
     param=calcCVParameters()
 
     for i in range(nBoucles):
-        sliderGrp.do("posture",posture)
+        1# ne pas utiliser sliderGrp.do("posture",posture)
         sliderGrp.do("compression",compression)
         sliderGrp.do("compression g",compressionGD)
             #sliderGrp.do("rot dorsale",angleDorsales)
             #sliderGrp.do("rot dorsale g ",angleDorsalesGD)
         sliderGrp.do("rot cervicale",angleCervicales)  
         sliderGrp.do("rot cervicale g",angleCervicalesGD)  
-        #sliderGrp.do("rot t",angleTete)
-        #sliderGrp.do("rot tete g",angleTeteGD)
+        # on place la tete que a la fin par meilleur passage, sinon prochaine rotation cervicale va tout bousiller -> TODO ameliorer ce probleme
+        sliderGrp.do("rot t",angleTete)
+        sliderGrp.do("rot tete g",angleTeteGD)
         sliderGrp.do("rot lombaire",angleLombaires) 
+        p("angleL",str(angleLHB()))
         sliderGrp.do("rot lombaire GD",angleLombairesGD) 
+        p("angleL",str(angleLHB()))
         
     sliderGrp.do("orientation",orientation)
-    sliderGrp.do("posture",posture)
+    p("angleL1",str(angleLHB()))
+    #ne pas utiliser sliderGrp.do("posture",posture)
+    p("angleL2",str(angleLHB()))
     scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
     sliderGrp.do("scale",scaleFactor)
+    p("angleL3",str(angleLHB()))
     sliderGrp.do("x",pos[0])
     sliderGrp.do("y",pos[1])
     sliderGrp.do("z",pos[2])
+    p("angleL4",str(angleLHB()))
 
     #ReplacePoints(pointOnCurveList,nameList)
 
@@ -222,7 +239,7 @@ def placementManuel(nBoucles=3):
 
     locatorList=map(position,[locator(i) for i in range(6)])
     for i in range(2):
-        1#scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
+        scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
         #sliderGrp.do("scale",scaleFactor)
 
         #compression
@@ -234,7 +251,7 @@ def placementManuel(nBoucles=3):
         ##correctionRot(sliderGrp,sliderGrp.string2num("rot dorsale gd"),locatorList[1])
 
         ##lombaires
-        #correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire"),locatorList[0])
+        #correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire"),locatorList[0],precision=10)
         #correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire gd"),locatorList[0])
 
         #cervicales
@@ -247,7 +264,7 @@ def placementManuel(nBoucles=3):
 
 
 
-    for i in range(1):
+    for i in range(0):
         scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
         #sliderGrp.do("scale",scaleFactor)
     #    #translateToCV(4,3)    
@@ -303,7 +320,7 @@ def placementManuel(nBoucles=3):
     return evaluation
     
 
-maxCV = MaxCV()
+maxCV = MaxCV
 
 sliderGrp=mainFct(pointOnCurveList,locatorList)
 
@@ -311,21 +328,24 @@ par=calcCVParameters()
 CVpos=calcPosCV()
 jtPos=JointPositions()
 jtParam=JointParameters()
+length=getCurveLength()
 
 for i in range(0,1):
-    j=3
-    cmds.currentTime(j, edit=True )
-    resetCurve(CVpos,jtPos)
+    j=0
+    #cmds.currentTime(j, edit=True )
+    resetCurve(sliderGrp,length,CVpos,jtPos)
     sliderGrp=mainFct(pointOnCurveList,locatorList,reset=True)
     checkParameters(par,CVpos,jtPos,jtParam)
-    placementManuel(1) 
+    placementManuel(2) 
+    #p("pos finale CV",calcPosCV())
+    #p("pos finale Joints",JointPositions())
 
 
    
 
     # setKey 
     cmds.setKeyframe("curve1",breakdown=False,hierarchy="None",controlPoints=True,shape=False)
-    for k in range(0,MaxCV()):
+    for k in range(MaxCV()):
         maya.mel.eval('setKeyframe -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {"curve1.cv['+str(k)+']"};')
 
     # on enregistre les valeurs des angles

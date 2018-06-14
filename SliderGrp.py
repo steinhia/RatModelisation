@@ -175,18 +175,18 @@ def createWindows(nameList,pointOnCurveList,locatorList):
     buttonList.append(functionButton(sliderList,crvInfos,7,names[7],-10,10,-60,60,0,0.00000001,setFcts[5],getFunction=fcts[7],Cote="C"))
 
     # compression
-    buttonList.append(functionButton(sliderList,crvInfos,8,names[8],-200,100,-50,85,0,0.00000001,setFcts[6],crvInfos,getFunction=fcts[8],getFunctionArgs=crvInfos,Cote="L"))
-    buttonList.append(functionButton(sliderList,crvInfos,9,names[9],-10,70,0,80,0,0.00000001,setFcts[7],crvInfos,getFunction=fcts[9],getFunctionArgs=crvInfos,Cote="L"))
+    buttonList.append(functionButton(sliderList,crvInfos,8,names[8],-200,100,-40,40,0,0.00000001,setFcts[6],crvInfos,getFunction=fcts[8],getFunctionArgs=crvInfos,Cote=""))
+    buttonList.append(functionButton(sliderList,crvInfos,9,names[9],0,40,0,80,0,0.00000001,setFcts[7],crvInfos,getFunction=fcts[9],getFunctionArgs=crvInfos,Cote=""))
 
     #tete
-    buttonList.append(functionButton(sliderList,crvInfos,10,names[10],-18,18,-60,60,0,0.00000001,setFcts[8],getFunction=angleTGD,Cote="L"))
-    buttonList.append(functionButton(sliderList,crvInfos,11,names[11],-18,18,-60,60,0,0.00000001,setFcts[9],getFunction=angleTHB,Cote="L")) 
+    buttonList.append(functionButton(sliderList,crvInfos,10,names[10],-20,20,-90,90,0,0.00000001,setFcts[8],getFunction=angleTGD,Cote="L"))
+    buttonList.append(functionButton(sliderList,crvInfos,11,names[11],-20,20,-90,90,0,0.00000001,setFcts[9],getFunction=angleTHB,Cote="L")) 
 
 
     # position
-    buttonList.append(postureButton(sliderList,crvInfos,12,names[12],-40,40,0.00000001,["curve1"],crvInfos[1][0],functionSet=setFcts[10],keepPosition=False,keepPosture=False,keepCurveLength=False))
-    buttonList.append(postureButton(sliderList,crvInfos,13,names[13],-40,40,0.00000001,["curve1"],crvInfos[1][1],functionSet=setFcts[11],keepPosition=False,keepPosture=False,keepCurveLength=False))
-    buttonList.append(postureButton(sliderList,crvInfos,14,names[14],-40,40,0.00000001,["curve1"],crvInfos[1][2],functionSet=setFcts[12],keepPosition=False,keepPosture=False,keepCurveLength=False))
+    buttonList.append(postureButton(sliderList,crvInfos,12,names[12],-60,60,0.00000001,["curve1"],crvInfos[1][0],functionSet=setFcts[10],keepPosition=False,keepPosture=False,keepCurveLength=False))
+    buttonList.append(postureButton(sliderList,crvInfos,13,names[13],-60,60,0.00000001,["curve1"],crvInfos[1][1],functionSet=setFcts[11],keepPosition=False,keepPosture=False,keepCurveLength=False))
+    buttonList.append(postureButton(sliderList,crvInfos,14,names[14],-60,60,0.00000001,["curve1"],crvInfos[1][2],functionSet=setFcts[12],keepPosition=False,keepPosture=False,keepCurveLength=False))
     # scaling
     buttonList.append(postureButton(sliderList,crvInfos,15,names[15],1,30,0.00000001,["curve1"],valueReset=getCurveLength(),valueSetTo=1,functionSet=setFcts[13],keepCurveLength=False,keepPosition=True,keepPosture=True,args=[],name2="set to 1"))
     # posture generale
