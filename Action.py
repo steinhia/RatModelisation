@@ -1,5 +1,5 @@
 # une classe pour une action a executer
-
+# -*- coding: utf-8 -*-
 #from functools import partial
 #import maya.cmds as cmds
 #import maya.mel as mel
@@ -47,9 +47,6 @@ class Action(object):
             newPos=getCurvePosition(Cote=self.Cote)
             newPosture=calcPosture(Cote=self.Cote)
             newLen=getCurveLength()
-        ###    #keepParameters(param)
-            #if not self.keepPosition:
-            #    self.crvInfos[1]=newPos
             if self.keepCurveLength:
                 1#keepCLen(self.crvInfos[4])
                 keepLengthValue(lenC,getCurvePosition())

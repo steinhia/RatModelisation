@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # raccourcis pour fonctions longues a ecrire comme position, valeur de slider etc
 
 from functools import partial
