@@ -129,6 +129,21 @@ def angleHB(v1,v2):
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleHB2D(positionList,v)
 
+def angleHB2D(v):
+    l=norm([v[0],v[2]])
+    if l==0:
+        return 90*np.sign(v[1])
+    return angle2D([l,0],[l,v[1]])
+
+def angleHB2DWithSign(v):
+    if abs(v[0])>abs(v[0]):
+        l=norm([v[0],v[2]])*np.sign(v[0])
+    else:
+        l=norm([v[0],v[2]])*np.sign(v[2])
+    if l==0:
+        return 90*np.sign(v[1])
+    return angle2D([abs(l),0],[l,v[1]])
+
 def angleHBOld(v1,v2):
     angle1=RadToDeg(math.atan2(v1[1],v1[2]))
     angle2=RadToDeg(math.atan2(v2[1],v2[2]))
@@ -240,33 +255,33 @@ def checkParameters(CVparam=[],CVpos=[],jtPos=[],jtParam=[],angles=[]):
     if CVparam!=[]:
         newCVparam=calcCVParameters()
         for (cvparam,cvparamnew) in zip(CVparam,newCVparam):
-            if abs(cvparam-cvparamnew)>0.00000001:
+            if abs(cvparam-cvparamnew)>0.01:
                 res=False
-                print "cv param bouge"
+                print "cv param bouge",cvparam,cvparamnew
     if CVpos!=[]:
         newCVpos=calcCVPositions()
         for (cvpos,cvposnew) in zip(CVpos,newCVpos):
-            if norm(sub(cvpos,cvposnew))>0.00000001:
+            if norm(sub(cvpos,cvposnew))>0.01:
                 res=False
-                print "cv position bouge"
+                print "cv position bouge",cvpos,cvposnew
     if jtPos!=[]:
         newJtpos=JointPositions()
         for (jtpos,jtposnew) in zip(jtPos,newJtpos):
-            if norm(sub(jtpos,jtposnew))>0.00000001:
+            if norm(sub(jtpos,jtposnew))>0.01:
                 res=False
-                print "joint position bouge"
+                print "joint position bouge",jtpos,jtposnew
     if jtParam!=[]:
         newJtparam=JointParameters()
         for (jtparam,jtparamnew) in zip(jtParam,newJtparam):
-            if abs(jtparam-jtparamnew)>0.00000001:
+            if abs(jtparam-jtparamnew)>0.01:
                 res=False
-                print "joint param bouge"      
+                print "joint param bouge",jtparam,jtparamnew     
     if angles!=[]:
         newAngles=calcAngles()
         for(i,j) in zip(angles,newAngles):
             if abs(i-j)>0.0000001:
                 res=False
-                print "angles ont bouge"
+                print "angles ont bouge",i,j
      
     if not res:
         print "Modele bouge avec le calcul"
