@@ -24,7 +24,7 @@ class SliderGrp(object):
 
         for i in range(2,12):
             buttonList[i].create()
-            buttonList[i].calcDroite()
+            #buttonList[i].calcDroite()
         #checkParameters(param)
 
         cmds.setParent('..')
@@ -163,8 +163,8 @@ def createWindows(nameList,pointOnCurveList,locatorList):
 
     # TODO garder les 2 keep=False fait planter les tests
     # cervicales GD HB TODO position tete par rapport  au sol ou aux dorsales (tenir tete droite) -> 2 fonctions align with et setstraight ?
-    buttonList.append(functionButton(sliderList,crvInfos,2,names[2],-20,15,-60,60,0,0.00000001,setFcts[0],getFunction=fcts[2],Cote="L"))
-    buttonList.append(functionButton(sliderList,crvInfos,3,names[3],-20,15,-60,60,0,0.00000001,setFcts[1],getFunction=fcts[3],Cote="L"))
+    buttonList.append(functionButton(sliderList,crvInfos,2,names[2],-10,10,-60,60,0,0.00000001,setFcts[0],getFunction=fcts[2],Cote="L"))
+    buttonList.append(functionButton(sliderList,crvInfos,3,names[3],-10,10,-60,60,0,0.00000001,setFcts[1],getFunction=fcts[3],Cote="L"))
 
     # dorsales GD HB -> dorsales HB = dorsales + lombaires
     buttonList.append(functionButton(sliderList,crvInfos,4,names[4],-8,8,-30,50,0,0.00000001,setFcts[2],getFunction=fcts[4],Cote="C"))
@@ -175,8 +175,8 @@ def createWindows(nameList,pointOnCurveList,locatorList):
     buttonList.append(functionButton(sliderList,crvInfos,7,names[7],-10,10,-60,60,0,0.00000001,setFcts[5],getFunction=fcts[7],Cote="C"))
 
     # compression
-    buttonList.append(functionButton(sliderList,crvInfos,8,names[8],-200,100,-40,40,0,0.00000001,setFcts[6],crvInfos,getFunction=fcts[8],getFunctionArgs=crvInfos,Cote=""))
-    buttonList.append(functionButton(sliderList,crvInfos,9,names[9],0,40,0,80,0,0.00000001,setFcts[7],crvInfos,getFunction=fcts[9],getFunctionArgs=crvInfos,Cote=""))
+    buttonList.append(functionButton(sliderList,crvInfos,8,names[8],-200,100,-40,40,0,0.00000001,setFcts[6],crvInfos,getFunction=fcts[8],getFunctionArgs=crvInfos,Cote="L"))
+    buttonList.append(functionButton(sliderList,crvInfos,9,names[9],0,40,0,80,0,0.00000001,setFcts[7],crvInfos,getFunction=fcts[9],getFunctionArgs=crvInfos,Cote="L"))
 
     #tete
     buttonList.append(functionButton(sliderList,crvInfos,10,names[10],-18,10,-90,90,0,0.00000001,setFcts[8],getFunction=angleTGD,Cote="L"))

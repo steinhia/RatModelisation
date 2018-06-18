@@ -286,7 +286,7 @@ def parabolicRotation(theta,list):
     tan=PostureVector()
     for i in range(n2N(end),n2N(begin)-1,-1):
         dist=(abs(i-nPivot))
-        angle=(math.atan(dist))**2*5
+        angle=math.atan(dist)*5 # carre c'est trop
         cmds.select(curvei(i)) # pas de add car la rotation est deja calculee en fonction de la distance
         cmds.rotate(theta*angle,r=True,p=pivot,x=x,y=y,z=z)
         #if x==1:
@@ -303,9 +303,9 @@ def rotLHB(theta,L=[]):
 def rotLGD(theta,L=[]):
     parabolicRotation(theta,[pointOnCurveList[3],pointOnCurveList[0],pointOnCurveList[2],0,1,0]) # L3 L6 L6
 def rotCHB(theta,L=[]):
-    parabolicRotation(theta,[pointOnCurveList[5],pointOnCurveList[6],pointOnCurveList[8],1,0,0]) # C7 C7 C0
+    parabolicRotation(theta,[pointOnCurveList[4],pointOnCurveList[5],pointOnCurveList[8],1,0,0]) # C7 C7 C0
 def rotCGD(theta,L=[]):
-    parabolicRotation(theta,[pointOnCurveList[5],pointOnCurveList[6],pointOnCurveList[8],0,1,0])
+    parabolicRotation(theta,[pointOnCurveList[4],pointOnCurveList[5],pointOnCurveList[8],0,1,0])
 def rotDHB(theta,L=[]):
     parabolicRotation(theta,[num2Name(2),num2Name(0),num2Name(1),1,0,0])
 def rotDGD(theta,L=[]):
@@ -320,11 +320,7 @@ def rotComp(value,crvInfos=[]):
 
     #parabolicRotation(value*0.5,[num2Name(2),num2Name(0),num2Name(1),1,0,0])
 
-
-
-
-
-    # premiere partie, rotation dans un sens
+   # premiere partie, rotation dans un sens
     nBegin=n2N(pointOnCurveList[2])
     nEnd=n2N(pointOnCurveList[4]) # TODO ou 5
     nMax= cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")-1
@@ -352,7 +348,7 @@ def rotComp(value,crvInfos=[]):
     cmds.select(clear=True)
     cmds.select(curvei(2),curvei(4))
     pivot=position(curvei(3))
-    #cmds.rotate(-value*0.1,0,0,pivot=pivot)
+    cmds.rotate(-value*0.1,0,0,pivot=pivot)
     cmds.select(clear=True)
 
     cmds.select(curvei(5))

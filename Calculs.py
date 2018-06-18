@@ -120,6 +120,16 @@ def calcCyphoseD(L=[]):
 def calcLordoseL(L=[]):
     return -calcCourbure([pointOnCurveList[3],pointOnCurveList[1]])
 
+
+
+def projPlanPosture(v,Cote=""):
+    positionList=[num2Name(i) for i in range(6)]
+    return GeneralCalculs.projPlanPosture(positionList,v,Cote)
+
+def projPlanPosture3D(p1,p2,Cote=""):
+    positionList=[num2Name(i) for i in range(6)]
+    return GeneralCalculs.projPlanPosture3D(positionList,p1,p2,Cote)
+
 def angleGD(v1,v2):
     v=SubVector(v1,v2)
     positionList=[num2Name(i) for i in range(6)]
@@ -134,6 +144,10 @@ def angleHB2D(v):
     if l==0:
         return 90*np.sign(v[1])
     return angle2D([l,0],[l,v[1]])
+
+def vect3DTo2D(v):
+    return [norm([v[0],v[2]]),v[1]]
+    
 
 def angleHB2DWithSign(v):
     if abs(v[0])>abs(v[0]):

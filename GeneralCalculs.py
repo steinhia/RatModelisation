@@ -53,6 +53,19 @@ class GeneralCalculs(object):
         else:
             return normalize(SubVector(liste[3],liste[1]))
 
+
+    @classmethod
+    def PointOnPlane(cls,liste,Cote="",*_):
+        #posture change orientation, pas l'inverse
+        if Cote=="C":
+            p=position(curvei(n2N('C0')))
+        elif Cote=="L":
+            p=position(curvei(n2N('L6')))
+        else:
+            p=position(curvei(n2N('T12')))
+        return p
+
+
     @classmethod
     def getPosture(cls,liste,Cote="",*_):
         if Cote=="C":
@@ -110,9 +123,9 @@ class GeneralCalculs(object):
         proj=cls.projPlanPosture(liste,v)
         return angle2D(proj,[v[0],v[2]])
 
-    # on projette le vecteur sur le plan forme par la verticale et le postureVector
+    # on projette le vecteur sur le plan formé par la verticale et le postureVector
     @classmethod
-    def projPlanPosture(cls,liste,v):
+    def projPlanPosture(cls,liste,v,Cote=""):
         [a,b,c]=cls.PostureVector(liste)
         if a!=0:
             r=c/a
@@ -124,7 +137,24 @@ class GeneralCalculs(object):
         return [p0,p2]
             #return np.degrees(angle(v,[0,v[1],v[2]]))
             #return np.degrees(angle(v,[p0,v[1],p2]))
-
+        normal=[-c,0,a]
+        M=position(liste[1])
+        MA=sub(M,v)
+        dist=np.dot(normal,MA)/np.norm(normal)
+        
+    # on projette le vecteur sur le plan formé par la verticale et le postureVector
+    @classmethod
+    def projPlanPosture3D(cls,liste,p1,p2,Cote=""):
+        [a,b,c]=cls.PostureVector(liste,Cote)
+        normal=[-c,0,a]
+        M=cls.PointOnPlane(liste)
+        MA1=sub(p1,M)
+        MA2=sub(p2,M)
+        dist1=np.dot(normal,MA1)/np.linalg.norm(normal)
+        dist2=np.dot(normal,MA2)/np.linalg.norm(normal)
+        p1Proj=sub(p1,pdt(dist1,normal))
+        p2Proj=sub(p2,pdt(dist2,normal))
+        return sub(p2Proj,p1Proj)
 
 
     @classmethod

@@ -62,30 +62,34 @@ def calcPosCV():
 
 # c'etait mieux quand on calculait l'angle
 # angle marche au bout -> mais pas bon avec l'orientation
-def calcPosRelatifHB(locator):
-    locatorOnCurve=getPoint(getParameter(locator))
-    tan=getTangent(locatorOnCurve)
+def calcPosRelatifHB(locator,Cote=""):
+    parLocOnCurve=getParameter(locator)
+    locatorOnCurve=getPoint(parLocOnCurve)
     vect=sub(locator,locatorOnCurve)
-    #p("locOn",locatorOnCurve,vect,tan)
-    #if angleHB2DWithSign(vect)-angleHB2DWithSign(tan)<0:
+    vectProj=vect3DTo2D(projPlanPosture3D(locatorOnCurve,locator,Cote))
+    #p("vProj",vectProj)
+    tan=getTangent(locatorOnCurve)
+    tanProj=vect3DTo2D(projPlanPosture3D(locatorOnCurve,sum(locatorOnCurve,tan),Cote))
+    #p("locOn",locatorOnCurve,vectProj,tanProj,tan)
+    #p("vect",str(angleHB2D(vect)),"tan",str(angleHB2D(tan)))
+    #return [vect[1],norm(vect)]
+    #if angle2D(vectProj,tanProj)<0:
     #    p("courbe dessous")
     #else:
     #    p("courbe dessus")
-    #p(str(angleHB2D(vect)),str(angleHB2D(tan)))
-    #p(vect)
-    #return [vect[1],norm(vect)]
-    #s= 1 if abs(calcOrientation())>90 else 1
-    return [angleHB2DWithSign(tan)-angleHB2DWithSign(vect),norm(vect)]
+    #return [angleHB2D(vectProj)-angleHB2D(tanProj),norm(vectProj)]
+    return [angle2D(vectProj,tanProj),norm(vectProj)]
 
-def calcPosRelatifGD(locatorPosition):
+def calcPosRelatifGD(locatorPosition,Cote=""):
     locatorOnCurve=getPoint(getParameter(locatorPosition))
     tan=getTangent(locatorOnCurve)
     vect=sub(locatorOnCurve,locatorPosition)
     return [angleGD(tan,vect),norm(vect)]
 
-def correctionRot(sliderGrp,nButton,locator,Croiss=True,precision=10):
+# garde en memoire le meilleur si marche pas bien
+def correctionRot(sliderGrp,nButton,locator,Croiss=True,precision=10,Cote=""):
     f = calcPosRelatifHB if nButton%2==sliderGrp.string2num("rot c")%2  else calcPosRelatifGD
-    [relatif,dist]=f(locator)
+    [relatif,dist]=f(locator,Cote="")
     distI=dist
     button=sliderGrp.buttonList[nButton]
     slider=button.slider
@@ -94,28 +98,30 @@ def correctionRot(sliderGrp,nButton,locator,Croiss=True,precision=10):
     maxSlider=slider.maxValue
     if (relatif<0 and Croiss) or (relatif>0 and (not Croiss)) :
         maxi=min(valInit,maxSlider)
-        mini=max(valInit-dist*2*(slider.maxValue-slider.minValue),minSlider)
+        mini=max(valInit-dist*(slider.maxValue-slider.minValue),minSlider)
     else:
         mini=max(valInit,minSlider)
-        maxi=min(valInit+dist*2*(slider.maxValue-slider.minValue),maxSlider)
+        maxi=min(valInit+dist*(slider.maxValue-slider.minValue),maxSlider)
     i=0
-    #p("mini",mini,maxi,relatif)
-    while abs(relatif)>0.01 and i<precision:
-        #p("i",i,relatif)
+    #print "miniinit",mini,maxi,relatif
+    while i<precision and abs(relatif)>0.01:
         i+=1
-        test=(mini+maxi)/2
-        slider.setValue(test)
+        testV=(mini+maxi)/2
+        #print "mini",mini,maxi
+        slider.setValue(testV)
         slider.update()
         [relatif,dist]=f(locator)
-        #p("i",i,relatif)
         if (relatif<0 and Croiss) or (relatif>0 and (not Croiss)):
-            maxi=test
+            maxi=testV
         else:
-            mini=test   
-    if distI<dist:
-        slider.setValue(valInit)
-        slider.update()
-        p("correctionRot failed",slider.label)
+            mini=testV 
+
+
+
+    #if distI<dist:
+    #    slider.setValue(valInit)
+    #    slider.update()
+    #    p("correctionRot failed",slider.label)
     
 
 def placeTete():
@@ -208,7 +214,7 @@ def placementManuel(nBoucles=3):
             #sliderGrp.do("rot dorsale",angleDorsales)
             #sliderGrp.do("rot dorsale g ",angleDorsalesGD)
         sliderGrp.do("rot cervicale",angleCervicales)  
-        #sliderGrp.do("rot cervicale g",angleCervicalesGD)  
+        sliderGrp.do("rot cervicale g",angleCervicalesGD)  
         # on place la tete que a la fin par meilleur passage, sinon prochaine rotation cervicale va tout bousiller -> TODO ameliorer ce probleme
         #sliderGrp.do("rot t",angleTete)
         #sliderGrp.do("rot tete g",angleTeteGD)
@@ -240,9 +246,44 @@ def placementManuel(nBoucles=3):
     #p("lordoseL1",calcLordoseL())
     #sliderGrp.do("courbure l",lordoseC)        
     #p("lordoseL2",calcLordoseL())
-
+    
     locatorList=map(position,[locator(i) for i in range(6)])
-    for i in range(2):
+
+    for i in range(1):
+        scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
+        sliderGrp.do("scale",scaleFactor)
+
+
+        for i in range(1):
+            translateToCV(6,4)
+        ## du coup on translate la courbe pour qu'elle repasse par le localisateur milieu, mais pas nécessairement
+            translateToLocator(2)
+            #correctionRot(sliderGrp,sliderGrp.string2num("compression"),locatorList[3])
+            ##correctionRot(sliderGrp,sliderGrp.string2num("compression g"),locatorList[3])
+            #correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire g"),locatorList[0],True)
+            #correctionRot(sliderGrp,sliderGrp.string2num("rot c"),locatorList[4],False)
+            #correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire"),locatorList[0],True)
+
+        # on translate la courbe pour que la courbe coincide parfaitement au niveau des lombaires
+        # a la fin, la courbe ne passera peut etre plus par le localisateur
+        #sliderGrp.do("rot lombaire",angleLombaires) 
+        for i in range(2):
+            translateToCV(0,0)
+        ## du coup on translate la courbe pour qu'elle repasse par le localisateur milieu, mais pas nécessairement
+            translateToLocator(2)
+            correctionRot(sliderGrp,sliderGrp.string2num("compression"),locatorList[3])
+            ##correctionRot(sliderGrp,sliderGrp.string2num("compression g"),locatorList[3])
+            correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire g"),locatorList[0],True)
+            correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire"),locatorList[0],True)
+            correctionRot(sliderGrp,sliderGrp.string2num("rot c"),locatorList[4],False)
+
+
+
+            #translateToLocator(3)
+            #translateToLocator(2)
+
+
+    for i in range(1):
         scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
         #sliderGrp.do("scale",scaleFactor)
 
@@ -268,36 +309,7 @@ def placementManuel(nBoucles=3):
 
 
 
-    for i in range(2):
-        scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
-        #sliderGrp.do("scale",scaleFactor)
 
-        # on translate la courbe pour que la courbe coincide parfaitement au niveau des lombaires
-        # a la fin, la courbe ne passera peut etre plus par le localisateur
-        #sliderGrp.do("rot lombaire",angleLombaires) 
-        for i in range(2):
-            translateToCV(0,0)
-        ## du coup on translate la courbe pour qu'elle repasse par le localisateur milieu, mais pas nécessairement
-            translateToLocator(2)
-            #correctionRot(sliderGrp,sliderGrp.string2num("compression"),locatorList[3])
-            #correctionRot(sliderGrp,sliderGrp.string2num("compression g"),locatorList[3])
-            correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire"),locatorList[0],True)
-            correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire g"),locatorList[0],True)
-            correctionRot(sliderGrp,sliderGrp.string2num("rot c"),locatorList[4],False)
-        # une fois qu'on a trouvé le meilleur point, recalcule les angles ?? hehehe
-        for i in range(2):
-            translateToCV(6,4)
-        ## du coup on translate la courbe pour qu'elle repasse par le localisateur milieu, mais pas nécessairement
-            translateToLocator(2)
-            #correctionRot(sliderGrp,sliderGrp.string2num("compression"),locatorList[3])
-            #correctionRot(sliderGrp,sliderGrp.string2num("compression g"),locatorList[3])
-
-            #correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire g"),locatorList[0],True)
-            correctionRot(sliderGrp,sliderGrp.string2num("rot c"),locatorList[4],False)
-            correctionRot(sliderGrp,sliderGrp.string2num("rot lombaire"),locatorList[0],True)
-
-            #translateToLocator(3)
-            #translateToLocator(2)
 
     #keepParameters(param)
         #pour que tous les locators passent exactement par la courbe
@@ -339,12 +351,12 @@ jtParam=JointParameters()
 length=getCurveLength()
 
 for i in range(0,1):
-    j=60
+    j=160
     cmds.currentTime(j, edit=True )
     #resetCurve(sliderGrp,length,CVpos,jtPos)
     #sliderGrp=mainFct(pointOnCurveList,locatorList,reset=True)
     #checkParameters(par,CVpos,jtPos,jtParam)
-    placementManuel(1) 
+    placementManuel(2) 
     #p("pos finale CV",calcPosCV())
     #p("pos finale Joints",JointPositions())
 
