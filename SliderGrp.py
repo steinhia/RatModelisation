@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-path="C:/Users/alexandra/Documents/alexandra/scripts/"
+path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"GuiObject.py")
 execfile(path+"Mouvements.py")
 execfile(path+"affichage.py")
 
 class SliderGrp(object):
-    def __init__(self,title,buttonList,checkBoxList,nameList,pointOnCurveList,locatorList):
+    def __init__(self,title,buttonList,checkBoxList,nameList,pointOnCurveList,locatorList,droites=[]):
         self.buttonList=buttonList
+        self.droites=droites
         self.nameList=nameList
         self.pointOnCurveList=list(pointOnCurveList)
         self.locatorList=list(locatorList)
@@ -20,11 +21,15 @@ class SliderGrp(object):
         cmds.setParent('..')
         cmds.text("\nMouvement de la colonne")
         cmds.rowColumnLayout(numberOfColumns=4,columnWidth=[(1,300),(2,300),(4,50),(5,50)])
-        #param=calcParameters()
 
-        for i in range(2,12):
-            buttonList[i].create()
-            #buttonList[i].calcDroite()
+        if self.droites==[]:
+            for i in range(2,12):
+                buttonList[i].create()
+                #self.droites.append(buttonList[i].calcDroite())
+        else :
+            for i in range(2,12):
+                buttonList[i].create()
+                #buttonList[i].affectDroite(self.droites[i-2])
         #checkParameters(param)
 
         cmds.setParent('..')
@@ -59,25 +64,25 @@ class SliderGrp(object):
         #    return [1]
         if "courbure l" in string :
             return 1
-        if "rot cervicale g" in string :
+        if "rotcgd" in string :
             return 2
-        if "rot c" in string :
+        if "rotchb" in string :
             return 3
-        if "rot dorsale g" in string :
+        if "rotdgd" in string :
             return 4
-        if "rot d" in string :
+        if "rotdhb" in string :
             return 5
-        if "rot lombaire g" in string :
+        if "rotlgd" in string :
             return 6
-        if "rot l" in string :
+        if "rotlhb" in string :
             return 7
         if "compression g" in string :
             return 8
         if "comp" in string :
             return 9
-        if "rot tete g" in string:
+        if "rottgd" in string:
             return 10
-        if "rot t" in string:
+        if "rotthb" in string:
             return 11
         if "x" in string :
             return 12
@@ -91,16 +96,11 @@ class SliderGrp(object):
             return 16
         if "orientation" in string :
             return 17
+        else:
+            print "mauvaise operation : ",string
 
     def string2button(self,string):
         return self.buttonList[self.string2num(string)]
-
-    #def Reset(self):
-    #    for button in self.buttonList[:12]:
-    #        button.slider.setValue(0)
-    #    for sliderDuo in self.buttonList[0].sliderList:
-    #        sliderDuo.update(True)
-
 
 def clearSliderVariables(): 
     blinnList=cmds.ls('*blinn*')
@@ -139,7 +139,7 @@ def functionCheckBox(label,crvInfos,functionCheck,functionUnCheck,value,args=[])
     return CheckBox(label,actionCheck,actionUnCheck,value)
 
        
-def createWindows(nameList,pointOnCurveList,locatorList):
+def createWindows(nameList,pointOnCurveList,locatorList,droites=[]):
     clearSliderVariables()
     crvInfos=[getCurveLength(),getCurvePosition(),calcPosture(),getChainLength(),getCLen()]
 
@@ -171,8 +171,8 @@ def createWindows(nameList,pointOnCurveList,locatorList):
     buttonList.append(functionButton(sliderList,crvInfos,5,names[5],-8,8,-30,50,0,0.00000001,setFcts[3],getFunction=fcts[5],Cote="C"))
 
     #lombaires
-    buttonList.append(functionButton(sliderList,crvInfos,6,names[6],-10,10,-60,60,0,0.00000001,setFcts[4],getFunction=fcts[6],Cote="C"))
-    buttonList.append(functionButton(sliderList,crvInfos,7,names[7],-10,10,-60,60,0,0.00000001,setFcts[5],getFunction=fcts[7],Cote="C"))
+    buttonList.append(functionButton(sliderList,crvInfos,6,names[6],-15,15,-60,60,0,0.00000001,setFcts[4],getFunction=fcts[6],Cote="C"))
+    buttonList.append(functionButton(sliderList,crvInfos,7,names[7],-15,15,-60,60,0,0.00000001,setFcts[5],getFunction=fcts[7],Cote="C"))
 
     # compression
     buttonList.append(functionButton(sliderList,crvInfos,8,names[8],-200,100,-40,40,0,0.00000001,setFcts[6],crvInfos,getFunction=fcts[8],getFunctionArgs=crvInfos,Cote="L"))
@@ -201,7 +201,7 @@ def createWindows(nameList,pointOnCurveList,locatorList):
     checkBoxList.append(functionCheckBox('Hide joints',crvInfos,HideSkeletonJoints,ShowSkeletonJoints,True))
     checkBoxList.append(functionCheckBox('Hide polygons',crvInfos,HidePolygons,ShowPolygons,True)) 
     # on cree le sliderGrp a partir de tous les sliders
-    sliderGrp1=SliderGrp("Modelisation de la colonne du rat",buttonList,checkBoxList,nameList,pointOnCurveList,locatorList)
+    sliderGrp1=SliderGrp("Modelisation de la colonne du rat",buttonList,checkBoxList,nameList,pointOnCurveList,locatorList,droites)
 
     colorSkeleton(nameList)
     return sliderGrp1

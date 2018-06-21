@@ -8,9 +8,9 @@
 import sys
 #import time
 
-sys.path.append("C:\Users\alexandra\Documents\alexandra\scripts")
+sys.path.append("C:\Users\alexa\Documents\alexandra\scripts")
 
-path="C:/Users/alexandra/Documents/alexandra/scripts/"
+path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"Mouvements.py")
 execfile(path+"Short.py")
 

@@ -6,10 +6,10 @@
 #import math
 import sys
 
-sys.path.append("C:/Users/alexandra/Documents/alexandra/scripts")
+sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
 
 
-path="C:/Users/alexandra/Documents/alexandra/scripts/"
+path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"Calculs.py")
 
 def clearVariables(nameList=[]):

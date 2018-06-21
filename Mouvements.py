@@ -1,8 +1,8 @@
 import sys
 
 
-sys.path.append("C:/Users/alexandra/Documents/alexandra/scripts")
-path="C:/Users/alexandra/Documents/alexandra/scripts/"
+sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
+path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"Calculs.py")
 
 #TODO pos different
@@ -371,7 +371,7 @@ def rotComp(value,crvInfos=[]):
 
 
 def rotCompGD(value,L=[]):
-    parabolicRotation(value*0.05,[num2Name(2),num2Name(3),pointOnCurveList[8],0,1,0])
+    parabolicRotation(value*0.05,[num2Name(1),num2Name(2),pointOnCurveList[8],0,1,0])
 
 
 

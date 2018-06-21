@@ -4,10 +4,10 @@
 import sys
 #import time
 
-sys.path.append("C:/Users/alexandra/Documents/alexandra/scripts")
+sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
 
 
-path="C:/Users/alexandra/Documents/alexandra/scripts/"
+path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"Action.py")
 import time
 import numpy as np
@@ -78,10 +78,14 @@ class Button(GuiObject):
         #    print "droite ok",slider.label, r_value, slope, intercept
         if abs(slope)>0.1:
             slider.dte=[slope,intercept]
+        else:
+            slider.dte=[]
         slider.setValue(valInit)
         slider.update(False,True) # TODO le deuxieme false ?
+        return slider.dte
 
-        #p("self droite",slider.dte)
+    def affectDroite(self,droite):
+        self.slider.dte=droite
 
     # reset -> valueReset=2.53...
     # set to 0 -> valueSetTo=0

@@ -9,9 +9,9 @@ import time
 import sys
 import inspect
 
-sys.path.append("C:/Users/alexandra/Documents/alexandra/scripts")
+sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
 
-path="C:/Users/alexandra/Documents/alexandra/scripts/"
+path="C:/Users/alexa/Documents/alexandra/scripts/"
 
 
 #pointOnCurveList=map(n2J,['L6','L3','T11','T8','T2','C4','C1'])

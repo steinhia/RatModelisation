@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import sys
-sys.path.append("C:/Users/alexandra/Documents/alexandra/scripts")
+sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
 import time
 import maya.mel as mel
 import numpy as np
 
-path="C:/Users/alexandra/Documents/alexandra/scripts/"
+path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"Short.py")
 
 

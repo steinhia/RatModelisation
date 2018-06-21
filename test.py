@@ -1,12 +1,12 @@
 import sys
-sys.path.append("C:/Users/alexandra/Documents/alexandra/scripts")
-path="C:/Users/alexandra/Documents/alexandra/scripts/"
+sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
+
+
 
 
 def test():
-
-    for i in range(1):
-        execfile(path+"Short.py")
+    path="C:/Users/alexa/Documents/alexandra/scripts/"
+    execfile(path+"TestClass.py")
 
 #print "\n"
 
@@ -44,15 +44,15 @@ def test():
    #         cmds.select(i)
    #         cmds.rename(i,newName)
    #       
-    param=calcCVParameters()
-    print param
+   # param=calcCVParameters()
+   # print param
     
     #recalageTangent(n2N('L3'),1)
     
-    param2=calcCVParameters()
-    print param2
-    keepParameters(param)
-    print calcCVParameters()
+    #param2=calcCVParameters()
+    #print param2
+    #keepParameters(param)
+    #print calcCVParameters()
         
 
 test()

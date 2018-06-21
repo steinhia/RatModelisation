@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
   
 import sys
-
-sys.path.append("C:/Users/alexandra/Documents/alexandra/scripts")
-
+sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
 
 
-path="C:/Users/alexandra/Documents/alexandra/scripts/"
+
+path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"createModel.py")
 execfile(path+"SliderGrp.py")
 execfile(path+"mesures.py")
@@ -19,7 +18,7 @@ def createGraphicalElements(pointOnCurveList,nameList,tailList):
     createCurve(pointOnCurveList,nameList)
     colorSkeleton(nameList)
 
-def mainFct(pointOnCurveList=['L6','L3','T11','T8','T2','C4','C0'],locatorList=['L6','L3','T8','T2','C0'],reset=False):
+def mainFct(pointOnCurveList=['L6','L3','T11','T8','T2','C4','C0'],locatorList=['L6','L3','T8','T2','C0'],reset=False,droites=[]):
 
     nameList=['obj55_VertebreL6_Exterior','obj53_VertebreL5_Exterior','obj51_VertebreL4_Exterior','obj50_VertebreL3_Exterior',\
                'obj98_VerterbreL2_Exterior','obj100_VertebreL1_Exterior','obj48_VertebreT13_Exterior','obj43_VertebreT12_Exterior',\
@@ -42,7 +41,7 @@ def mainFct(pointOnCurveList=['L6','L3','T11','T8','T2','C4','C0'],locatorList=[
         ShowPolygons()
         clearVariables(nameList)
         createGraphicalElements(pointOnCurveList,nameList,tailList)
-    sliderGrp=createWindows(nameList,pointOnCurveList,locatorList)
+    sliderGrp=createWindows(nameList,pointOnCurveList,locatorList,droites)
     return sliderGrp
 
 
@@ -56,7 +55,7 @@ nameList=['obj55_VertebreL6_Exterior','obj53_VertebreL5_Exterior','obj51_Vertebr
 pointOnCurveList=['L6','L4','T11','T8','T2','C5','C0','MilTete','Tete'] 
 locatorList=['L6','L4','T11','T2','C0','Tete'] # T3 t13 t19tc0 c6
   
-sliderGrp=mainFct(pointOnCurveList,locatorList)
+#sliderGrp=mainFct(pointOnCurveList,locatorList)
 #sliderGrp.do("scale",10)
 #sliderGrp.do("z",-5)
 

@@ -1,7 +1,8 @@
 import sys
-sys.path.append("C:/Users/alexandra/Documents/alexandra/scripts")
+import numpy as np
+#sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
 
-path="C:/Users/alexandra/Documents/alexandra/scripts/"
+path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"Short.py")
 
 def placeLocator(num=-1):
@@ -9,7 +10,7 @@ def placeLocator(num=-1):
         result = cmds.promptDialog(message='Num of Locator:',button=['OK', 'Cancel'],\
 		defaultButton='OK',cancelButton='Cancel',dismissString='Cancel')
         if result == 'OK' :
-            while ((num<0 or num>4) and i<10):
+            while (num<0 or num>4):
 	            num=int(cmds.promptDialog(query=True, text=True))
         if num!=-1:
             # ray1
