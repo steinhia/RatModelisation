@@ -221,6 +221,12 @@ class SliderOffset(Slider):
     def sliderValue(self,*_):
         return Slider.sliderValue(self)
 
+    def setActionWithoutMoving(self,testValue,ajust=True):
+        self.action.offset=self.value-testValue
+        self.value=testValue
+        self.action.execute(ajust=ajust)
+
+
     def setValue(self,val,*_):
         Slider.setValue(self,val)
 

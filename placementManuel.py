@@ -119,8 +119,6 @@ def correctionRot(sliderGrp,nButton,locator,Croiss=True,precision=10,Cote=""):
         else:
             mini=testV 
 
-
-
     #if distI<dist:
     #    slider.setValue(valInit)
     #    slider.update()
@@ -185,9 +183,8 @@ def calcAngleDorsales():
     v2=sub(position(curvei(3)),position(curvei(2)))
     print angleHB(v1,v2)
 
-#53 ou 83 selon pendant ou avant
-def placementManuel(nBoucles=3):
 
+def placeAnglesCalcules(sliderGrp,nBoucles):
     compression=angleCompLoc()
     compressionGD=angleCompGDLoc()
 
@@ -220,8 +217,8 @@ def placementManuel(nBoucles=3):
         sliderGrp.do("rotCHB",angleCervicales)  
         sliderGrp.do("rotCGD",angleCervicalesGD)  
         # on place la tete que a la fin par meilleur passage, sinon prochaine rotation cervicale va tout bousiller -> TODO ameliorer ce probleme
-        sliderGrp.do("rotTHB",angleTete)
-        sliderGrp.do("rotTGD",angleTeteGD)
+        #sliderGrp.do("rotTHB",angleTete)
+        #sliderGrp.do("rotTGD",angleTeteGD)
         sliderGrp.do("rotLHB",angleLombaires) 
         sliderGrp.do("rotLGD",angleLombairesGD) 
         
@@ -233,27 +230,7 @@ def placementManuel(nBoucles=3):
     sliderGrp.do("y",pos[1])
     sliderGrp.do("z",pos[2])
 
-    #p("temps premier placement : ",time.time()-t)
-    t=time.time()
-
-    #ReplacePoints(pointOnCurveList,nameList)
-
-     #calcul des distances des locators a la courbe
-
-    #locatorOnCurveList=map(getPoint,map(getParameter,locatorList))
-    #diff=[sub(locatorList[i],locatorOnCurveList[i]) for i in range(5)]
-    #res=[]
-    #for i,posi in enumerate(diff):
-    #    if norm(posi)>0.03:
-    #        res.append(True)
-    #    else:
-    #        res.append(False)
-
-    #lordoseC=calcLordoseC()
-    #p("lordoseL1",calcLordoseL())
-    #sliderGrp.do("courbure l",lordoseC)        
-    #p("lordoseL2",calcLordoseL())
-    
+def Correction(sliderGrp):
     locatorList=map(position,[locator(i) for i in range(6)])
 
     for i in range(1):
@@ -272,6 +249,8 @@ def placementManuel(nBoucles=3):
             correctionRot(sliderGrp,sliderGrp.string2num("rotLHB"),locatorList[0],True)
             correctionRot(sliderGrp,sliderGrp.string2num("rotCHB"),locatorList[4],False)
             correctionRot(sliderGrp,sliderGrp.string2num("rotCGD"),locatorList[4],False)
+            correctionRot(sliderGrp,sliderGrp.string2num("rotTHB"),locatorList[5],False)
+            correctionRot(sliderGrp,sliderGrp.string2num("rotTGD"),locatorList[5],False)
 
         #p("temps placementC : ",time.time()-t)
         t=time.time()
@@ -279,6 +258,8 @@ def placementManuel(nBoucles=3):
 
         # on translate la courbe pour que la courbe coincide parfaitement au niveau des lombaires
         for i in range(1):
+            scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
+            sliderGrp.do("scale",scaleFactor)
             translateToCV(0,0)
         ## on translate la courbe pour qu'elle repasse par le localisateur milieu
             translateToLocator(2)
@@ -288,13 +269,20 @@ def placementManuel(nBoucles=3):
             correctionRot(sliderGrp,sliderGrp.string2num("rotLHB"),locatorList[0],True)
             correctionRot(sliderGrp,sliderGrp.string2num("rotCHB"),locatorList[4],False)
             correctionRot(sliderGrp,sliderGrp.string2num("rotCGD"),locatorList[4],False)
+            correctionRot(sliderGrp,sliderGrp.string2num("rotTHB"),locatorList[5],False)
+            correctionRot(sliderGrp,sliderGrp.string2num("rotTGD"),locatorList[5],False)
+        for _ in range(2):
+            translateToLocator(3)
+            translateToLocator(4)
+            translateToLocator(1)
+            translateToLocator(2)
 
             #translateToLocator(3)
             #translateToLocator(2)
         #p("temps placementL : ",time.time()-t)
 
 
-    for i in range(2):
+    for i in range(0):
         scaleFactor=locatorLength()/locatorCurveLength()*getCurveLength()
         sliderGrp.do("scale",scaleFactor)
         t=time.time()
@@ -316,38 +304,13 @@ def placementManuel(nBoucles=3):
         #correctionRot(sliderGrp,sliderGrp.string2num("rotCGD"),locatorList[4],False)
 
         #tete
-        correctionRot(sliderGrp,sliderGrp.string2num("rotTHB"),locatorList[5],False)
-        correctionRot(sliderGrp,sliderGrp.string2num("rotTGD"),locatorList[5],False)
+        #correctionRot(sliderGrp,sliderGrp.string2num("rotTHB"),locatorList[5],False)
+        #correctionRot(sliderGrp,sliderGrp.string2num("rotTGD"),locatorList[5],False)
         #p("temps placementT : ",time.time()-t)
 
 
 
 
-    #keepParameters(param)
-        #pour que tous les locators passent exactement par la courbe
-        #for i in range(1):
-        ##    correctionPos(sliderGrp,1,position("locatorAngle1"))
-        # position precise
-        #ajustePosCurvePoints()
-        ##### position sur la courbe
-        #correctionPos(sliderGrp,2,position(locator(2)))
-        #correctionPos(sliderGrp,1,position(locator(1)))
-        #correctionPos(sliderGrp,4,position(locator(3)))
-        #correctionPos(sliderGrp,0,position(locator(0)))
-        #correctionPos(sliderGrp,6,position(locator(4)))
-        #correctionPos(sliderGrp,3,position("locatorD"))
-
-        ## recale les 3 points hors extremites donc les cv se sont petit a petit decales
-        #recalageTangentSansLocator(oldParamC,5)
-        ###recalageTangentSansLocator(oldParamD,3)
-        #recalageTangent(n2N('T10'),2)
-        #recalageTangent(n2N('L3'),1)
-        #recalageTangent(n2N('T2'),4)
-
-    #p("duree placage : "+str(time.time()-t))      
-    #p("param debut",param) 
-    #a=Evaluate()
-    evaluation=1#a.execute()
     cmds.select(clear=True)
     return evaluation
     
@@ -364,12 +327,15 @@ jtParam=JointParameters()
 length=getCurveLength()
 
 for i in range(0,1):
-    j=160
+    j=0
     cmds.currentTime(j, edit=True )
-    #resetCurve(sliderGrp,length,CVpos,jtPos)
+    resetCurve(sliderGrp,length,CVpos,jtPos)
     #sliderGrp=mainFct(pointOnCurveList,locatorList,reset=True,droites=droites)
     #checkParameters(par,CVpos,jtPos,jtParam)
-    placementManuel(1) 
+    placeAnglesCalcules(sliderGrp,1)
+    Correction(sliderGrp)
+    #a=Evaluate()
+    evaluation=1#a.execute()
     #p("pos finale CV",calcPosCV())
     #p("pos finale Joints",JointPositions())
 
@@ -401,4 +367,49 @@ for i in range(0,1):
 
 
 
- 
+
+
+
+
+    #ReplacePoints(pointOnCurveList,nameList)
+
+     #calcul des distances des locators a la courbe
+
+    #locatorOnCurveList=map(getPoint,map(getParameter,locatorList))
+    #diff=[sub(locatorList[i],locatorOnCurveList[i]) for i in range(5)]
+    #res=[]
+    #for i,posi in enumerate(diff):
+    #    if norm(posi)>0.03:
+    #        res.append(True)
+    #    else:
+    #        res.append(False)
+
+    #lordoseC=calcLordoseC()
+    #p("lordoseL1",calcLordoseL())
+    #sliderGrp.do("courbure l",lordoseC)        
+    #p("lordoseL2",calcLordoseL())
+    
+
+        #keepParameters(param)
+        #pour que tous les locators passent exactement par la courbe
+        #for i in range(1):
+        ##    correctionPos(sliderGrp,1,position("locatorAngle1"))
+        # position precise
+        #ajustePosCurvePoints()
+        ##### position sur la courbe
+        #correctionPos(sliderGrp,2,position(locator(2)))
+        #correctionPos(sliderGrp,1,position(locator(1)))
+        #correctionPos(sliderGrp,4,position(locator(3)))
+        #correctionPos(sliderGrp,0,position(locator(0)))
+        #correctionPos(sliderGrp,6,position(locator(4)))
+        #correctionPos(sliderGrp,3,position("locatorD"))
+
+        ## recale les 3 points hors extremites donc les cv se sont petit a petit decales
+        #recalageTangentSansLocator(oldParamC,5)
+        ###recalageTangentSansLocator(oldParamD,3)
+        #recalageTangent(n2N('T10'),2)
+        #recalageTangent(n2N('L3'),1)
+        #recalageTangent(n2N('T2'),4)
+
+    #p("duree placage : "+str(time.time()-t))      
+    #p("param debut",param) 

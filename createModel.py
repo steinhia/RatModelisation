@@ -96,11 +96,12 @@ def createJointChain(nameList,tailList):
     createJoint([-20.65, 31.59, 11.94])
     cmds.parent('joint27','joint26')
     #mil tete
-    createJoint([-20.84, 31.588147934268626, 13.395785063192402])
-    cmds.parent('joint28','joint27')
+    #createJoint([-20.84, 31.588147934268626, 13.395785063192402])
+    #createJoint([-20.65, 31.59, 11.94])
+    #cmds.parent('joint28','joint27')
     # tete
     createJoint([-21.187440416932613, 31.778254582324013, 19.917467419599596])
-    cmds.parent('joint29','joint28')
+    cmds.parent('joint28','joint27')
 
 
         
@@ -116,7 +117,10 @@ def bindSkeleton(nameList,tailList):
     cmds.bindSkin()
 
 def ClosestPoint(curvePoint):
-    posi=position(curvePoint)
+    if isinstance(curvePoint,str):
+        posi=position(curvePoint)
+    else :
+        posi=curvePoint
     distMax=10000
     indiceMax=-1
     for i in range(MaxCV()):
@@ -129,7 +133,7 @@ def ClosestPoint(curvePoint):
 
     
 def createCurve(pointOnCurveList,nameList):   
-    cmds.select('joint1','joint29', add=1)
+    cmds.select('joint1','joint28', add=1)
     handle=cmds.ikHandle(n='ikHandle',ns=1, sol='ikSplineSolver',simplifyCurve=False)
     if('curve1' in cmds.listRelatives('objGroup')):
         cmds.parent( 'curve1', world=True )
@@ -148,13 +152,19 @@ def createCurve(pointOnCurveList,nameList):
     cmds.delete('curve1' , ch = 1)
     KeepList=[]
     maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
+    p(pointOnCurveList)
     for curvePoint in pointOnCurveList :
         KeepList.append(ClosestPoint(curvePoint))
+    point=getPoint(getParameter(position(n2J('C0')))+0.1)
+    p("pt",point)
+    KeepList.append(ClosestPoint(point))
     for i in range(maxCV-2,1,-1):
         newMaxCV=cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
         if(i not in KeepList and i!= newMaxCV):
             cmds.delete(curvei(i))
     cmds.delete('curve1.cv[1]')
+    #cmds.insertKnotCurve( 'curve1.u[15]', ch=True, rpo=True) 
+    #cmds.hardenPointCurve( 'curve1.cv[6]', ch=True, rpo=True, m=-2 )
 
     ##cree point de multiplicite 2 au niveau de la tete
     #paramTete=cmds.getAttr("curve1.maxValue")

@@ -287,7 +287,7 @@ def calcCVPositions():
 
 def JointPositions():
     res=[]
-    for i in range(29):
+    for i in range(28):
         res.append(position('joint'+str(i+1)))
     return res
 

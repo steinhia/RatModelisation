@@ -102,6 +102,7 @@ class SliderGrp(object):
     def string2button(self,string):
         return self.buttonList[self.string2num(string)]
 
+
 def clearSliderVariables(): 
     blinnList=cmds.ls('*blinn*')
     for i in blinnList:
