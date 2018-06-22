@@ -87,4 +87,8 @@ def HalfChainLengtL():
 def RapportChainLength():
     locatorList=[locator(i) for i in range(6)]
     return GeneralCalculs.RapportChainLength(locatorList)
+
+def createLocatorPlane():
+    locatorList=[locator(i) for i in range(6)]
+    return GeneralCalculs.createPlane(locatorList)
     

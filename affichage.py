@@ -130,3 +130,18 @@ def colorSkeleton(nameList):
     mel.eval("sets -e -forceElement blinn3SG;")
     mel.eval("setAttr \"blinn3.color\" -type double3 0 0 1 ;")
     cmds.select( clear=True )  
+
+def HidePlane():
+    if cmds.objExists('locatorPlane'):
+        cmds.hide('locatorPlane')
+    if cmds.objExists('curvePlane'):
+        cmds.hide('curvePlane')
+
+def ShowPlane():
+    if cmds.objExists('locatorPlane'):
+        cmds.showHidden('locatorPlane')
+    if cmds.objExists('curvePlane'):
+        cmds.showHidden('curvePlane')
+
+
+

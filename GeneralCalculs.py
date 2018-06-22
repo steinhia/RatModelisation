@@ -15,12 +15,12 @@ class GeneralCalculs(object):
     #def __init__(self,liste,*_):
     #    liste=liste # noms
 
-    @classmethod
-    def angleHBOriente(cls,v1,v2):
-        return abs(valPrincDeg(angleHB(v1,v2)))*np.sign(valPrincDeg(angleHB(v1,[0,0,1])))
-    @classmethod
-    def angleGDOriente(cls,v1,v2):
-        return abs(valPrincDeg(angleHB(v1,v2)))*np.sign(valPrincDeg(angleHB(v1,[0,0,1])))
+    #@classmethod
+    #def angleHBOriente(cls,v1,v2):
+    #    return abs(valPrincDeg(angleHB(v1,v2)))*np.sign(valPrincDeg(angleHB(v1,[0,0,1])))
+    #@classmethod
+    #def angleGDOriente(cls,v1,v2):
+    #    return abs(valPrincDeg(angleHB(v1,v2)))*np.sign(valPrincDeg(angleHB(v1,[0,0,1])))
 
     # seuls les points de controle ne bougent pas, alors que le parametre des vertebres change
     # donc positions C et L ont besoin d'etre tres stables -> points de controle et pas position de la vertebre
@@ -30,40 +30,58 @@ class GeneralCalculs(object):
         milieu=getMilieu(position(liste[0]),position(liste[3]))
         if num<0 or num>2:
             if Cote=="C":
-                return position(curvei(n2N('C0')))
+                return CVPosition(liste[4])
             elif Cote=="L":
-                return position(curvei(n2N('L6')))
+                return CVPosition(liste[0])
             else:
                 #p("liste2",position(liste[2]),liste[2])
-                return position(liste[2])
+                return CVPosition(liste[2])
         else:
             if Cote=="C":
-                return position(curvei(n2N('C0')))[num]
+                return CVPosition(liste[4])[num]
             elif Cote=="L":
-                return position(curvei(n2N('L6')))[num]
+                return CVPosition(liste[0])[num]
             else:
-                return position(liste[2])[num]
+                return CVPosition(liste[2])[num]
 
     @classmethod
     def PostureVector(cls,liste,Cote="",*_):
         if Cote=="C":
-            return normalize(SubVector(curvei(n2N('C0')),curvei(n2N('T2'))))
+            return normalize(sub(CVPosition(liste[4]),CVPosition(liste[3])))
         elif Cote=="L":
-            return normalize(SubVector(curvei(n2N('L1')),curvei(n2N('L6'))))
+            return normalize(sub(CVPosition(liste[0]),CVPosition(liste[2])))
         else:
-            return normalize(SubVector(liste[3],liste[1]))
+            return normalize(sub(CVPosition(liste[3]),CVPosition(liste[0])))
 
 
     @classmethod
     def PointOnPlane(cls,liste,Cote="",*_):
         #posture change orientation, pas l'inverse
         if Cote=="C":
-            p=position(curvei(n2N('C0')))
+            p=CVPosition(liste[4])
         elif Cote=="L":
-            p=position(curvei(n2N('L6')))
+            p=CVPosition(liste[0])
         else:
-            p=position(curvei(n2N('T12')))
+            p=CVPosition(liste[2])
         return p
+
+    @classmethod
+    def createPlane(cls,liste):
+        normal=np.cross(PostureVector(),[0,1,0])
+        if 'locator' in liste[0]:
+            name='locatorPlane'
+            if cmds.objExists('locatorPlane'):
+                cmds.delete('locatorPlane')
+        else:
+            name='curvePlane'
+            if cmds.objExists('curvePlane'):
+                cmds.delete('curvePlane')
+        cmds.polyPlane(n=name,axis=normal, sx=10, sy=10, w=50, h=50)
+        center=cmds.getAttr(name+'.center')[0]
+        posL6=CVPosition(liste[0])
+        t=sub(posL6,center)
+        cmds.select(name)
+        cmds.move(t[0],t[1],t[2],r=True)
 
 
     @classmethod
@@ -112,6 +130,7 @@ class GeneralCalculs(object):
     def proj2D(cls,v):
         return [v[0],v[2]]
 
+    # que des l positifs, evite les angles au dessus de 90°, c'est ce qu'on veut pourles angles C
     @classmethod
     def angleHB2D(cls,v):
         l=norm([v[0],v[2]])
@@ -145,15 +164,10 @@ class GeneralCalculs(object):
     # on projette le vecteur sur le plan formé par la verticale et le postureVector
     @classmethod
     def projPlanPosture3D(cls,liste,p1,p2,Cote=""):
-        [a,b,c]=cls.PostureVector(liste,Cote)
-        normal=[-c,0,a]
+        normal=np.cross(PostureVector(),[0,1,0])
         M=cls.PointOnPlane(liste)
-        MA1=sub(p1,M)
-        MA2=sub(p2,M)
-        dist1=np.dot(normal,MA1)/np.linalg.norm(normal)
-        dist2=np.dot(normal,MA2)/np.linalg.norm(normal)
-        p1Proj=sub(p1,pdt(dist1,normal))
-        p2Proj=sub(p2,pdt(dist2,normal))
+        p1Proj=projPoint3D(p1,M,normal,Cote)
+        p2Proj=projPoint3D(p2,M,normal,Cote)
         return sub(p2Proj,p1Proj)
 
 

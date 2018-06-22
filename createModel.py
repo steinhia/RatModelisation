@@ -152,11 +152,9 @@ def createCurve(pointOnCurveList,nameList):
     cmds.delete('curve1' , ch = 1)
     KeepList=[]
     maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
-    p(pointOnCurveList)
     for curvePoint in pointOnCurveList :
         KeepList.append(ClosestPoint(curvePoint))
     point=getPoint(getParameter(position(n2J('C0')))+0.1)
-    p("pt",point)
     KeepList.append(ClosestPoint(point))
     for i in range(maxCV-2,1,-1):
         newMaxCV=cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")

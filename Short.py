@@ -90,7 +90,13 @@ def position(name):
         return getMilieu(position('C0'),position('Tete'))
     else:
         return -1
-    # nom de la vertebre (objet existe pas)       
+    # nom de la vertebre (objet existe pas)  
+   
+    
+def CVPosition(name):
+    if 'locator' in name:
+        return position(name)
+    return position(curvei(n2N(name)))
 
 def norm(vect) : 
     norm=0.0
@@ -179,10 +185,7 @@ def angle2D(v1, v2):
     return np.degrees(angle)
     #return np.degrees(np.arctan2(sinang, cosang))
     #return np.degrees(np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0)))*np.sign(np.cross(v1,v2))
-
-def angle3DHB(v):
-    angle=angle3D(v,[0,0,1])
-    
+ 
 
 def angleGD(v1,v2):
     angle1=np.degrees(math.atan2(v1[0],v1[2]))
@@ -294,6 +297,19 @@ def JointPositions():
 def JointParameters():
     return map(getParameter,JointPositions())
 
+def ScaleFactor():
+    return locatorLength()/locatorCurveLength()*getCurveLength()
+
+
+def projPoint3D(p,pointOnPlane,normal,Cote=""):
+    MA=sub(p,pointOnPlane)
+    dist=np.dot(normal,MA)/np.linalg.norm(normal)
+    pProj=sub(p,pdt(dist,normal))
+    return pProj
+
+def ex(name):
+    path="C:/Users/alexa/Documents/alexandra/scripts/"
+    execfile(path+name)
 
     
         
