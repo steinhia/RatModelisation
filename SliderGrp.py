@@ -25,7 +25,7 @@ class SliderGrp(object):
         if self.droites==[]:
             for i in range(2,12):
                 buttonList[i].create()
-                #self.droites.append(buttonList[i].calcDroite())
+                self.droites.append(buttonList[i].calcDroite())
         else :
             for i in range(2,12):
                 buttonList[i].create()
@@ -180,8 +180,8 @@ def createWindows(nameList,pointOnCurveList,locatorList,droites=[]):
     buttonList.append(functionButton(sliderList,crvInfos,9,names[9],0,40,0,80,0,0.00000001,setFcts[7],crvInfos,getFunction=fcts[9],getFunctionArgs=crvInfos,Cote="L"))
 
     #tete
-    buttonList.append(functionButton(sliderList,crvInfos,10,names[10],-18,10,-90,90,0,0.00000001,setFcts[8],getFunction=angleTGD,Cote="L"))
-    buttonList.append(functionButton(sliderList,crvInfos,11,names[11],-18,10,-90,90,0,0.00000001,setFcts[9],getFunction=angleTHB,Cote="L")) 
+    buttonList.append(functionButton(sliderList,crvInfos,10,names[10],-28,10,-90,90,0,0.00000001,setFcts[8],getFunction=angleTGD,Cote="L"))
+    buttonList.append(functionButton(sliderList,crvInfos,11,names[11],-28,10,-90,90,0,0.00000001,setFcts[9],getFunction=angleTHB,Cote="L")) 
 
 
     # position

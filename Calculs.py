@@ -105,7 +105,7 @@ def calcCourbure(L):
     [v1,v2]=L
     rot1=getTangent(n2J(v1)) #n2J
     rot2=getTangent(n2J(v2))
-    return angleHB(rot2,rot1)
+    #return angleHB(rot2,rot1)
     return np.degrees(rot2[1]-rot1[1])
 
 # en deg
@@ -134,14 +134,14 @@ def createCurvePlane():
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.createPlane(positionList)
 
-def angleGD(v1,v2):
-    v=SubVector(v1,v2)
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.angleGD2D(positionList,v)
-def angleHB(v1,v2):
-    v=SubVector(v1,v2)
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.angleHB2D(positionList,v)
+#def angleGD(v1,v2):
+#    v=SubVector(v1,v2)
+#    positionList=[num2Name(i) for i in range(6)]
+#    return GeneralCalculs.angleGD2D(positionList,v)
+#def angleHB(v1,v2):
+#    v=SubVector(v1,v2)
+#    positionList=[num2Name(i) for i in range(6)]
+#    return GeneralCalculs.angleHB2D(positionList,v)
 
 #def angleHB2D(v):
 #    l=norm([v[0],v[2]])
@@ -161,6 +161,17 @@ def angle3DHB(v1):
         angle = math.acos(np.dot(v1,v2)/(np.linalg.norm(v1)*np.linalg.norm(v2)))
     angle*=np.sign(np.dot(v1,[0,1,0]))
     return np.degrees(angle)
+
+def angleHB(v1,v2):
+    angle1=np.degrees(math.atan2(v1[1],v1[2]))
+    angle2=np.degrees(math.atan2(v2[1],v2[2]))
+    return valPrincDeg(angle2-angle1)
+
+
+def angleGD(v1,v2):
+    angle1=np.degrees(math.atan2(v1[0],v1[2]))
+    angle2=np.degrees(math.atan2(v2[0],v2[2]))
+    return valPrincDeg(angle1-angle2)
 
 
 

@@ -34,15 +34,14 @@ class GeneralCalculs(object):
             elif Cote=="L":
                 return CVPosition(liste[0])
             else:
-                #p("liste2",position(liste[2]),liste[2])
-                return CVPosition(liste[2])
+                return position(liste[2])
         else:
             if Cote=="C":
                 return CVPosition(liste[4])[num]
             elif Cote=="L":
-                return CVPosition(liste[0])[num]
+                return CVposition(liste[0])[num]
             else:
-                return CVPosition(liste[2])[num]
+                return position(liste[2])[num]
 
     @classmethod
     def PostureVector(cls,liste,Cote="",*_):
@@ -126,11 +125,12 @@ class GeneralCalculs(object):
     def proj(cls,v):
         return [v[0],0,v[2]]
 
-    @classmethod
-    def proj2D(cls,v):
-        return [v[0],v[2]]
+    #@classmethod
+    #def proj2D(cls,v):
+    #    return [v[0],v[2]]
 
     # que des l positifs, evite les angles au dessus de 90°, c'est ce qu'on veut pourles angles C
+    # non un vrai angle, mais qui depend de orientation
     @classmethod
     def angleHB2D(cls,v):
         l=norm([v[0],v[2]])

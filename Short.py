@@ -28,9 +28,9 @@ def n2J(name):
         return -1
 
 def n2N(name):
-    dico={'L6':0, 'L5':0,'L4':0,'L3':1,'L2':1,'L1':1,'T13':1, \
-        'T12':1,'T11':1,'T10':2,'T9':2,'T8':2,'T7':2,'T6':3, \
-        'T5':3,'T4':3,'T3':3,'T2':4,'T1':4,'C7':4,'C6':4,\
+    dico={'L6':0, 'L5':0,'L4':0,'L3':1,'L2':1,'L1':1,'T13':2, \
+        'T12':2,'T11':2,'T10':2,'T9':3,'T8':3,'T7':3,'T6':3, \
+        'T5':3,'T4':4,'T3':4,'T2':4,'T1':4,'C7':4,'C6':4,\
         'C5':5,'C4':5,'C3':5,'C2':6,'C1':6,'C0':6,'MilTete':7,'Tete':8}
     if name in dico :
         return dico[name]
@@ -161,36 +161,25 @@ def valPrincDeg(theta):
         theta2 -= 360.0
     return theta2
 
-def angleHB(v1,v2):
-    angle1=np.degrees(math.atan2(v1[1],v1[2]))
-    angle2=np.degrees(math.atan2(v2[1],v2[2]))
-    return valPrincDeg(angle2-angle1)
+#def angle_between(v1,v2):
+#    dot=dotProduct(v1,v2)
+#    if dot<-1:
+#        dot=-1
+#    if dot>1:
+#        dot=1
+#    return np.sign(np.cross(v1,v2))*np.degrees(math.acos(dot/(norm(v1)*norm(v2))))
 
-
-def angle_between(v1,v2):
-    dot=dotProduct(v1,v2)
-    if dot<-1:
-        dot=-1
-    if dot>1:
-        dot=1
-    return np.sign(np.cross(v1,v2))*np.degrees(math.acos(dot/(norm(v1)*norm(v2))))
-
-# projette sur le plan forme par la verticale et le vecteur de posture
-def angle2D(v1, v2):
-    v1_n=normalize(v1)
-    v2_n=normalize(v2)
-    C = (v1_n[0]*v2_n[0]+v1_n[1]*v2_n[1])
-    S = (v1[0]*v2[1]-v1[1]*v2[0]);
-    angle= np.sign(S)*np.arccos(C)
-    return np.degrees(angle)
-    #return np.degrees(np.arctan2(sinang, cosang))
-    #return np.degrees(np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0)))*np.sign(np.cross(v1,v2))
+## projette sur le plan forme par la verticale et le vecteur de posture
+#def angle2D(v1, v2):
+#    v1_n=normalize(v1)
+#    v2_n=normalize(v2)
+#    C = (v1_n[0]*v2_n[0]+v1_n[1]*v2_n[1])
+#    S = (v1[0]*v2[1]-v1[1]*v2[0]);
+#    angle= np.sign(S)*np.arccos(C)
+#    return np.degrees(angle)
+#    #return np.degrees(np.arctan2(sinang, cosang))
+#    #return np.degrees(np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0)))*np.sign(np.cross(v1,v2))
  
-
-def angleGD(v1,v2):
-    angle1=np.degrees(math.atan2(v1[0],v1[2]))
-    angle2=np.degrees(math.atan2(v2[0],v2[2]))
-    return valPrincDeg(angle1-angle2)
 
 def getPoint(parameter):
     return cmds.pointOnCurve( 'curve1', pr=parameter, p=True )
@@ -310,6 +299,9 @@ def projPoint3D(p,pointOnPlane,normal,Cote=""):
 def ex(name):
     path="C:/Users/alexa/Documents/alexandra/scripts/"
     execfile(path+name)
+
+def mv(v):
+    cmds.move(v[0],v[1],v[2],r=True)
 
     
         
