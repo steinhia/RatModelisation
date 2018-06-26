@@ -25,7 +25,7 @@ class SliderGrp(object):
         if self.droites==[]:
             for i in range(2,12):
                 buttonList[i].create()
-                self.droites.append(buttonList[i].calcDroite())
+                #self.droites.append(buttonList[i].calcDroite())
         else :
             for i in range(2,12):
                 buttonList[i].create()
@@ -160,7 +160,7 @@ def createWindows(nameList,pointOnCurveList,locatorList,droites=[]):
     buttonList=[]
     # courbures cervicale, dorsale et lombaire
     buttonList.append(courbureButton(sliderList,crvInfos,0,names[0],-1,1,-3,3,0,0.00000001,['curve1.cv[5]'],getFunction=fcts[0]))
-    buttonList.append(courbureButton(sliderList,crvInfos,1,names[1],-3,3,-3,3,0,0.00001,['curve1.cv[0]'],getFunction=fcts[1]))
+    buttonList.append(courbureButton(sliderList,crvInfos,1,names[1],-3,3,-3,3,0,0.00001,['curve1.cv[1]'],getFunction=fcts[1]))
 
     # TODO garder les 2 keep=False fait planter les tests
     # cervicales GD HB TODO position tete par rapport  au sol ou aux dorsales (tenir tete droite) -> 2 fonctions align with et setstraight ?

@@ -121,9 +121,9 @@ def setPosture(ThetaVoulu,Cote=""):
     for i in range(5):
         posture=calcPosture(Cote)
         orient=PostureVector(Cote)
-        angle=ThetaVoulu-posture
+        angle=posture-ThetaVoulu
         select('curve1')
-        cmds.rotate(angle*orient[2],0.0,angle*orient[0],r=True,pivot=pos)
+        cmds.rotate(angle*orient[2],0.0,angle*orient[2],r=True,pivot=pos)
 
 
 #TODO PB A 180 -> bon calcul? regarder modif avec compression

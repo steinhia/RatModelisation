@@ -122,9 +122,9 @@ def calcLordoseL(L=[]):
 
 
 
-#def projPlanPosture(v,Cote=""):
-#    positionList=[num2Name(i) for i in range(6)]
-#    return GeneralCalculs.projPlanPosture(positionList,v,Cote)
+def projPlanPosture(v,Cote=""):
+    positionList=[num2Name(i) for i in range(6)]
+    return GeneralCalculs.projPlanPosture(positionList,v,Cote)
 
 def projPlanPosture3D(p1,p2,Cote=""):
     positionList=[num2Name(i) for i in range(6)]
@@ -151,27 +151,44 @@ def createCurvePlane():
 
 #def vect3DTo2D(v):
 #    return [norm([v[0],v[2]]),v[1]]
-    
 
-def angle3DHB(v1):
+# projette sur le plan forme par la verticale et le vecteur de posture
+def angle2D(v1, v2):
+    v1_n=normalize(v1)
+    v2_n=normalize(v2)
+    C = (v1_n[0]*v2_n[0]+v1_n[1]*v2_n[1])
+    S = (v1[0]*v2[1]-v1[1]*v2[0]);
+    angle= np.sign(S)*np.arccos(C)
+    return np.degrees(angle) 
+
+def angle3DHB(v1,PV=False):
+    positionList=[num2Name(i) for i in range(6)]
+    return GeneralCalculs.angleHB2D(positionList,v1,PV)
     v2=[abs(v1[0]),0,abs(v1[2])]
     if v1[0]==0 and v1[2]==0:
         angle=pi()/2.0
     else:
-        angle = math.acos(np.dot(v1,v2)/(np.linalg.norm(v1)*np.linalg.norm(v2)))
+        val=np.dot(v1,v2)/(np.linalg.norm(v1)*np.linalg.norm(v2))
+        if val>1:
+            val=1
+        if val<-1:
+            val=-1
+        angle = math.acos(val)
     angle*=np.sign(np.dot(v1,[0,1,0]))
+    #angle*=np.sign(calcOrientation())
     return np.degrees(angle)
 
-def angleHB(v1,v2):
-    angle1=np.degrees(math.atan2(v1[1],v1[2]))
-    angle2=np.degrees(math.atan2(v2[1],v2[2]))
-    return valPrincDeg(angle2-angle1)
+
+#def angleHB(v1,v2):
+#    angle1=np.degrees(math.atan2(v1[1],v1[2]))
+#    angle2=np.degrees(math.atan2(v2[1],v2[2]))
+#    return valPrincDeg(angle2-angle1)
 
 
-def angleGD(v1,v2):
-    angle1=np.degrees(math.atan2(v1[0],v1[2]))
-    angle2=np.degrees(math.atan2(v2[0],v2[2]))
-    return valPrincDeg(angle1-angle2)
+#def angleGD(v1,v2):
+#    angle1=np.degrees(math.atan2(v1[0],v1[2]))
+#    angle2=np.degrees(math.atan2(v2[0],v2[2]))
+#    return valPrincDeg(angle1-angle2)
 
 
 

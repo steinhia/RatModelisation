@@ -13,7 +13,6 @@ execfile(path+"main.py")
 execfile(path+"mesures.py")
 execfile(path+"EvalClass.py")
 
-
 def placageOpti():
     min=100000
     iMin=-1
@@ -223,6 +222,8 @@ def placeAnglesCalcules(sliderGrp,nBoucles):
     oldParamD=getParameter(position(curvei(3)))
     param=calcCVParameters()
 
+    #print "CompGD",compressionGD,"comp",compression,"CHB",angleCervicales,"CGD",angleCervicalesGD,"LGD",angleLombairesGD,"LHB",angleLombaires
+
     t=time.time()
     for i in range(nBoucles):
         1# ne pas utiliser sliderGrp.do("posture",posture)
@@ -374,13 +375,13 @@ jtParam=JointParameters()
 length=getCurveLength()
 
 for i in range(0,1):
-    j=60
+    j=0
     cmds.currentTime(j, edit=True )
     resetCurve(sliderGrp,length,CVpos,jtPos)
     sliderGrp=mainFct(pointOnCurveList,locatorList,reset=True,droites=droites)
     #checkParameters(par,CVpos,jtPos,jtParam)
     placeAnglesCalcules(sliderGrp,1)
-    Correction(sliderGrp)
+    #Correction(sliderGrp)
     #a=Evaluate()
     evaluation=1#a.execute()
     #p("pos finale CV",calcPosCV())

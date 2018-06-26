@@ -169,18 +169,6 @@ def valPrincDeg(theta):
 #        dot=1
 #    return np.sign(np.cross(v1,v2))*np.degrees(math.acos(dot/(norm(v1)*norm(v2))))
 
-## projette sur le plan forme par la verticale et le vecteur de posture
-#def angle2D(v1, v2):
-#    v1_n=normalize(v1)
-#    v2_n=normalize(v2)
-#    C = (v1_n[0]*v2_n[0]+v1_n[1]*v2_n[1])
-#    S = (v1[0]*v2[1]-v1[1]*v2[0]);
-#    angle= np.sign(S)*np.arccos(C)
-#    return np.degrees(angle)
-#    #return np.degrees(np.arctan2(sinang, cosang))
-#    #return np.degrees(np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0)))*np.sign(np.cross(v1,v2))
- 
-
 def getPoint(parameter):
     return cmds.pointOnCurve( 'curve1', pr=parameter, p=True )
     

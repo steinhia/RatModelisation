@@ -91,8 +91,8 @@ class GeneralCalculs(object):
             p=cls.PostureVector(liste,"L")
         else:
             p=cls.PostureVector(liste)
-        return angle2D([math.sqrt(p[0]**2+p[2]**2),p[1]],[1,0])
-        #return angle(cls.PostureVector(liste),cls.refVector(liste))
+        return valPrincDeg(angle3DHB(p,PV=True))
+        #return angle2D([math.sqrt(p[0]**2+p[2]**2),p[1]],[1,0])
 
     @classmethod
     def getOrientation(cls,liste,Cote="",*_):
@@ -112,7 +112,6 @@ class GeneralCalculs(object):
         length=0
         for i in range(len(posList)-2):
             length+=distance(posList[i],posList[i+1])
-            #p("dist",distance(posList[i],posList[i+1]),liste)
         return length
 
     @classmethod
@@ -122,7 +121,7 @@ class GeneralCalculs(object):
         return pV
 
     @classmethod
-    def proj(cls,v):
+    def projV(cls,v):
         return [v[0],0,v[2]]
 
     #@classmethod
@@ -132,39 +131,55 @@ class GeneralCalculs(object):
     # que des l positifs, evite les angles au dessus de 90°, c'est ce qu'on veut pourles angles C
     # non un vrai angle, mais qui depend de orientation
     @classmethod
-    def angleHB2D(cls,v):
+    def angleHB2D(cls,liste,v,PV=False):
         l=norm([v[0],v[2]])
         #p("vect",[l,0],[l,v[1]],v)
-        return angle2D([l,0],[l,v[1]])
+        #print "angles",angle3DHB(v),angle2D([l,0],[l,v[1]])
+        #return angle3DHB(v)
+        if PV :
+            #print signe*angle2D([l,0],[l,v[1]]),angle2D([l,0],[l,v[1]])
+            return angle2D([l,0],[l,v[1]])
+        #signe=-1 if abs(calcOrientation())>135 else 1 
+        sens=np.sign(np.dot(v,cls.PostureVector(liste)))
+        #p("signe",str(sens))
+        #if sens:
+        #    print [l,0],[l,v[1]]
+        #    return angle2D([l,0],[l,v[1]])
+        #print "v",[l,0],[sens*l,v[1]]
+        return angle2D([l,0],[sens*l,v[1]])
 
     @classmethod
-    def angleGD2D(cls,liste,v):
-        proj=cls.projPlanPosture(liste,v)
-        return angle2D(proj,[v[0],v[2]])
+    def angleGD2D(cls,liste,p1,p2):
+        v=sub(p2,p1)
+        #proj1=cls.projPlanPosture(liste,v)
+        proj=cls.projPlanPosture3D(liste,p1,p2)
+        proj2D=[proj[0],proj[2]]
+        return angle2D(proj2D,[v[0],v[2]])
 
-    # on projette le vecteur sur le plan formé par la verticale et le postureVector
-    @classmethod
-    def projPlanPosture(cls,liste,v,Cote=""):
-        [a,b,c]=cls.PostureVector(liste)
-        if a!=0:
-            r=c/a
-            p0=float((v[0]+r*v[2])/(1.0+r**2))
-            p2=r*p0
-        else:
-            p0=0
-            p2=v[2]
-        return [p0,p2]
-            #return np.degrees(angle(v,[0,v[1],v[2]]))
-            #return np.degrees(angle(v,[p0,v[1],p2]))
-        normal=[-c,0,a]
-        M=position(liste[1])
-        MA=sub(M,v)
-        dist=np.dot(normal,MA)/np.norm(normal)
+
+    ## on projette le vecteur sur le plan formé par la verticale et le postureVector
+    #@classmethod
+    #def projPlanPosture(cls,liste,v,Cote=""):
+    #    [a,b,c]=cls.PostureVector(liste)
+    #    if a!=0:
+    #        r=c/a
+    #        p0=float((v[0]+r*v[2])/(1.0+r**2))
+    #        p2=r*p0
+    #    else:
+    #        p0=0
+    #        p2=v[2]
+    #    return [p0,v[1],p2]
+    #        #return np.degrees(angle(v,[0,v[1],v[2]]))
+    #        #return np.degrees(angle(v,[p0,v[1],p2]))
+    #    normal=[-c,0,a]
+    #    M=cls.PointOnPlane(liste)
+    #    MA=sub(M,v)
+    #    dist=np.dot(normal,MA)/np.norm(normal)
         
     # on projette le vecteur sur le plan formé par la verticale et le postureVector
     @classmethod
     def projPlanPosture3D(cls,liste,p1,p2,Cote=""):
-        normal=np.cross(PostureVector(),[0,1,0])
+        normal=normalize(np.cross(PostureVector(),[0,1,0]))
         M=cls.PointOnPlane(liste)
         p1Proj=projPoint3D(p1,M,normal,Cote)
         p2Proj=projPoint3D(p2,M,normal,Cote)
@@ -174,25 +189,27 @@ class GeneralCalculs(object):
     @classmethod
     def angleCHB(cls,liste,pointOnCurveList=[],*_):
         #p("c",position(liste[3]),position(liste[4]),position(pointOnCurveList[5]))
-        if 'locator' in liste[0] :
+        if 'locator' in liste[0] or True:
             v=SubVector(liste[4],liste[3])
         else:
             v=SubVector(liste[4],liste[3])
             #v=SubVector(liste[4],pointOnCurveList[5])
         #p("finc")
-        return cls.angleHB2D(v)
+        return cls.angleHB2D(liste,v)
         #return angleHB(SubVector(liste[4],liste[3]),cls.refVector(liste))
         #return abs(angleHB(SubVector(liste[4],liste[3]),cls.refVector(liste)))*np.sign(angleHB(SubVector(liste[4],liste[3]),[0,0,1]))
 
 
     @classmethod
     def angleCGD(cls,liste,pointOnCurveList=[],*_):
-        if 'locator' in liste[0] :
+        if 'locator' in liste[0] or True:
             v=SubVector(liste[4],liste[3])
+            p1=position(liste[3])
+            p2=position(liste[4])
         else:
             v=SubVector(liste[4],liste[3])
             #v=SubVector(liste[4],pointOnCurveList[4])
-        return cls.angleGD2D(liste,v)
+        return cls.angleGD2D(liste,p1,p2)
         #return angleGD(SubVector(liste[4],liste[3]),cls.refVector(liste))
         #return cls.angleHBOriente(SubVector(liste[4],liste[3],cls.refVector(liste)))
 
@@ -203,48 +220,57 @@ class GeneralCalculs(object):
     @classmethod
     def angleDHB(cls,liste,*_):
         v=SubVector(liste[2],liste[1])
-        return cls.angleHB2D(v)
+        return cls.angleHB2D(liste,v)
         #return angleHB(SubVector(liste[2],liste[1]),cls.refVector(liste))
 
     @classmethod
     def angleDGD(cls,liste,*_):
         v=SubVector(liste[2],liste[1])
-        return cls.angleGD2D(liste,v)
+        p1=position(liste[1])
+        p2=position(liste[2])
+        return cls.angleGD2D(liste,p1,p2)
         #return angleGD(SubVector(liste[2],liste[1]),cls.refVector(liste))
 
     @classmethod
     def angleLHB(cls,liste,*_):
         v=SubVector(liste[2],liste[0])
-        return cls.angleHB2D(v)
+        return cls.angleHB2D(liste,v)
         #return angleHB(SubVector(liste[1],liste[0]),cls.refVector(liste))
 
     @classmethod
     def angleLGD(cls,liste,*_):
         v=SubVector(liste[2],liste[0])
-        return cls.angleGD2D(liste,v)
+        p1=position(liste[0])
+        p2=position(liste[2])
+        return cls.angleGD2D(liste,p1,p2)
         #return angleGD(SubVector(liste[1],liste[0]),cls.refVector(liste))
 
     @classmethod
     def angleTHB(cls,liste,*_):
         v=SubVector(liste[5],liste[4])
         #p(position(liste[5]),position(liste[4]))
-        return cls.angleHB2D(v)
+        return cls.angleHB2D(liste,v)
 
     @classmethod
     def angleTGD(cls,liste,*_):
         v=SubVector(liste[5],liste[4])
-        return cls.angleGD2D(liste,v)
+        p1=position(liste[4])
+        p2=position(liste[5])
+        return cls.angleGD2D(liste,p1,p2)
 
     @classmethod
     def angleComp(cls,liste,*_):
         v=SubVector(liste[3],liste[2])
-        return -cls.angleHB2D(v)
+        return -cls.angleHB2D(liste,v)
 
 #TODO translation pour la CompGD -> // HB
 # et mesure angle cervicales ????????
     @classmethod
     def angleCompGD(cls,liste,*_):
         v=SubVector(liste[3],liste[2])
+        p1=position(liste[2])
+        p2=position(liste[3])
+        return -cls.angleGD2D(liste,p1,p2)
         return -cls.angleGD2D(liste,v)
         #return -valPrincDeg(angleGD(cls.refVector(liste),SubVector(liste[3],liste[2])))
 
