@@ -34,7 +34,7 @@ class Action(object):
         pos=getCurvePosition(Cote=self.Cote)
         posture=calcPosture(Cote=self.Cote)
         lenC=getCurveLength()
-        lenChain=getChainLength()
+        lenChain=getJointChainLength()
         jtParam=JointParameters()
         if self.mvt and ajust:
             setOrientation(0)
@@ -49,13 +49,13 @@ class Action(object):
             newLen=getCurveLength()
             if self.keepCurveLength:
                 1#keepCLen(self.crvInfos[4])
+                keepChainLengthValue(lenChain)
                 keepLengthValue(lenC,getCurvePosition())
-                #keepChainLengthValue(lenChain)
             else:
                 cL=getCurveLength()
                 rapport=cL/lenC
                 #self.crvInfos[0]=cL
-                #keepChainLengthValue(lenChain*rapport)
+                keepChainLengthValue(lenChain*rapport)
                 #self.crvInfos[3]=getChainLength()
             if self.keepPosture :
                setPosture(posture,Cote=self.Cote)

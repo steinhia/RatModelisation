@@ -135,7 +135,7 @@ def createCurvePlane():
     return GeneralCalculs.createPlane(positionList)
 
 #def angleGD(v1,v2):
-#    v=SubVector(v1,v2)
+#    v=sub(v1,v2)
 #    positionList=[num2Name(i) for i in range(6)]
 #    return GeneralCalculs.angleGD2D(positionList,v)
 #def angleHB(v1,v2):
@@ -185,10 +185,10 @@ def angle3DHB(v1,PV=False):
 #    return valPrincDeg(angle2-angle1)
 
 
-#def angleGD(v1,v2):
-#    angle1=np.degrees(math.atan2(v1[0],v1[2]))
-#    angle2=np.degrees(math.atan2(v2[0],v2[2]))
-#    return valPrincDeg(angle1-angle2)
+def angleGD(v1,v2):
+    angle1=np.degrees(math.atan2(v1[0],v1[2]))
+    angle2=np.degrees(math.atan2(v2[0],v2[2]))
+    return valPrincDeg(angle1-angle2)
 
 
 
@@ -307,45 +307,61 @@ def calcParameters():
     #print "pos apres reset",positions
     return [param,positions]
 
-def checkParameters(CVparam=[],CVpos=[],jtPos=[],jtParam=[],angles=[]):
+def checkParameters(CVparam=[],CVpos=[],jtPos=[],jtParam=[],angles=[],printOK=False):
     res=True
     if CVparam!=[]:
         newCVparam=calcCVParameters()
         for (cvparam,cvparamnew) in zip(CVparam,newCVparam):
-            if abs(cvparam-cvparamnew)>0.01:
+            if abs(cvparam-cvparamnew)>0.001:
                 res=False
                 print "cv param bouge",cvparam,cvparamnew
+            else:
+                if printOK:
+                    print "cv param ok"
+
     if CVpos!=[]:
         newCVpos=calcCVPositions()
         for (cvpos,cvposnew) in zip(CVpos,newCVpos):
-            if norm(sub(cvpos,cvposnew))>0.01:
+            if norm(sub(cvpos,cvposnew))>0.00001:
                 res=False
                 print "cv position bouge",cvpos,cvposnew
+            else:
+                if printOK:
+                    print "cv pos ok"
     if jtPos!=[]:
         newJtpos=JointPositions()
         for (jtpos,jtposnew) in zip(jtPos,newJtpos):
-            if norm(sub(jtpos,jtposnew))>0.01:
+            if norm(sub(jtpos,jtposnew))>0.00001:
                 res=False
                 print "joint position bouge",jtpos,jtposnew
+            else:
+                if printOK:
+                    print "joint pos ok"
     if jtParam!=[]:
         newJtparam=JointParameters()
         for (jtparam,jtparamnew) in zip(jtParam,newJtparam):
-            if abs(jtparam-jtparamnew)>0.01:
+            if abs(jtparam-jtparamnew)>0.00001:
                 res=False
                 print "joint param bouge",jtparam,jtparamnew     
+            else:
+                if printOK:
+                    print "joint param ok"
     if angles!=[]:
         newAngles=calcAngles()
         for(i,j) in zip(angles,newAngles):
-            if abs(i-j)>0.0000001:
+            if abs(i-j)>0.00001:
                 res=False
                 print "angles ont bouge",i,j
+            else:
+                if printOK:
+                    print "angles ok"
      
     if not res:
         print "Modele bouge avec le calcul"
     #else :
     #    print "Modele semble stable"
 
-def getChainLength(L=[]):
+def getJointChainLength(L=[]):
     len=0
     for i in range(1,26):
        len+=distance(position('joint'+str(i)),position('joint'+str(i+1)))

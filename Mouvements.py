@@ -16,7 +16,7 @@ def keepLengthValue(newLengthvalue,L=[]):
     cmds.scale(scaleValue,scaleValue,scaleValue,r=True,pivot=posInit)
 
 def keepChainLengthValue(newValue,L=[]):
-    Length=getChainLength()
+    Length=getJointChainLength()
     posInit=getCurvePosition()
     cmds.select('joint1',r=1)
     scaleValue=newValue/Length
@@ -303,7 +303,6 @@ def parabolicRotation(theta,list):
     tan=PostureVector()
     for i in range(n2N(end),n2N(begin)-1,-1):
         dist=(abs(i-nPivot))
-        #p(i)
         angle=math.atan(dist)**1*5 # carre c'est trop
         cmds.select(curvei(i)) # pas de add car la rotation est deja calculee en fonction de la distance
         cmds.rotate(theta*angle,r=True,p=pivot,x=x,y=y,z=z)

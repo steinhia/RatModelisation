@@ -25,7 +25,7 @@ class SliderGrp(object):
         if self.droites==[]:
             for i in range(2,12):
                 buttonList[i].create()
-                #self.droites.append(buttonList[i].calcDroite())
+                self.droites.append(buttonList[i].calcDroite())
         else :
             for i in range(2,12):
                 buttonList[i].create()

@@ -110,8 +110,9 @@ class GeneralCalculs(object):
     def getChainLength(cls,liste,*_):
         posList=map(position,liste)
         length=0
-        for i in range(len(posList)-2):
+        for i in range(len(posList)-1):
             length+=distance(posList[i],posList[i+1])
+        p("CLen",length)
         return length
 
     @classmethod
@@ -153,7 +154,11 @@ class GeneralCalculs(object):
         v=sub(p2,p1)
         #proj1=cls.projPlanPosture(liste,v)
         proj=cls.projPlanPosture3D(liste,p1,p2)
-        proj2D=[proj[0],proj[2]]
+        sens=np.sign(np.dot(v,cls.PostureVector(liste)))
+        #print sens,np.dot(v,cls.PostureVector(liste,"C"))
+        proj2D=[sens*proj[0],sens*proj[2]]
+        #print "vect",v,proj,proj2D
+        #p("proj",proj2D,[v[0],v[2]])
         return angle2D(proj2D,[v[0],v[2]])
 
 
