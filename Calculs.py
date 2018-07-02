@@ -52,27 +52,17 @@ def calcCentroid(name):
     cmds.select(clear=True)
     cmds.select(name)
     vertPos=vertexCmds()
-    #l=cmds.getAttr(name+".vtx")
-    #n=len(l)
-    #print vertPos
     n=len(vertPos)
     center=[0,0,0]
     for i in range(n):
         point=vertPos[i]
-        #point=l[i]
         center=[center[i]+point[i] for i in range(3)]
     center=[center[i]/(n) for i in range(3)]
     del vertPos
     return center
 
-
-
-
 # CALCULS SUR LA COURBE
-        
-
-     
-
+          
 # orientation par rapport au corps et pas la tete
 def getCurvePosition(num=-1,Cote=""):
     positionList=[num2Name(i) for i in range(6)]
@@ -120,8 +110,6 @@ def calcCyphoseD(L=[]):
 def calcLordoseL(L=[]):
     return -calcCourbure([pointOnCurveList[3],pointOnCurveList[1]])
 
-
-
 def projPlanPosture(v,Cote=""):
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.projPlanPosture(positionList,v,Cote)
@@ -130,29 +118,10 @@ def projPlanPosture3D(p1,p2,Cote=""):
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.projPlanPosture3D(positionList,p1,p2,Cote)
 
-def createCurvePlane():
+def createCurvePlane(Cote=""):
     positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.createPlane(positionList)
+    return GeneralCalculs.createPlane(positionList,Cote)
 
-#def angleGD(v1,v2):
-#    v=sub(v1,v2)
-#    positionList=[num2Name(i) for i in range(6)]
-#    return GeneralCalculs.angleGD2D(positionList,v)
-#def angleHB(v1,v2):
-#    v=SubVector(v1,v2)
-#    positionList=[num2Name(i) for i in range(6)]
-#    return GeneralCalculs.angleHB2D(positionList,v)
-
-#def angleHB2D(v):
-#    l=norm([v[0],v[2]])
-#    if l==0:
-#        return 90*np.sign(v[1])
-#    return angle2D([l,0],[l,v[1]])
-
-#def vect3DTo2D(v):
-#    return [norm([v[0],v[2]]),v[1]]
-
-# projette sur le plan forme par la verticale et le vecteur de posture
 def angle2D(v1, v2):
     v1_n=normalize(v1)
     v2_n=normalize(v2)
@@ -161,55 +130,29 @@ def angle2D(v1, v2):
     angle= np.sign(S)*np.arccos(C)
     return np.degrees(angle) 
 
-def angle3DHB(v1,PV=False):
+def angleHB(v1,PV=False):
     positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.angleHB2D(positionList,v1,PV)
-    v2=[abs(v1[0]),0,abs(v1[2])]
-    if v1[0]==0 and v1[2]==0:
-        angle=pi()/2.0
-    else:
-        val=np.dot(v1,v2)/(np.linalg.norm(v1)*np.linalg.norm(v2))
-        if val>1:
-            val=1
-        if val<-1:
-            val=-1
-        angle = math.acos(val)
-    angle*=np.sign(np.dot(v1,[0,1,0]))
-    #angle*=np.sign(calcOrientation())
-    return np.degrees(angle)
-
-
-#def angleHB(v1,v2):
-#    angle1=np.degrees(math.atan2(v1[1],v1[2]))
-#    angle2=np.degrees(math.atan2(v2[1],v2[2]))
-#    return valPrincDeg(angle2-angle1)
-
-
+    return GeneralCalculs.angleHB(positionList,v1,PV)
+    #v2=[abs(v1[0]),0,abs(v1[2])]
+    #if v1[0]==0 and v1[2]==0:
+    #    angle=pi()/2.0
+    #else:
+    #    val=np.dot(v1,v2)/(np.linalg.norm(v1)*np.linalg.norm(v2))
+    #    if val>1:
+    #        val=1
+    #    if val<-1:
+    #        val=-1
+    #    angle = math.acos(val)
+    #angle*=np.sign(np.dot(v1,[0,1,0]))
+    ##angle*=np.sign(calcOrientation())
+    #return np.degrees(angle)
+    
 def angleGD(v1,v2):
     angle1=np.degrees(math.atan2(v1[0],v1[2]))
     angle2=np.degrees(math.atan2(v2[0],v2[2]))
     return valPrincDeg(angle1-angle2)
 
 
-
-#def angleHB2DWithSign(v):
-#    if abs(v[0])>abs(v[0]):
-#        l=norm([v[0],v[2]])*np.sign(v[0])
-#    else:
-#        l=norm([v[0],v[2]])*np.sign(v[2])
-#    if l==0:
-#        return 90*np.sign(v[1])
-#    return angle2D([abs(l),0],[l,v[1]])
-
-#def angleHBOld(v1,v2):
-#    angle1=RadToDeg(math.atan2(v1[1],v1[2]))
-#    angle2=RadToDeg(math.atan2(v2[1],v2[2]))
-#    return valPrincDeg(angle1-angle2)
-
-#def angleGDOld(v1,v2):
-#    angle1=RadToDeg(math.atan2(v1[0],v1[2]))
-#    angle2=RadToDeg(math.atan2(v2[0],v2[2]))
-#    return valPrincDeg(angle1-angle2)
 
 def angleCHB(L=[]):
     positionList=[num2Name(i) for i in range(6)]
@@ -499,7 +442,48 @@ def EvalPositionLocator2():
 
 
 
-    
+# aucun sens parce que projection seulement pour un vecteur
+#def angleGD(v1,v2):
+#    v=sub(v1,v2)
+#    positionList=[num2Name(i) for i in range(6)]
+#    return GeneralCalculs.angleGD2D(positionList,v)
+#def angleHB(v1,v2):
+#    v=SubVector(v1,v2)
+#    positionList=[num2Name(i) for i in range(6)]
+#    return GeneralCalculs.angleHB(positionList,v)
 
+#def angleHB(v):
+#    l=norm([v[0],v[2]])
+#    if l==0:
+#        return 90*np.sign(v[1])
+#    return angle2D([l,0],[l,v[1]])
+
+#def vect3DTo2D(v):
+#    return [norm([v[0],v[2]]),v[1]]    
+
+#def angleHB2DWithSign(v):
+#    if abs(v[0])>abs(v[0]):
+#        l=norm([v[0],v[2]])*np.sign(v[0])
+#    else:
+#        l=norm([v[0],v[2]])*np.sign(v[2])
+#    if l==0:
+#        return 90*np.sign(v[1])
+#    return angle2D([abs(l),0],[l,v[1]])
+
+#def angleHBOld(v1,v2):
+#    angle1=RadToDeg(math.atan2(v1[1],v1[2]))
+#    angle2=RadToDeg(math.atan2(v2[1],v2[2]))
+#    return valPrincDeg(angle1-angle2)
+
+#def angleGDOld(v1,v2):
+#    angle1=RadToDeg(math.atan2(v1[0],v1[2]))
+#    angle2=RadToDeg(math.atan2(v2[0],v2[2]))
+#    return valPrincDeg(angle1-angle2)
+
+
+#def angleHB(v1,v2):
+#    angle1=np.degrees(math.atan2(v1[1],v1[2]))
+#    angle2=np.degrees(math.atan2(v2[1],v2[2]))
+#    return valPrincDeg(angle2-angle1)
 
 

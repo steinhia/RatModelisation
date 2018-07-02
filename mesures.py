@@ -88,7 +88,7 @@ def RapportChainLength():
     locatorList=[locator(i) for i in range(6)]
     return GeneralCalculs.RapportChainLength(locatorList)
 
-def createLocatorPlane():
+def createLocatorPlane(Cote=""):
     locatorList=[locator(i) for i in range(6)]
-    return GeneralCalculs.createPlane(locatorList)
+    return GeneralCalculs.createPlane(locatorList,Cote)
     

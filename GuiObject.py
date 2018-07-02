@@ -123,12 +123,9 @@ class ButtonGlobal(GuiObject):
         self.pointOnCurveList=pointOnCurveList
 
     def update(self,*_):
-        if self.nameList==[]:
-            Align()
-        else :
-            #cmds.window(title ="Modelisation de la colonne du rat",le=50,te=50,width=400,height=450)
-            sliderGrp=mainFct()
-            #cmds.showWindow(sliderGrp.window)
+        #cmds.window(title ="Modelisation de la colonne du rat",le=50,te=50,width=400,height=450)
+        sliderGrp=mainFct()
+        #cmds.showWindow(sliderGrp.window)
 
 # valeur d'un champ a partir d'une fonction (courbure etc)
 class SliderDuo(GuiObject):
@@ -270,17 +267,21 @@ class SliderAbs(Slider):
 
 class CheckBox(GuiObject):
 
-    def __init__(self,label,actionCheck,actionUnCheck,value,*_):
+    def __init__(self,label,actionCheck,actionUnCheck,value,args=[],*_):
         GuiObject.__init__(self,label)
         self.actionCheck=actionCheck
         self.actionUnCheck=actionUnCheck
         self.value=value
+        self.args=args
 
     def create(self):
 
         self.CheckBox=cmds.checkBox(label=self.label,onc=self.CheckFunction,ofc=self.UnCheckFunction,value=self.value)
         if(self.value):
-            self.actionCheck.execute(ajust=False)
+            if self.args==[]:
+                self.actionCheck.execute(ajust=False)
+            else:
+                self.actionCheck.execute(ajust=False,args=self.args)
         else:
             self.actionUnCheck.execute(ajust=False)
             
@@ -289,12 +290,32 @@ class CheckBox(GuiObject):
         a=1
 
     def CheckFunction(self,*_):
-        self.actionCheck.execute()
+        if self.args==[]:
+            self.actionCheck.execute()
+        else:
+            print self.actionCheck
         self.value=True
 
     def UnCheckFunction(self,*_):
         self.actionUnCheck.execute()
         self.value=False
+
+
+class RadioButtonGrp(GuiObject):
+
+    def __init__(self,label,actionList,labelArray,numberOfRadioButtons,paramList):
+        GuiObject.__init__(self,label)
+        self.actionList=actionList
+        self.labelArray=labelArray
+        self.numberOfRadioButtons=numberOfRadioButtons
+        self.paramList=paramList
+
+    def create(self):
+        if self.numberOfRadioButtons==2:
+            self.RadioButton=cmds.radioButtonGrp( label=self.label, labelArray2=self.labelArray, numberOfRadioButtons=self.numberOfRadioButtons, on1=self.actionList[0],on2=self.actionList[1],select=1)
+        else:
+            self.RadioButton=cmds.radioButtonGrp( label=self.label, labelArray3=self.labelArray, numberOfRadioButtons=self.numberOfRadioButtons, on1=self.actionList[0],on2=self.actionList[1],on3=self.actionList[2],select=1)
+
 
 
         

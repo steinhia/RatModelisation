@@ -26,7 +26,6 @@ def placeLocator(num=-1):
 
             q=norm(np.cross(dir2,CD))/norm(np.cross(dir2,dir1))
             M=sum(posC,pdt(q,dir1))
-            p("num",num,M)
             cmds.select(locator(num))
             cmds.move(M[0],M[1],M[2],r=False)
             #string='setKeyframe -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 -i {"locatorAngle'+str(num)+'"};'

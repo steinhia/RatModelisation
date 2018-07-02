@@ -16,9 +16,9 @@ execfile(path+"Short.py")
 
 class Action(object):
 
-    def __init__(self,offset,crvInfos,Cote,keepPosture,keepPosition,keepCurveLength,mvt=True,*_):
+    def __init__(self,offset,Cote,keepPosture,keepPosition,keepCurveLength,mvt=True,*_):
         self.offset=offset
-        self.crvInfos=crvInfos #length position posture chainLength cLen
+        #self.crvInfos=crvInfos #length position posture chainLength cLen
         self.mvt=mvt
         self.keepCurveLength=keepCurveLength
         self.keepPosture=keepPosture
@@ -74,8 +74,8 @@ class Action(object):
 
 class SimpleAction(Action):
 
-    def __init__(self,offset,crvInfos,type,x,y,z,listOfSelection,Cote,keepPosition,keepPosture=True,keepCurveLength=True,pivot=-1,mvt=True,*_): # pivot = position du pivot
-        Action.__init__(self,offset,crvInfos,Cote,keepPosture,keepPosition,keepCurveLength) 
+    def __init__(self,offset,type,x,y,z,listOfSelection,Cote,keepPosition,keepPosture=True,keepCurveLength=True,pivot=-1,mvt=True,*_): # pivot = position du pivot
+        Action.__init__(self,offset,Cote,keepPosture,keepPosition,keepCurveLength) 
         self.type=type
         self.x=x
         self.y=y
@@ -105,14 +105,15 @@ class SimpleAction(Action):
 # les arguments de la fonction doivent etre une unique liste        
 class FunctionAction(Action):
 
-    def __init__(self,offset,crvInfos,function,Cote,keepPosture,keepPosition,keepCurveLength=True,args=[],mvt=True,*_):
-        Action.__init__(self, offset,crvInfos,Cote,keepPosture,keepPosition,keepCurveLength) 
+    def __init__(self,offset,function,Cote,keepPosture,keepPosition,keepCurveLength=True,args=[],mvt=True,*_):
+        Action.__init__(self, offset,Cote,keepPosture,keepPosition,keepCurveLength) 
         self.function=function
         self.args=args
         self.mvt=mvt
 
     def execute(self,ajust=True,*_):
-        Action.execute(self,ajust)
+                #p("args",self.args)
+        Action.execute(self,ajust,self.args)
 
     def executeAction(self,*_):
         if self.args==[] :

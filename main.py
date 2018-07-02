@@ -53,9 +53,9 @@ nameList=['obj55_VertebreL6_Exterior','obj53_VertebreL5_Exterior','obj51_Vertebr
             'obj70_VertebreC7_Exterior','obj69_VertebreC6_Exterior','obj103_VertebreC5_Exterior','obj105_VertebreC4_Exterior', \
             'obj107_VertebreC3_Exterior','obj47_VertebreC2_Axis_Exterior','obj45_VertebreC1_Atlas_Exterior']
 pointOnCurveList=['L6','L3','T12','T9','T2','C5','C0','Tete'] 
-locatorList=['L6','L3','T12','T2','C0','Tete'] # T3 t13 t19tc0 c6 # TODO remettre T11
+locatorList=['L6','L3','T12','T2','C0','Tete'] # T3 t13 t19tc0 c6 # TODO remettre T11?
   
-#sliderGrp=mainFct(pointOnCurveList,locatorList)
+sliderGrp=mainFct(pointOnCurveList,locatorList)
 
 #sliderGrp.do("scale",10)
 #sliderGrp.do("z",-5)

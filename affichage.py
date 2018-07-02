@@ -30,7 +30,6 @@ def HideListRest(args=[]):
     HideList.append(cmds.ls('*Cluster*',r=True))
     HideList.append(cmds.ls('*Caudale*',r=True))
     HideList.append(cmds.ls('*Sacrum*',r=True)) 
-    HideList.append(['obj8_Crane_Exterior','obj181_Mandibule_Exterior','obj182_Mandibule_Crane','obj109_OsHyoide_Exterior'])
     return HideList
 
 def HideListHead(args=[]):
@@ -77,17 +76,7 @@ def ShowPolygons(args=[]):
     #if(cmds.checkBox(boxHead,q = True, v = True)):
     #    HideHeadAndTail()
          
-def HideCircles(args=[]):
-    HideList=cmds.ls('*Circle*',r=True)
-    for i in HideList :
-        cmds.hide(i)
-    cmds.showHidden('objGroup',a=True)
-    
-def ShowCircles(args=[]):
-    HideList=cmds.ls('*Circle*',r=True)
-    for i in HideList :
-        cmds.showHidden(i,a=True) 
-            
+          
 def HideSkeletonJoints(args=[]):
     for i in range(56) :
         if(cmds.objExists('joint'+str(i+1))):
@@ -122,6 +111,9 @@ def colorSkeleton(nameList):
     cmds.select( clear=True)
     for i in range(6,19) :
         cmds.select(nameList[i],add=True)
+    cmds.select('obj8_Crane_Exterior',add=True)
+    cmds.select('obj181_Mandibule_Exterior',add=True)
+    cmds.select('obj109_OsHyoide_Exterior',add=True)
     mel.eval("sets -e -forceElement blinn2SG;")
     mel.eval("setAttr \"blinn2.color\" -type double3 0 1 0 ;")
     cmds.select( clear=True )
@@ -131,17 +123,56 @@ def colorSkeleton(nameList):
     mel.eval("setAttr \"blinn3.color\" -type double3 0 0 1 ;")
     cmds.select( clear=True )  
 
-def HidePlane():
-    if cmds.objExists('locatorPlane'):
-        cmds.hide('locatorPlane')
-    if cmds.objExists('curvePlane'):
-        cmds.hide('curvePlane')
+def HidePlane(*_):
+    #if cmds.objExists('locatorPlane'):
+    #    cmds.delete('locatorPlane')
+    #if cmds.objExists('curvePlane'):
+    #    cmds.delete('curvePlane')
+    if cmds.objExists('PosturePlane'):
+        cmds.delete('PosturePlane')
 
-def ShowPlane():
-    if cmds.objExists('locatorPlane'):
-        cmds.showHidden('locatorPlane')
-    if cmds.objExists('curvePlane'):
-        cmds.showHidden('curvePlane')
+def press(*args):
+    selected = cmds.radioButtonGrp(rB, q=True, select=True)
+    print theList[selected ]
+
+
+def ShowPlane(paramList=[],*_):
+    if paramList!=[] and paramList[2]=="On":
+        Cote=paramList[1]
+        if paramList==[] or paramList[0]=="Curve":
+            createCurvePlane(Cote=Cote)
+        elif paramList[0]=="Locator":
+            createLocatorPlane(Cote=Cote)
+
+def ShowPlaneOn(paramList,*_):
+    paramList[2]="On"
+    ShowPlane(paramList)
+
+def ClickCurve(paramList,*_):
+    paramList[0]="Curve"
+    ShowPlane(paramList)
+
+def ClickLocator(paramList,*_):
+    paramList[0]="Locator"
+    ShowPlane(paramList)
+
+def ClickN(paramList,*_):
+    paramList[1]=""
+    ShowPlane(paramList)
+
+def ClickC(paramList,*_):
+    paramList[1]="C"
+    ShowPlane(paramList)
+
+def ClickL(paramList,*_):
+    paramList[1]="L"
+    ShowPlane(paramList)
+
+
+
+
+ 
+
 
 
 
