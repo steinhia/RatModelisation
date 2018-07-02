@@ -13,8 +13,6 @@ execfile(path+"GeneralCalculs.py")
 #def Hor():
 #    return SubVector('locatorPlane2','locatorPlane1')
 
-def locator(i):
-    return 'locatorAngle'+str(i)
 
 def locatorPostureVector(Cote=""):
     locatorList=[locator(i) for i in range(6)]

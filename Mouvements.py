@@ -376,7 +376,7 @@ def rotComp(value,crvInfos=[]):
 
 
 def rotCompGD(value,L=[]):
-    parabolicRotation(value*0.05,[num2Name(2),num2Name(2),pointOnCurveList[7],0,1,0])
+    parabolicRotation(value*0.05,[num2Name(1),num2Name(2),pointOnCurveList[7],0,1,0])
 
 
 

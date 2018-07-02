@@ -237,6 +237,8 @@ def placeAnglesCalcules(sliderGrp,nBoucles):
     # on place d'abord les angles GD -> plus facile a placer maintenant
     locatorList=map(position,[locator(i) for i in range(6)])
 
+    t=time.time()
+
     for i in range(1):#nBoucles):
             correctionRot(sliderGrp,sliderGrp.string2num("compression g"),locatorList[3],False)
             correctionRot(sliderGrp,sliderGrp.string2num("rotLGD"),locatorList[0],True)
@@ -244,16 +246,19 @@ def placeAnglesCalcules(sliderGrp,nBoucles):
             correctionRot(sliderGrp,sliderGrp.string2num("rotTGD"),locatorList[5],False)
 
 
+    print "apres GD",time.time()-t
+    t=time.time()
+
     t=time.time()
     for i in range(nBoucles):
         sliderGrp.do("compression",compression)
         sliderGrp.do("rotLHB",angleLombaires) 
         sliderGrp.do("rotCHB",angleCervicales)  
 
-        correctionRot(sliderGrp,sliderGrp.string2num("compression g"),locatorList[3],False)
-        correctionRot(sliderGrp,sliderGrp.string2num("rotLGD"),locatorList[0],True)
-        correctionRot(sliderGrp,sliderGrp.string2num("rotCGD"),locatorList[4],False)
-        correctionRot(sliderGrp,sliderGrp.string2num("rotTGD"),locatorList[5],False)
+        #correctionRot(sliderGrp,sliderGrp.string2num("compression g"),locatorList[3],False)
+        #correctionRot(sliderGrp,sliderGrp.string2num("rotLGD"),locatorList[0],True)
+        #correctionRot(sliderGrp,sliderGrp.string2num("rotCGD"),locatorList[4],False)
+        #correctionRot(sliderGrp,sliderGrp.string2num("rotTGD"),locatorList[5],False)
         #sliderGrp.do("compression g",compressionGD)
         #sliderGrp.do("rotLGD",angleLombairesGD) 
         #sliderGrp.do("rotCGD",angleCervicalesGD)  
@@ -262,11 +267,17 @@ def placeAnglesCalcules(sliderGrp,nBoucles):
         #sliderGrp.do("rotTGD",angleTeteGD)
 
 
+    print "apres nBGD",time.time()-t
+    t=time.time()
+
     sliderGrp.do("orientation",orientation)
     sliderGrp.do("scale",ScaleFactor())
     sliderGrp.do("x",pos[0])
     sliderGrp.do("y",pos[1])
     sliderGrp.do("z",pos[2])
+
+    print "apres fin",time.time()-t
+    t=time.time()
 
 def Correction(sliderGrp):
     locatorList=map(position,[locator(i) for i in range(6)])
@@ -274,7 +285,7 @@ def Correction(sliderGrp):
     for i in range(2):
         sliderGrp.do("scale",ScaleFactor())
 
-        t=time.time()
+        #t=time.time()
 
 
         for _ in range(1):
@@ -302,7 +313,8 @@ def Correction(sliderGrp):
         #    correctionRot(sliderGrp,sliderGrp.string2num("rotTGD"),locatorList[5],False)
         #    correctionRot(sliderGrp,sliderGrp.string2num("rotTHB"),locatorList[5],False)
 
-
+        #print "apres translate",time.time()-t
+        #t=time.time()
 
         # on translate la courbe pour que la courbe coincide parfaitement au niveau des lombaires
         for i in range(1):
@@ -310,17 +322,18 @@ def Correction(sliderGrp):
             translateToCV(0,0)
         ## on translate la courbe pour qu'elle repasse par le localisateur milieu
             translateToLocator(2)
-            for _ in range(2):
+            for _ in range(1):
                 correctionRot(sliderGrp,sliderGrp.string2num("compression g"),locatorList[3],False)
                 correctionRot(sliderGrp,sliderGrp.string2num("compression"),locatorList[3])
-            for _ in range(2):
+            for _ in range(1):
                 correctionRot(sliderGrp,sliderGrp.string2num("rotLGD"),locatorList[0],True)
                 correctionRot(sliderGrp,sliderGrp.string2num("rotLHB"),locatorList[0],True)
-            for i in range(2):
+            for i in range(1):
                 correctionRot(sliderGrp,sliderGrp.string2num("rotCGD"),locatorList[4],False)
                 correctionRot(sliderGrp,sliderGrp.string2num("rotCHB"),locatorList[4],False)
 
- 
+        #print "apres corr",time.time()-t
+        #t=time.time() 
 
 
         #for i in range(1):
@@ -338,10 +351,13 @@ def Correction(sliderGrp):
         #    for i in range(2):
         #        correctionRot(sliderGrp,sliderGrp.string2num("rotCGD"),locatorList[4],False)
         #        correctionRot(sliderGrp,sliderGrp.string2num("rotCHB"),locatorList[4],False)
-        for _ in range(2):
+        for _ in range(4):
             correctionRot(sliderGrp,sliderGrp.string2num("rotTGD"),locatorList[5],False)
             correctionRot(sliderGrp,sliderGrp.string2num("rotTHB"),locatorList[5],False)
 
+
+        #print "apres corrT",time.time()-t
+        #t=time.time() 
 
         #for _ in range(1): 
         #    translateToLocator(3)
@@ -359,34 +375,24 @@ def Correction(sliderGrp):
         #p("temps placementC : ",time.time()-t)
         t=time.time()
 
-   
-
-maxCV = MaxCV
-sliderGrp=mainFct(pointOnCurveList,locatorList)
-droites=sliderGrp.droites
-par=calcCVParameters() 
-CVpos=calcPosCV()
-jtPos=JointPositions()
-jtParam=JointParameters()
-length=getCurveLength()
-
-for i in range(0,1):
-    j=1
-    cmds.currentTime(j, edit=True )
-    resetCurve(sliderGrp,length,CVpos,jtPos)
-    sliderGrp=mainFct(pointOnCurveList,locatorList,reset=True,droites=droites)
-    checkParameters(par,CVpos,jtPos,jtParam,printOK=False)
-    placeAnglesCalcules(sliderGrp,1)
-    Correction(sliderGrp)
-    a=Evaluate()
-    evaluation=a.execute()
-    #p("pos finale CV",calcPosCV())
-    #p("pos finale Joints",JointPositions())
+def setAllCurves():
+    for i in range(20):
+        if isSet():
+            cmds.currentTime(i, edit=True )
+            for j in range(maxCV()):
+                posj=cmds.getAttr('posCV.pos'+str(j))[0]
+                cmds.select(curvei(j))
+                cmds.move(posj[0],posj[1],posj[2])
+            saveKeys()
+ 
+def isSet():
+    res=0
+    res+=cmds.getAttr('posCV.pos0X')+cmds.getAttr('posCV.pos1X')+cmds.getAttr('posCV.pos1X')
+    return res!=0
 
 
-   
-
-    # setKey pour enregistrer la position de la courbe a chaque instant
+def saveKeys():
+        # setKey pour enregistrer la position de la courbe a chaque instant
     cmds.setKeyframe("curve1",breakdown=False,hierarchy="None",controlPoints=True,shape=False)
     for k in range(MaxCV()):
         maya.mel.eval('setKeyframe -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {"curve1.cv['+str(k)+']"};')
@@ -399,8 +405,48 @@ for i in range(0,1):
         cmds.setAttr('ValeurAngles.'+angleName,value)
         mel.eval('setKeyframe { "ValeurAngles.'+angleName+'" };')
         
-    cmds.select('locatorAngle1')
-    cmds.hide()
+    # on enregistre les positions des points de contrôle
+    for i in range(maxCV()):
+        pos=position(curvei(i))
+        cmds.setAttr('posCV.pos'+str(i)+'X',pos[0])
+        cmds.setAttr('posCV.pos'+str(i)+'Y',pos[1])
+        cmds.setAttr('posCV.pos'+str(i)+'Z',pos[2])
+        mel.eval('setKeyframe { "posCV.pos'+str(i)+'" };')
+
+
+maxCV = MaxCV
+sliderGrp=mainFct(pointOnCurveList,locatorList)
+droites=sliderGrp.droites
+par=calcCVParameters() 
+CVpos=calcPosCV()
+jtPos=JointPositions()
+jtParam=JointParameters()
+length=getCurveLength()
+
+setAllCurves()
+
+for i in range(0,20):
+    j=8
+    cmds.currentTime(i, edit=True )
+    resetCurve(sliderGrp,length,CVpos,jtPos)
+    sliderGrp=mainFct(pointOnCurveList,locatorList,reset=True,droites=droites)
+    checkParameters(par,CVpos,jtPos,jtParam,printOK=False)
+    placeAnglesCalcules(sliderGrp,1)
+    Correction(sliderGrp)
+    saveKeys()
+    a=Evaluate()
+    evaluation=a.execute()
+    #p("pos finale CV",calcPosCV())
+    #p("pos finale Joints",JointPositions())
+cmds.select('locatorAngle1')
+cmds.hide()
+
+
+   
+
+
+
+
 
 
 

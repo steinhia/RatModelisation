@@ -80,6 +80,9 @@ def select(name):
 def curvei(i):
     return 'curve1.cv['+str(i)+']'
 
+def locator(i):
+    return 'locatorAngle'+str(i)
+
 def position(name):
     joint=n2J(name)
     if joint !=-1 :
