@@ -337,12 +337,21 @@ def rotComp(value,crvInfos=[]):
     for i in range(nEnd,nBegin-1,-1):
         cmds.select(curvei(i),add=True)
         cmds.rotate(-value*0.5,0.0,0.0,r=True,pivot=pivot)
+
+
+    # pivot milieu des dorsales
+    cmds.select(clear=True)
+    cmds.select(curvei(2),curvei(4),curvei(1))
+    pivot=position(curvei(3))
+    cmds.rotate(value*0.1,0,0,pivot=pivot)
+    cmds.select(clear=True)
+    
     posB2=position(curvei(nEnd))
     posE2=position(curvei(nMax))
     tB=sub(posB2,posB)
     tE=sub(posE2,posE)
 
-    # translation pour ramener les points extremes
+        # translation pour ramener les points extremes
     cmds.select(clear=True)
     for i in range(nEnd+1,nMax+1):
         cmds.select(curvei(i),add=True)
@@ -353,15 +362,7 @@ def rotComp(value,crvInfos=[]):
     cmds.move(tE[0],tE[1],tE[2],r=True)
     cmds.select(clear=True)
 
-    cmds.select(clear=True)
-    cmds.select(curvei(2),curvei(4))
-    pivot=position(curvei(3))
-    cmds.rotate(-value*0.1,0,0,pivot=pivot)
-    cmds.select(clear=True)
 
-    cmds.select(curvei(5))
-    pivot=position(curvei(4))
-    #cmds.rotate(-value*2,0,0,pivot=pivot)
 
 # TODO revoir l'idee de faire la rot lombaire en meme temps que la compression
     #cmds.select(curvei(0))

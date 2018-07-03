@@ -61,6 +61,8 @@ def calcCentroid(name):
     del vertPos
     return center
 
+
+
 # CALCULS SUR LA COURBE
           
 # orientation par rapport au corps et pas la tete
@@ -133,19 +135,7 @@ def angle2D(v1, v2):
 def angleHB(v1,PV=False):
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleHB(positionList,v1,PV)
-    #v2=[abs(v1[0]),0,abs(v1[2])]
-    #if v1[0]==0 and v1[2]==0:
-    #    angle=pi()/2.0
-    #else:
-    #    val=np.dot(v1,v2)/(np.linalg.norm(v1)*np.linalg.norm(v2))
-    #    if val>1:
-    #        val=1
-    #    if val<-1:
-    #        val=-1
-    #    angle = math.acos(val)
-    #angle*=np.sign(np.dot(v1,[0,1,0]))
-    ##angle*=np.sign(calcOrientation())
-    #return np.degrees(angle)
+
     
 def angleGD(v1,v2):
     angle1=np.degrees(math.atan2(v1[0],v1[2]))
@@ -180,7 +170,6 @@ def angleTGD(L=[]):
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleTGD(positionList)
 
-
 def angleComp(crvInfos=[]):
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleComp(positionList)
@@ -196,7 +185,6 @@ def getDistCVPoint():
         cvPos=getPoint(getParameter(position(curvei(i))))
         vertPos=getPoint(getParameter(position(n2J(pointOnCurveList[i]))))
         res.append(norm(sub(cvPos,vertPos)))
-    print res
     return res
 
 def getTangent(name): # nom ou position directement
@@ -207,8 +195,8 @@ def getTangent(name): # nom ou position directement
         pos=name
     # point le plus proche sur la courbe
     param=getParameter(pos)
-    if(cmds.objExists('locator1')):
-        cmds.delete('locator1')
+    #if(cmds.objExists('locator1')):
+    #    cmds.delete('locator1')
     # tangente a la courbe en ce point
     return cmds.pointOnCurve( 'curve1', pr=param,tangent=True )
 
@@ -224,6 +212,16 @@ def getLen(beginP,endP):
 def getCLen():
     beginP=getParameter(position(curvei(n2N("T1"))))
     endP=getParameter(position(curvei(n2N("C0"))))
+    return getLen(beginP,endP)[1]
+
+def getTLen():
+    beginP=getParameter(position(curvei(n2N("C0"))))
+    endP=getParameter(position(curvei(n2N("Tete"))))
+    return getLen(beginP,endP)[1]
+
+def getLLen():
+    beginP=getParameter(position(curvei(n2N("L6"))))
+    endP=getParameter(position(curvei(n2N("L1"))))
     return getLen(beginP,endP)[1]
 
 
@@ -247,8 +245,44 @@ def calcParameters():
         pos=position(curvei(i))
         positions.append(pos)
         param.append(getParameter(pos))
-    #print "pos apres reset",positions
     return [param,positions]
+
+
+def getJointChainLength(L=[]):
+    len=0
+    for i in range(1,26):
+       len+=distance(position('joint'+str(i)),position('joint'+str(i+1)))
+    return len
+
+def locatorCurveLength():
+    positionList=[num2Name(i) for i in range(6)]
+    return GeneralCalculs().getChainLength(positionList) 
+
+def HalfChainCurveLengthL():
+    positionList=[num2Name(i) for i in range(6)]
+    return GeneralCalculs.HalfChainLengthL(positionList)
+
+def HalfChainCurveLengthC():
+    positionList=[num2Name(i) for i in range(6)]
+    return GeneralCalculs.HalfChainLengthC(positionList)
+
+def RapportChainCurveLength():
+    positionList=[num2Name(i) for i in range(6)]
+    return GeneralCalculs.RapportChainLength(positionList)
+
+def RapportCurveLength():
+    return RapportChainCurveLength()/RapportChainLength()
+
+def LRapport():
+    crv=distance(num2Name(0),num2Name(1))/distance(num2Name(1),num2Name(2))
+    loc=distance(locator(0),locator(1))/distance(locator(1),locator(2))
+    return crv/loc
+
+def CRapport():
+    crv=distance(num2Name(3),num2Name(4))/distance(num2Name(2),num2Name(3))
+    loc=distance(locator(3),locator(4))/distance(locator(2),locator(3))
+    return crv/loc
+
 
 def checkParameters(CVparam=[],CVpos=[],jtPos=[],jtParam=[],angles=[],printOK=False):
     res=True
@@ -261,7 +295,6 @@ def checkParameters(CVparam=[],CVpos=[],jtPos=[],jtParam=[],angles=[],printOK=Fa
             else:
                 if printOK:
                     print "cv param ok"
-
     if CVpos!=[]:
         newCVpos=calcCVPositions()
         for (cvpos,cvposnew) in zip(CVpos,newCVpos):
@@ -304,41 +337,6 @@ def checkParameters(CVparam=[],CVpos=[],jtPos=[],jtParam=[],angles=[],printOK=Fa
     #else :
     #    print "Modele semble stable"
 
-def getJointChainLength(L=[]):
-    len=0
-    for i in range(1,26):
-       len+=distance(position('joint'+str(i)),position('joint'+str(i+1)))
-    return len
-
-def locatorCurveLength():
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs().getChainLength(positionList) 
-
-def HalfChainCurveLengthL():
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.HalfChainLengthL(positionList)
-
-def HalfChainCurveLengthC():
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.HalfChainLengthC(positionList)
-
-def RapportChainCurveLength():
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.RapportChainLength(positionList)
-
-def RapportCurveLength():
-    return RapportChainCurveLength()/RapportChainLength()
-
-def LRapport():
-    crv=distance(num2Name(0),num2Name(1))/distance(num2Name(1),num2Name(2))
-    loc=distance(locator(0),locator(1))/distance(locator(1),locator(2))
-    return crv/loc
-
-
-def CRapport():
-    crv=distance(num2Name(3),num2Name(4))/distance(num2Name(2),num2Name(3))
-    loc=distance(locator(3),locator(4))/distance(locator(2),locator(3))
-    return crv/loc
 
 def EvalPositionLocator():
     rapport=RapportCurveLength()
