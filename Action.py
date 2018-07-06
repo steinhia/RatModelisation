@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # une classe pour une action a executer
 # -*- coding: utf-8 -*-
 #from functools import partial
@@ -29,18 +31,21 @@ class Action(object):
 
     def execute(self,ajust=True,*_):
         param=calcCVParameters()
-        orientation=calcOrientation(Cote=self.Cote)
+        #orientation=calcOrientation(Cote=self.Cote)
+        orientationOpp=calcOrientation(Cote=self.CoteOpp)
         pos=getCurvePosition(Cote=self.CoteOpp)
         posture=calcPosture(Cote=self.CoteOpp)
         lenC=getCurveLength()
         lenChain=getJointChainLength()
         jtParam=JointParameters()
+        cmds.select(clear=True)
         if self.mvt and ajust:
             setOrientation(0,self.Cote)
         cmds.select(clear=True)
         self.executeAction(self)
+        cmds.select(clear=True)
         if self.function!=setOrientation and self.mvt and ajust:
-            setOrientation(orientation,Cote=self.Cote)
+            setOrientation(orientationOpp,Cote=self.CoteOpp)
         if self.mvt and ajust:
             #keepJointParameters(jtParam)
             newPos=getCurvePosition(Cote=self.CoteOpp)
@@ -106,7 +111,6 @@ class FunctionAction(Action):
         self.mvt=mvt
 
     def execute(self,ajust=True,*_):
-                #p("args",self.args)
         Action.execute(self,ajust,self.args)
 
     def executeAction(self,*_):

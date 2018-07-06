@@ -20,28 +20,28 @@ class GeneralCalculs(object):
     # pour la position de la courbe, besoin d'un point sur la courbe (scaling etc) -> plutot joint que cv point
     @classmethod
     def getPosition(cls,liste,num=-1,Cote="",*_):
-        milieu=getMilieu(position(liste[0]),position(liste[3]))
-        if num<0 or num>2:
-            if Cote=="C":
-                return CVPosition(liste[4])
-            elif Cote=="L":
-                return CVPosition(liste[0])
-            else:
-                return position(liste[2])
+        if Cote=="C":
+            pos=CVPosition(liste[4])
+        elif Cote=="L":
+            pos=CVPosition(liste[0])
+        elif Cote=="T":
+            pos=CVPosition(liste[5])
         else:
-            if Cote=="C":
-                return CVPosition(liste[4])[num]
-            elif Cote=="L":
-                return CVposition(liste[0])[num]
-            else:
-                return position(liste[2])[num]
+            pos=position(liste[2])
+        if num<0 or num>2:
+            return pos
+        return pos[num]
 
+            # TODO probleme vient de cet ordre de posture!!!!!
+            #probleme avec t, plan légèrement decale a cause du point supplementaire, en tout cas pas axe de la tete
     @classmethod
     def PostureVector(cls,liste,Cote="",*_):
         if Cote=="C":
             return normalize(sub(CVPosition(liste[4]),CVPosition(liste[3])))
         elif Cote=="L":
-            return normalize(sub(CVPosition(liste[0]),CVPosition(liste[2])))
+            return normalize(sub(CVPosition(liste[2]),CVPosition(liste[0])))
+        elif Cote=="T":
+            return normalize(sub(CVPosition(liste[5]),CVPosition(liste[4])))
         else:
             return normalize(sub(CVPosition(liste[3]),CVPosition(liste[0])))
 
@@ -56,10 +56,10 @@ class GeneralCalculs(object):
 
         normal=np.cross(PostureVector(Cote),[0,1,0])
         name="PosturePlane"
-        cmds.polyPlane(n=name,axis=normal, sx=1, sy=1, w=50, h=50)
+        cmds.polyPlane(n=name,axis=normal, sx=1, sy=1, w=5, h=5)
         center=cmds.getAttr(name+'.center')[0]
-        posL6=CVPosition(liste[0])
-        t=sub(posL6,center)
+        ptOnPlane=cls.PointOnPlane(liste,Cote)#posL6=CVPosition(liste[0])
+        t=sub(ptOnPlane,center)
         cmds.select(name)
         cmds.move(t[0],t[1],t[2],r=True)
 
@@ -72,39 +72,23 @@ class GeneralCalculs(object):
 
     @classmethod
     def getPosture(cls,liste,Cote="",*_):
-        if Cote=="C":
-            p=cls.PostureVector(liste,"C")
-        elif Cote=="L":
-            p=cls.PostureVector(liste,"L")
-        else:
-            p=cls.PostureVector(liste)
+        p=cls.PostureVector(liste,Cote)
         return valPrincDeg(angleHB(p,PV=True))
 
     @classmethod
     def getOrientation(cls,liste,Cote="",*_):
-        #posture change orientation, pas l'inverse TODO a changer
-        if Cote=="C":
-            p=cls.PostureVector(liste,"C")
-        elif Cote=="L":
-            p=cls.PostureVector(liste,"L")
-        else:
-            p=cls.PostureVector(liste)
+        p=cls.PostureVector(liste,Cote)
         return angle2D([p[0],p[2]],[0,1])
         
 
     @classmethod
     def getChainLength(cls,liste,*_):
         posList=map(position,liste)
+        posList=[posList[i] for i in range(len(posList)) if i!=1]
         length=0
         for i in range(len(posList)-1):
             length+=distance(posList[i],posList[i+1])
         return length
-
-    @classmethod
-    def refVector(cls,liste,*_):
-        pV=cls.PostureVector(liste)
-        pV[1]=0
-        return pV
 
     @classmethod
     def projV(cls,v):
@@ -116,6 +100,7 @@ class GeneralCalculs(object):
 
     # que des l positifs, evite les angles au dessus de 90°, c'est ce qu'on veut pourles angles C
     # non un vrai angle, mais qui depend de orientation
+    # TODO projeter sur plan , obtenir les coordonnees 2D puis calculer l'angle'
     @classmethod
     def angleHB(cls,liste,v,PV=False):
         l=norm([v[0],v[2]])
@@ -130,7 +115,6 @@ class GeneralCalculs(object):
         pProj=cls.proj2D(cls.PostureVector(liste))
         return angle2D(pProj,vProj)
 
-
     @classmethod
     def PointOnPlane(cls,liste,Cote="",*_):
         #posture change orientation, pas l'inverse
@@ -138,6 +122,8 @@ class GeneralCalculs(object):
             p=CVPosition(liste[4])
         elif Cote=="L":
             p=CVPosition(liste[0])
+        elif Cote=="T":
+            p=CVPosition(liste[5])
         else:
             p=CVPosition(liste[2])
         return p
@@ -145,11 +131,36 @@ class GeneralCalculs(object):
     # on projette le vecteur sur le plan formé par la verticale et le postureVector
     @classmethod
     def projPlanPosture3D(cls,liste,p1,p2,Cote=""):
-        normal=normalize(np.cross(PostureVector(),[0,1,0]))
-        M=cls.PointOnPlane(liste)
+        normal=normalize(np.cross(PostureVector(Cote),[0,1,0]))
+        M=cls.PointOnPlane(liste,Cote)
         p1Proj=projPoint3D(p1,M,normal,Cote)
         p2Proj=projPoint3D(p2,M,normal,Cote)
         return sub(p2Proj,p1Proj)
+
+        # on projette le vecteur sur le plan formé par la verticale et le postureVector
+    @classmethod
+    def projPlanPosture2D(cls,liste,p1,p2,Cote=""):
+        normal=normalize(np.cross(PostureVector(Cote),[0,1,0]))
+        M=cls.PointOnPlane(liste,Cote)
+        p1Proj=projPoint3D(p1,M,normal,Cote)
+        p2Proj=projPoint3D(p2,M,normal,Cote)
+        p1Proj2D=cls.getPlaneCoordinates(liste,p1Proj,Cote)
+        p2Proj2D=cls.getPlaneCoordinates(liste,p2Proj,Cote)
+        return sub(p2Proj2D,p1Proj2D)
+
+    @classmethod
+    def getPlaneCoordinates(cls,liste,p1,Cote=""):
+        v1=normalize(cls.projV(PostureVector(Cote)))
+        v2=[0,1,0]
+        return [np.dot(p1,v1),np.dot(p1,v2)]
+
+        # on projette le vecteur sur le plan formé par la verticale et le postureVector
+    @classmethod
+    def projPtPV(cls,liste,p1,Cote=""):
+        normal=normalize(np.cross(PostureVector(Cote),[0,1,0]))
+        M=cls.PointOnPlane(liste,Cote)
+        p1Proj=projPoint3D(p1,M,normal,Cote)
+        return p1Proj
 
 
     @classmethod

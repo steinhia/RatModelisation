@@ -25,11 +25,11 @@ class SliderGrp(object):
         if self.droites==[]:
             for i in range(2,12):
                 buttonList[i].create()
-                self.droites.append(buttonList[i].calcDroite())
+                #self.droites.append(buttonList[i].calcDroite())
         else :
             for i in range(2,12):
                 buttonList[i].create()
-                buttonList[i].affectDroite(self.droites[i-2])
+                #buttonList[i].affectDroite(self.droites[i-2])
         #checkParameters(param)
 
         cmds.setParent('..')
@@ -51,18 +51,10 @@ class SliderGrp(object):
 
         # Planes
         cmds.setParent('..')
-        #cmds.rowColumnLayout( numberOfColumns=2,columnWidth=[(1, 200),(2,200),(3,200)])
-        #checkPlane=functionCheckBox('Show Plane',ShowPlane,HidePlane,False)
-        #checkPlane.create()
-
-        #cmds.setParent('..')
         cmds.rowColumnLayout(numberOfColumns=1)#,columnWidth=[(1, 200),(2,500)])
 
         for buttonRadio in planesList:
             buttonRadio.create()
-
-
-        #normal, cervicales ou lombaires
 
 
     def do(self,string,value,updateText=True):
@@ -178,7 +170,7 @@ def createWindows(nameList,pointOnCurveList,locatorList,droites=[]):
 
     # TODO garder les 2 keep=False fait planter les tests
     # cervicales GD HB TODO position tete par rapport  au sol ou aux dorsales (tenir tete droite) -> 2 fonctions align with et setstraight ?
-    buttonList.append(functionButton(sliderList,2,names[2],-10,10,-60,60,0,0.00000001,setFcts[0],getFunction=fcts[2],Cote="",CoteOpp=""))
+    buttonList.append(functionButton(sliderList,2,names[2],-10,10,-60,60,0,0.00000001,setFcts[0],getFunction=fcts[2],Cote="C",CoteOpp="L"))
     buttonList.append(functionButton(sliderList,3,names[3],-10,10,-60,60,0,0.00000001,setFcts[1],getFunction=fcts[3],Cote="C",CoteOpp="L"))
 
     # dorsales GD HB -> dorsales HB = dorsales + lombaires
@@ -190,12 +182,12 @@ def createWindows(nameList,pointOnCurveList,locatorList,droites=[]):
     buttonList.append(functionButton(sliderList,7,names[7],-30,30,-60,60,0,0.00000001,setFcts[5],getFunction=fcts[7],Cote="L",CoteOpp="C"))
 
     # compression
-    buttonList.append(functionButton(sliderList,8,names[8],-100,200,-40,40,0,0.00000001,setFcts[6],crvInfos,getFunction=fcts[8],getFunctionArgs=crvInfos,Cote="",CoteOpp=""))
-    buttonList.append(functionButton(sliderList,9,names[9],0,40,0,80,0,0.00000001,setFcts[7],crvInfos,getFunction=fcts[9],getFunctionArgs=crvInfos,Cote="",CoteOpp="L"))
+    buttonList.append(functionButton(sliderList,8,names[8],-100,200,-40,50,0,0.00000001,setFcts[6],crvInfos,getFunction=fcts[8],getFunctionArgs=crvInfos,Cote="",CoteOpp="L"))
+    buttonList.append(functionButton(sliderList,9,names[9],0,50,0,80,0,0.00000001,setFcts[7],crvInfos,getFunction=fcts[9],getFunctionArgs=crvInfos,Cote="",CoteOpp="L"))
 
     #tete
-    buttonList.append(functionButton(sliderList,10,names[10],-28,20,-90,90,0,0.00000001,setFcts[8],getFunction=angleTGD,Cote="",CoteOpp=""))
-    buttonList.append(functionButton(sliderList,11,names[11],-28,20,-90,90,0,0.00000001,setFcts[9],getFunction=angleTHB,Cote="C",CoteOpp="L")) 
+    buttonList.append(functionButton(sliderList,10,names[10],-20,17,-90,90,0,0.00000001,setFcts[8],getFunction=angleTGD,Cote="C",CoteOpp="L"))
+    buttonList.append(functionButton(sliderList,11,names[11],-20,17,-90,90,0,0.00000001,setFcts[9],getFunction=angleTHB,Cote="C",CoteOpp="L")) 
 
 
     # position
@@ -221,7 +213,7 @@ def createWindows(nameList,pointOnCurveList,locatorList,droites=[]):
     planesList=[]
     planesList.append(functionCheckBox('Show Plane',partial(ShowPlaneOn,paramList),HidePlane,False))
     planesList.append(RadioButtonGrp('type',[partial(ClickCurve,paramList),partial(ClickLocator,paramList)],['Curve', 'Locator'],2,paramList))
-    planesList.append(RadioButtonGrp('portion',[partial(ClickN,paramList),partial(ClickC,paramList),partial(ClickL,paramList)],['Normal', 'Cervicales', 'Lombaires'],3,paramList))
+    planesList.append(RadioButtonGrp('portion',[partial(ClickN,paramList),partial(ClickC,paramList),partial(ClickL,paramList),partial(ClickT,paramList)],['Normal', 'Cervicales', 'Lombaires','Tete'],4,paramList))
 
     # on cree le sliderGrp a partir de tous les sliders
     sliderGrp1=SliderGrp("Modelisation de la colonne du rat",buttonList,checkBoxList,nameList,pointOnCurveList,locatorList,planesList,droites)

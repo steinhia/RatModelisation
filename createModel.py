@@ -121,16 +121,11 @@ def ImportMesh():
     mv(pdt(-1,posL6))
 
 
-
-
-
     # on donne le bon angle
     v=sub(posL6,posC1)
     aA=cmds.angleBetween( v1=v, v2=(1.0, 0.0, 0.0) )
     cmds.select('camGroup')
     cmds.rotate(angle*aA[0],angle*aA[1],angle*aA[2],r=True)
-
-
 
 
 def createJointChain(nameList,tailList):
@@ -180,11 +175,11 @@ def ClosestPoint(curvePoint):
     return indiceMax
 
     
-def createCurve(pointOnCurveList,nameList):   
+def createCurve(pointOnCurveList,nameList):
     cmds.select('joint1','joint28', add=1)
     handle=cmds.ikHandle(n='ikHandle',ns=1, sol='ikSplineSolver',simplifyCurve=False)
     if('curve1' in cmds.listRelatives('objGroup')):
-        cmds.parent( 'curve1', world=True )
+        cmds.parent( 'curve1', world=True )  
 
     tmpArclenDim=cmds.arcLengthDimension( 'curveShape1.u[0]' )   
     npC = cmds.createNode("nearestPointOnCurve")
@@ -199,13 +194,14 @@ def createCurve(pointOnCurveList,nameList):
         cmds.insertKnotCurve( 'curve1.u['+str(param)+']', ch=True, rpo=True) 
     cmds.delete('curve1' , ch = 1)
     KeepList=[]
-    maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
+    maxCV = MaxCV()
     for curvePoint in pointOnCurveList :
-        KeepList.append(ClosestPoint(curvePoint))
+        if curvePoint!=-1:
+            KeepList.append(ClosestPoint(curvePoint))
     point=getPoint(getParameter(position(n2J('C0')))+2)
     KeepList.append(ClosestPoint(point))
     for i in range(maxCV-2,1,-1):
-        newMaxCV=cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
+        newMaxCV=MaxCV()
         if(i not in KeepList and i!= newMaxCV):
             cmds.delete(curvei(i))
     cmds.delete('curve1.cv[1]')
@@ -218,6 +214,22 @@ def createCurve(pointOnCurveList,nameList):
     ##print "paramC0",paramC0
     ##param=(paramTete+3.0*paramC0)/4.0
     ##cmds.insertKnotCurve( 'curve1.u['+str(paramC0)+']', ch=True) 
+
+    cmds.duplicate('curve1',n='curve2',rc=True)
+    for i in range(MaxCV()):
+        pos=position(curvei(i,'curve2'))
+        cmds.select(curvei(i,'curve2'))
+        cmds.move(0,-pos[1],0,r=True)
+        cmds.connectAttr(curvei(i)+'.xValue',curvei(i,'curve2')+'.xValue')
+        cmds.connectAttr(curvei(i)+'.zValue',curvei(i,'curve2')+'.zValue')
+    npCHor = cmds.createNode("nearestPointOnCurve")
+    cmds.connectAttr("curveShape2.worldSpace", npCHor + ".inputCurve")
+    cmds.rename('nearestPointOnCurve1', 'nearestPointOnCurveHorGetParam')
+
+    #cmds.hide('curve2')
+
+
+
 
 
 

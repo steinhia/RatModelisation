@@ -43,7 +43,6 @@ class Button(GuiObject):
 
       
     def create(self,*_):
-        #p("debutcreate",self.slider,self.slider2)
         if self.slider!=-1:
             self.slider.create()
         else:
@@ -187,7 +186,6 @@ class Slider(GuiObject):
         if self.dte==[]:
             return []
         elif self.dte[0] !=0 :
-            #print "res",(float(x)-float(self.dte[1]))/float(self.dte[0])
             return (float(x)-float(self.dte[1]))/float(self.dte[0])
         else :
             p("probleme polyfit",self.dte)
@@ -293,7 +291,7 @@ class CheckBox(GuiObject):
         if self.args==[]:
             self.actionCheck.execute()
         else:
-            print self.actionCheck
+            self.actionCheck.execute(self.args)
         self.value=True
 
     def UnCheckFunction(self,*_):
@@ -314,7 +312,7 @@ class RadioButtonGrp(GuiObject):
         if self.numberOfRadioButtons==2:
             self.RadioButton=cmds.radioButtonGrp( label=self.label, labelArray2=self.labelArray, numberOfRadioButtons=self.numberOfRadioButtons, on1=self.actionList[0],on2=self.actionList[1],select=1)
         else:
-            self.RadioButton=cmds.radioButtonGrp( label=self.label, labelArray3=self.labelArray, numberOfRadioButtons=self.numberOfRadioButtons, on1=self.actionList[0],on2=self.actionList[1],on3=self.actionList[2],select=1)
+            self.RadioButton=cmds.radioButtonGrp( label=self.label, labelArray4=self.labelArray, numberOfRadioButtons=self.numberOfRadioButtons, on1=self.actionList[0],on2=self.actionList[1],on3=self.actionList[2],on4=self.actionList[3],select=1)
 
 
 

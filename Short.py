@@ -14,30 +14,47 @@ sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
 path="C:/Users/alexa/Documents/alexandra/scripts/"
 
 
+
+
+def curvei(i,curve='curve1'):
+    return curve+'.cv['+str(i)+']'
+
+def locator(i):
+    return 'locatorAngle'+str(i)
+
+def joint(i):
+    if i>0 and i<29:
+        return 'joint'+str(i)
+    return -1
+
+
 #pointOnCurveList=map(n2J,['L6','L3','T11','T8','T2','C4','C1'])
 def n2J(name):
-    dico={'L6':'joint1', 'L5':'joint2','L4':'joint3','L3':'joint4','L2':'joint5','L1':'joint6','T13':'joint7', \
-        'T12':'joint8','T11':'joint9','T10':'joint10','T9':'joint11','T8':'joint12','T7':'joint13','T6':'joint14', \
-        'T5':'joint15','T4':'joint16','T3':'joint17','T2':'joint18','T1':'joint19','C7':'joint20','C6':'joint21',\
-        'C5':'joint22','C4':'joint23','C3':'joint24','C2':'joint25','C1':'joint26','C0':'joint27','Tete':'joint28'}
+    #dico={'L6':'joint1', 'L5':'joint2','L4':'joint3','L3':'joint4','L2':'joint5','L1':'joint6','T13':'joint7', \
+    #    'T12':'joint8','T11':'joint9','T10':'joint10','T9':'joint11','T8':'joint12','T7':'joint13','T6':'joint14', \
+    #    'T5':'joint15','T4':'joint16','T3':'joint17','T2':'joint18','T1':'joint19','C7':'joint20','C6':'joint21',\
+    #    'C5':'joint22','C4':'joint23','C3':'joint24','C2':'joint25','C1':'joint26','C0':'joint27','Tete':'joint28'}
+    #if (not isinstance(name,list)) and name in dico :
+    #    return dico[name]
+    #else:
+    #    return -1
+    return joint(name2Num(name))
+
+
+def name2Num(name):
+    dico={'L6':1, 'L5':2,'L4':3,'L3':4,'L2':5,'L1':6,'T13':7, \
+        'T12':8,'T11':9,'T10':10,'T9':11,'T8':12,'T7':13,'T6':14, \
+        'T5':15,'T4':16,'T3':17,'T2':18,'T1':19,'C7':20,'C6':21,\
+        'C5':22,'C4':23,'C3':24,'C2':25,'C1':26,'C0':27,'Tete':28}
     if (not isinstance(name,list)) and name in dico :
         return dico[name]
-    elif name=='MilTete':
-        return 'joint28'
     else:
         return -1
 
+
 def n2N(name):
-    dico={'L6':0, 'L5':0,'L4':0,'L3':1,'L2':1,'L1':1,'T13':2, \
-        'T12':2,'T11':2,'T10':2,'T9':3,'T8':3,'T7':3,'T6':3, \
-        'T5':3,'T4':4,'T3':4,'T2':4,'T1':4,'C7':4,'C6':4,\
-        'C5':5,'C4':5,'C3':5,'C2':6,'C1':6,'C0':6,'MilTete':7,'Tete':8}
-    if name in dico :
-        return dico[name]
-    elif isinstance(name,str) :
-        return name
-    else:
-        return -1
+    liste=[abs(name2Num(name)-name2Num(num2NameCV(i))) for i in range(9)]
+    return liste.index(min(liste))
 
 def nLoc2nCurve(num):
     dico={0:0,1:1,2:2,3:4,4:6}
@@ -45,7 +62,9 @@ def nLoc2nCurve(num):
         return dico[name]
     else :
         return -1
-    
+
+def num2NameCV(num):
+    return pointOnCurveList[num]
 
 def num2Name(num):
     if 'sliderGrp' in globals() and hasattr(sliderGrp, 'locatorList'):
@@ -77,20 +96,14 @@ def select(name):
 #def nCurveToJoint(num):
 #    dico={0:'joint1',1:'joint4',2:'joint7',3:'joint13',4:'joint19',5:'joint23',6:'joint26'}
 
-def curvei(i):
-    return 'curve1.cv['+str(i)+']'
 
-def locator(i):
-    return 'locatorAngle'+str(i)
 
 def position(name):
+    if cmds.objExists(name):
+        return cmds.xform(name,q=1,t=1,ws=1)
     joint=n2J(name)
     if joint !=-1 :
         return cmds.xform(joint,q=1,t=1,ws=1)
-    if cmds.objExists(name):
-        return cmds.xform(name,q=1,t=1,ws=1)
-    elif name=="MilTete":
-        return getMilieu(position('C0'),position('Tete'))
     else:
         return -1
     # nom de la vertebre (objet existe pas)  
@@ -174,16 +187,30 @@ def valPrincDeg(theta):
 
 def getPoint(parameter):
     return cmds.pointOnCurve( 'curve1', pr=parameter, p=True )
+
+def getPointHor(parameter):
+    return cmds.pointOnCurve( 'curve2', pr=parameter, p=True )
     
 def getParameter(location):
     cmds.setAttr("nearestPointOnCurveGetParam.inPosition", location[0], location[1], location[2], type="double3") 
     uParam = cmds.getAttr("nearestPointOnCurveGetParam.parameter")
     return uParam
 
+def getParameterProj(location):
+    cmds.setAttr("nearestPointOnCurveHorGetParam.inPosition", location[0], location[1], location[2], type="double3") 
+    uParam = cmds.getAttr("nearestPointOnCurveHorGetParam.parameter")
+    return uParam
+
 def nearestPoint(name): 
     location=position(name)
     cmds.setAttr("nearestPointOnCurveGetParam.inPosition", location[0], location[1], location[2], type="double3") 
     wParam = cmds.getAttr("nearestPointOnCurveGetParam.position")
+    return wParam[0]
+
+def nearestPointHor(name):
+    location=position(name)
+    cmds.setAttr("nearestPointOnCurveHorGetParam.inPosition", location[0], location[1], location[2], type="double3") 
+    wParam = cmds.getAttr("nearestPointOnCurveHorGetParam.position")
     return wParam[0]
     
 
@@ -291,8 +318,15 @@ def ex(name):
     path="C:/Users/alexa/Documents/alexandra/scripts/"
     execfile(path+name)
 
-def mv(v):
-    cmds.move(v[0],v[1],v[2],r=True)
+def mv(v,rel=False):
+    cmds.move(v[0],v[1],v[2],r=rel)
+
+
+def projHor(v):
+    return [v[0],v[2]]
+
+def projHor3D(v):
+    return [v[0],0,v[2]]
 
     
         

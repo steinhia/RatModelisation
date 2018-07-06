@@ -2,6 +2,15 @@ import sys
 import numpy as np
 #sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
 
+
+objs=[]
+for i in range(1,6):
+    objs.append('locatorAngle'+str(i))
+
+for obj in objs :
+    print cmds.getAttr(obj+'.rpt')
+    cmds.setAttr(obj+'.rpt',0,0,0)
+
 path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"Short.py")
 

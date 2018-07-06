@@ -168,6 +168,10 @@ def ClickL(paramList,*_):
     paramList[1]="L"
     ShowPlane(paramList)
 
+def ClickT(paramList,*_):
+    paramList[1]="T"
+    ShowPlane(paramList)
+
 
 
 

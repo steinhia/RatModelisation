@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import maya.api.OpenMaya as om2
 #import maya.cmds as cmds
 #import maya
@@ -120,6 +122,14 @@ def projPlanPosture3D(p1,p2,Cote=""):
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.projPlanPosture3D(positionList,p1,p2,Cote)
 
+def projPlanPosture2D(p1,p2,Cote=""):
+    positionList=[num2Name(i) for i in range(6)]
+    return GeneralCalculs.projPlanPosture2D(positionList,p1,p2,Cote)
+
+def projPtPV(p1,Cote=""):
+    positionList=[num2Name(i) for i in range(6)]
+    return GeneralCalculs.projPtPV(positionList,p1,Cote)
+
 def createCurvePlane(Cote=""):
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.createPlane(positionList,Cote)
@@ -135,6 +145,17 @@ def angle2D(v1, v2):
 def angleHB(v1,PV=False):
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleHB(positionList,v1,PV)
+
+# voir signe, chercher comment définir
+# anglebetween maya!!
+def angleHB2V(v1,v2):
+    cosinus=np.dot(v1,v2)/(np.linalg.norm(v1)*np.linalg.norm(v2))
+    angle=math.acos(cosinus)
+    aB=cmds.angleBetween(v1=v1, v2=v2)
+    v12=sub(v1,v2)
+    angle=aB[3]
+    angle*=np.sign(dotProduct(np.cross(v1,v2),[0,0,1]) )
+    return angle
 
     
 def angleGD(v1,v2):
