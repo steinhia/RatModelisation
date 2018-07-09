@@ -165,36 +165,42 @@ def angleGD(v1,v2):
 
 
 
-def angleCHB(L=[]):
+def angleCHB():
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleCHB(positionList,pointOnCurveList)
-def angleCGD(L=[]):
+def angleCGD():
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleCGD(positionList,pointOnCurveList)
-def angleDHB(L=[]):
+def angleDHB():
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleDHB(positionList)
-def angleDGD(L=[]):
+def angleDGD():
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleDGD(positionList)
-def angleLHB(L=[]):
+def angleLHB():
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleLHB(positionList)
-def angleLGD(L=[]):
+def angleLGD():
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleLGD(positionList)
 
-def angleTHB(L=[]):
+def angleTHB():
     positionList=[num2Name(i) for i in range(6)]
+    liste=[num2Name(i) for i in range(6)]
+    v=SubVector(liste[5],liste[4])
+    l=norm([v[0],v[2]])
+    sens=np.sign(np.dot(projHor3D(v),projHor3D(GeneralCalculs.PostureVector(liste))))
+    #print "vlsens",v,l,np.dot(projHor3D(v),projHor3D(GeneralCalculs.PostureVector(liste))),angle2D([l,0],[sens*l,v[1]]),projHor3D(GeneralCalculs.PostureVector(liste))
     return GeneralCalculs.angleTHB(positionList)
-def angleTGD(L=[]):
+
+def angleTGD():
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleTGD(positionList)
 
-def angleComp(crvInfos=[]):
+def angleComp():
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleComp(positionList)
-def angleCompGD(crvInfos=[]):
+def angleCompGD():
     positionList=[num2Name(i) for i in range(6)]
     return GeneralCalculs.angleCompGD(positionList)
 

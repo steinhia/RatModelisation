@@ -26,11 +26,16 @@ class GuiObject(object):
     def update(self):
         raise NotImplementedError
 
+
+
+
+
+
 # on lui associe forcement un slider et un texte (courbure, orientation)
 # que des boutons reset
-class Button(GuiObject):
+class Group(GuiObject):
     
-    def __init__(self,label,label2,slider,sliderList,indiceText,valueReset,valueSetTo=0,slider2=-1,setOneFunction=-1,*_):
+    def __init__(self,label,label2,slider,sliderList,indiceText,valueReset,valueSetTo=0,slider2=-1,setOneFunction=-1,functionCorr=-1,corrArgs=[],*_):
         GuiObject.__init__(self, label)
         self.label2=label2        
         self.slider=slider
@@ -40,6 +45,8 @@ class Button(GuiObject):
         self.valueReset=valueReset # pas 0 mais valeur du slider 2 au debut
         self.valueSetTo=valueSetTo # 0 ou autre
         self.setOneFunction=setOneFunction
+        self.functionCorr=functionCorr
+        self.corrArgs=corrArgs
 
       
     def create(self,*_):
@@ -52,7 +59,9 @@ class Button(GuiObject):
             # on associe chaque texte a son slider
             self.sliderList[self.indiceText].associate(self.slider,self.slider2)
         self.GuiButton=cmds.button(label=self.label,command=partial(self.update,self.valueReset,True)) 
-        self.GuiButton=cmds.button(label=self.label2,command=partial(self.update,self.valueSetTo,True)) 
+        self.GuiButton2=cmds.button(label=self.label2,command=partial(self.update,self.valueSetTo,True)) 
+        if self.functionCorr!=-1:
+            self.GuiButtonCorr=cmds.button(label="Corr",command=partial(self.updateCorr,self.corrArgs))
 
 
     def calcDroite(self,*_):
@@ -67,10 +76,15 @@ class Button(GuiObject):
                 val=min+i*(max-min)/50.0
                 slider.setValue(val)
                 slider.update(False,True) # attention False necessaire
-                x.append(val)
+
                 # si ne veut pas actualiser, doit utiliser la fonction de calcul
-                val=self.sliderList[self.indiceText].fct(self.sliderList[self.indiceText].args)
-                y.append(val) # TODO comparer tps apres
+                valy=self.sliderList[self.indiceText].fct(self.sliderList[self.indiceText].args)
+                # si aux extremes, prend pas en compte
+
+                slider2=self.sliderList[self.indiceText].slider2
+                if valy<slider2.maxValue and valy>slider2.minValue:
+                    x.append(val)
+                    y.append(valy)
             slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
             if abs(1.0-abs(r_value))>0.01 or abs(slope)<0.1:
                 print "pas de droite pour ",slider.label, r_value, slope, intercept
@@ -91,6 +105,7 @@ class Button(GuiObject):
 
     # reset -> valueReset=2.53...
     # set to 0 -> valueSetTo=0
+    # fait un update de chaque bouton
     def update(self,value,updateText=True,*_):
         currentValue=self.sliderValue()
         if(currentValue!=value):
@@ -99,6 +114,13 @@ class Button(GuiObject):
         if updateText:
             for i in self.sliderList :
                 i.update(True)
+
+    def updateCorr(self,updateText=True,*_):
+        if self.functionCorr!=-1 :
+            self.functionCorr(self.sliderList)
+            if updateText:
+                for i in self.sliderList :
+                    i.update(True)
 
     def reset(self):
         self.update(self.valueReset,True)
@@ -111,6 +133,27 @@ class Button(GuiObject):
 
     def calcValue(self):
         return self.sliderList[self.indiceText].fct(self.sliderList[self.indiceText].args)
+
+
+
+#class Button(GuiObject):
+
+#    def __init__(self,label,function,functionArgs):
+#        GuiObject.__init__(self, label)
+#        self.function=function
+#        self.functionArgs=functionArgs
+
+#    def create(self,*_):
+#        self.GuiButton=cmds.button(label=self.label,command=partial(self.update,self.functionArgs)) 
+
+#    def update(self,updateText=True,*_):
+#        function(functionArgs)
+#        if updateText:
+#            for i in self.sliderList :
+#                i.update(True)
+
+
+
 
 class ButtonGlobal(GuiObject):
 
@@ -214,7 +257,12 @@ class SliderOffset(Slider):
                             i.update(True)
                         else:
                             i.update(False)
-
+                            sl2=i.slider2
+                            # si depasse la valeur limite a droite, on l'affecte pour rester ok
+                            val2=sl2.value
+                            #if val2>=sl2.maxValue or val2<=sl2.minValue:
+                            #    sl2.setValue(val2)
+                            #    sl2.update()
 
     def sliderValue(self,*_):
         return Slider.sliderValue(self)

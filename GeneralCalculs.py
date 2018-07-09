@@ -43,7 +43,7 @@ class GeneralCalculs(object):
         elif Cote=="T":
             return normalize(sub(CVPosition(liste[5]),CVPosition(liste[4])))
         else:
-            return normalize(sub(CVPosition(liste[3]),CVPosition(liste[0])))
+            return normalize(sub(CVPosition(liste[4]),CVPosition(liste[0])))
 
 
     @classmethod
@@ -106,7 +106,9 @@ class GeneralCalculs(object):
         l=norm([v[0],v[2]])
         if PV :
             return angle2D([l,0],[l,v[1]])
-        sens=np.sign(np.dot(v,cls.PostureVector(liste)))
+        sens=np.sign(np.dot(projHor3D(v),projHor3D(cls.PostureVector(liste))))
+        if sens==-1:
+            1#print "inversion"
         return angle2D([l,0],[sens*l,v[1]])
 
     @classmethod
