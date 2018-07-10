@@ -72,17 +72,17 @@ class Group(GuiObject):
             valInit=slider.value
             x=[]
             y=[]
-            for i in range(0,50):
-                val=min+i*(max-min)/50.0
+            for i in range(0,10):
+                val=min+(i+5)*(max-min)/20.0
                 slider.setValue(val)
                 slider.update(False,True) # attention False necessaire
 
                 # si ne veut pas actualiser, doit utiliser la fonction de calcul
-                valy=self.sliderList[self.indiceText].fct(self.sliderList[self.indiceText].args)
+                valy=self.sliderList[self.indiceText].fct()
                 # si aux extremes, prend pas en compte
 
                 slider2=self.sliderList[self.indiceText].slider2
-                if valy<slider2.maxValue and valy>slider2.minValue:
+                if (valy<slider2.maxValue and valy>slider2.minValue) or True:
                     x.append(val)
                     y.append(valy)
             slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
@@ -223,7 +223,7 @@ class Slider(GuiObject):
         return cmds.floatSliderGrp(self.GuiSlider, q=True, v=True)
 
     def create(self,*_):
-        self.GuiSlider=cmds.floatSliderGrp(label=self.label, field=True,height=30, s=self.step, minValue=self.minValue, maxValue=self.maxValue, value=self.value , cc= partial(self.update,True,True)) # pas de dc car trop long      
+        self.GuiSlider=cmds.floatSliderGrp(label=self.label, field=True,height=30, s=self.step, minValue=self.minValue, maxValue=self.maxValue, value=self.value , cc= partial(self.update,True,True,30)) # pas de dc car trop long      
 
     def f(self,x,*_):
         if self.dte==[]:
@@ -291,13 +291,16 @@ class SliderAbs(Slider):
         Slider.create(self)
 
      
-    def update(self,updateText=True,ajust=True,*_):
+    def update(self,updateText=True,ajust=True,nMax=10,*_):
         self.value=self.sliderValue()
         self.action.offset=self.value
-        self.action.execute(ajust)
+        self.action.execute(ajust,nMax)
         if updateText:
             for i in self.sliderList:
+                if i.slider2!=self:
                     i.update(True)
+                else:
+                    i.update(False)
 
     def setValue(self,val,*_):
         Slider.setValue(self,val)

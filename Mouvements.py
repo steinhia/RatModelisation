@@ -116,7 +116,7 @@ def setZ(z,Cote=""):
 
 def setPosture(ThetaVoulu,Cote=""):
     # position du centre au depart
-    pos=getCurvePosition(Cote=Cote)
+    pos=getCurvePosition()
     for i in range(5):
         posture=calcPosture(Cote)
         orient=PostureVector(Cote)
@@ -166,7 +166,7 @@ def setOrientation(ThetaVoulu,Cote=""):
 #        [crvLengthNew,distBegin2]=getLen(beginP,endP)
 
 
-# teste une valeur du premier slider pour obtenir la courbure voulue -> envoie premier slider dans la fonction
+# teste une valeur du premier slider pour obtenir la theta voulue -> envoie premier slider dans la fonction
 # trop long
 def setOneRot(valeur,test,L,moveSlider=False):
     t=time.time()
@@ -195,20 +195,18 @@ def setOneRotWithChangement(test,slider,getFunction,getFunctionArgs,moveSlider=T
     fTest=getFunction()
     return fTest
 
-def isInside(courbure,fMin,fMax):
-    return (courbure >=fMin and courbure <=fMax) or (courbure >=fMax and courbure <=fMin)
+def isInside(theta,fMin,fMax):
+    return (theta >=fMin and theta <=fMax) or (theta >=fMax and theta <=fMin)
 
-# cherche a atteindre une courbure par dichotomie
+# cherche a atteindre une theta par dichotomie
 # slider envoye = slider1
-def setRot(courbure,L,precision=1):
+def setRot(theta,L,nMax=30):
     [slider,getFunction,getFunctionArgs,crvInfos,minSlider,maxSlider]=L
     fTest=100000.0
-    fx=slider.f(courbure)
+    fx=slider.f(theta)
     test=fx
-    #fx=[]
     val=slider.getValue()
     #print "fx",fx
-    #print "setR"
     if fx==[] :
         mini=minSlider
         maxi=maxSlider
@@ -217,59 +215,61 @@ def setRot(courbure,L,precision=1):
         fMax=setOneRot(val,maxi,[slider,getFunction,getFunctionArgs])
     else:
         #fVal=setOneRot(val,fx,[slider,getFunction,getFunctionArgs,crvInfos])
-        pas=(maxSlider-minSlider)/2000.0
+        pas=(maxSlider-minSlider)/500.0
         mini=fx-pas
         maxi=fx+pas
          #on regarde si croissant ou decroissant
         fMin=setOneRot(val,mini,[slider,getFunction,getFunctionArgs])
         fMax=setOneRot(val,maxi,[slider,getFunction,getFunctionArgs])
         i=0
-        while (not isInside(courbure,fMin,fMax)) and ((minSlider<mini and maxSlider>maxi and minSlider<maxSlider) or (minSlider<maxi and maxSlider>mini and minSlider>maxSlider)) and i<10:
+        #print "mininit",mini,maxi
+        while (not isInside(theta,fMin,fMax)) and ((minSlider<mini and maxSlider>maxi and minSlider<maxSlider) or (minSlider<maxi and maxSlider>mini and minSlider>maxSlider)) and i<10:
             i+=1
             pas*=5.0
             mini=fx-pas
             maxi=fx+pas
+            #print "minimaxi",mini,maxi
             fMin=setOneRot(val,mini,[slider,getFunction,getFunctionArgs])
             fMax=setOneRot(val,maxi,[slider,getFunction,getFunctionArgs])
         if i==10 or (mini<minSlider or maxi>maxSlider):
-            print "tentative f-1 failed",getFunction,"calcMinMax",mini,maxi,fx,pas
+            #print "tentative f-1 failed",getFunction,"calcMinMax",mini,maxi,fx,pas
             mini=minSlider
             maxi=maxSlider
             fMin=setOneRot(val,minSlider,[slider,getFunction,getFunctionArgs])
             fMax=setOneRot(val,maxSlider,[slider,getFunction,getFunctionArgs])
+        #print "iinit",i
         #print ("i",i)
         #mini=max(mini,minSlider)
         #maxi=min(maxi,maxSlider)
-        #fMin=setOneRot(val,mini,[slider,getFunction,getFunctionArgs])
-        #fMax=setOneRot(val,maxi,[slider,getFunction,getFunctionArgs])
-        #p("min",mini,maxi,minSlider,maxSlider,fMin,fMax)
-    if isInside(courbure,fMin,fMax):
+    if isInside(theta,fMin,fMax):
         i=0
-        while abs(fTest-courbure)>10 and i<20:
+        while abs(fTest-theta)>0.01 and i<nMax:
             i+=1
             test=float(mini+maxi)/2.0
             fTest=setOneRot(val,test,[slider,getFunction,getFunctionArgs])
             #print "test",test,fTest
             if i>15:
-                1#print "gde value",test,"fTest",fTest,"courbure",courbure
-            if((fTest>courbure and fMin<fMax) or (fTest<courbure and fMin>fMax )):
+                1#print "gde value",test,"fTest",fTest,"theta",theta
+            if((fTest>theta and fMin<fMax) or (fTest<theta and fMin>fMax )):
                 maxi=test
             else :
                 mini=test
+        #print "testend",test
         setOneRotWithChangement(test,slider,getFunction,getFunctionArgs)
         t=time.time()
+
         #print "boucle 2 ",  i
-    elif (courbure <=fMin and fMin<=fMax) or (courbure>=fMin and fMin>=fMax) :
+    elif (theta <=fMin and fMin<=fMax) or (theta>=fMin and fMin>=fMax) :
         setOneRotWithChangement(mini,slider,getFunction,getFunctionArgs)
         test=mini
-        #print "en dehors des bornes! plus petit que le minimum",fMin,fMax,getFunction,courbure
+        #print "en dehors des bornes! plus petit que le minimum",fMin,fMax,getFunction,theta
     else:
         setOneRotWithChangement(maxi,slider,getFunction,getFunctionArgs)
         test=maxi
-        #print "en dehors des bornes! plus grand que le maximum",fMin,fMax,getFunction,courbure
+        #print "en dehors des bornes! plus grand que le maximum",fMin,fMax,getFunction,theta
     # TODO regarder ici si ca passe pas trop souvent -> TestClass Mini
-    if(abs(courbure-getFunction())>1 and test!=mini and test!=maxi):
-        print "FAIL SETROT", getFunction,abs(courbure-getFunction())
+    if(abs(theta-getFunction())>1 and test!=mini and test!=maxi):
+        print "FAIL SETROT", getFunction,abs(theta-getFunction())
     #print "duree",time.time()-t
     return test
     
@@ -291,7 +291,7 @@ def parabolicRotation(theta,list):
         cmds.rotate(theta*angle,r=True,p=pivot,x=x,y=y,z=z)
 
         # TODO revoir difference, pas si importante 
-def parabolicRotationGD(theta,list):
+def parabolicRotationGD(theta,list,*_):
     t=time.time()
     [pivotName,begin,end,x,y,z]=list
     if isinstance(pivotName,str):
@@ -304,14 +304,14 @@ def parabolicRotationGD(theta,list):
         dist=(abs(i-nPivot))
         angle=math.atan(dist)**1*5 # carre c'est trop
         cmds.select(curvei(i),add=True) # pas de add car la rotation est deja calculee en fonction de la distance
-    cmds.rotate(theta*5,r=True,p=pivot,x=x,y=y,z=z)
+    cmds.rotate(theta*5,r=True,p=pivot,x=0,y=1,z=0)
 
 def rotLHB(theta,L=[]):
-    parabolicRotation(theta,[pointOnCurveList[1],pointOnCurveList[0],pointOnCurveList[1],1,0,0]) # L3 L6 L6
+    parabolicRotation(theta,[pointOnCurveList[1],pointOnCurveList[0],pointOnCurveList[1],1,0,0]) 
 def rotLGD(theta,L=[]):
-    parabolicRotationGD(theta,[pointOnCurveList[2],pointOnCurveList[0],pointOnCurveList[1],0,1,0]) # L3 L6 L6 si besoin pivot a un : comp mal reglee
+    parabolicRotationGD(theta,[pointOnCurveList[2],pointOnCurveList[0],pointOnCurveList[1],0,1,0])
 def rotCHB(theta,L=[]):
-    parabolicRotation(theta,[pointOnCurveList[4],pointOnCurveList[5],pointOnCurveList[8],1,0,0]) # C7 C7 C0
+    parabolicRotation(theta,[pointOnCurveList[4],pointOnCurveList[5],pointOnCurveList[8],1,0,0]) 
 def rotCGD(theta,L=[]):
     parabolicRotationGD(theta,[pointOnCurveList[4],pointOnCurveList[5],pointOnCurveList[8],0,1,0])
 def rotDHB(theta,L=[]):
@@ -325,45 +325,68 @@ def rotTGD(theta,L=[]):
 
 
 def rotComp(value,crvInfos=[]):
-
+    #print "debut"
     #parabolicRotation(value*0.5,[num2Name(2),num2Name(0),num2Name(1),1,0,0])
-
+    #print "LLen()",getLLen()
    # premiere partie, rotation dans un sens
-    nBegin=n2N(pointOnCurveList[2])
-    nEnd=n2N(pointOnCurveList[4]) # TODO ou 5
-    nMax= cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")-1
-    pivot=position(curvei(n2N(num2Name(2))))
+    nBegin=2#n2N(2)#pointOnCurveList[2])
+    nEnd=4#n2N(pointOnCurveList[4]) # TODO ou 5
+    nMax= MaxCV()-1
+
     nPivot=2
-    posB=position(curvei(nEnd))
-    posE=position(curvei(nMax))
-    for i in range(nEnd,nBegin-1,-1):
-        cmds.select(curvei(i),add=True)
-        cmds.rotate(-value*0.5,0.0,0.0,r=True,pivot=pivot)
+    pivot=position(curvei(nPivot))#n2N(num2Name(2))))
 
+    posB=position(curvei(4))
+    posE=position(curvei(2))
 
-    # pivot milieu des dorsales
-    cmds.select(clear=True)
-    cmds.select(curvei(2),curvei(4),curvei(1))
-    pivot=position(curvei(3))
-    cmds.rotate(value*0.1,0,0,pivot=pivot)
-    cmds.select(clear=True)
+    #for i in range(nEnd,nBegin-1,-1):
+    #    cmds.select(curvei(i),add=True)
+    #cmds.rotate(-value*0.5,0.0,0.0,r=True,pivot=pivot)
+    parabolicRotation(-value,[pointOnCurveList[2],pointOnCurveList[2],pointOnCurveList[4],1,0,0])
+    parabolicRotation(-value*0.1,[pointOnCurveList[2],pointOnCurveList[2],pointOnCurveList[3],1,0,0])
+
     
-    posB2=position(curvei(nEnd))
-    posE2=position(curvei(nMax))
-    tB=sub(posB2,posB)
-    tE=sub(posE2,posE)
-
-        # translation pour ramener les points extremes
-    cmds.select(clear=True)
-    for i in range(nEnd+1,nMax+1):
-        cmds.select(curvei(i),add=True)
+    #translation pour ramener les points extremes
+    tB=sub(position(curvei(4)),posB)
+    cmds.select(curvei(5),curvei(6),curvei(7),curvei(8))
     cmds.move(tB[0],tB[1],tB[2],r=True)
-    cmds.select(clear=True)
-    for i in range(0,nEnd-2):
-        cmds.select(curvei(i),add=True)
-    cmds.move(tE[0],tE[1],tE[2],r=True)
-    cmds.select(clear=True)
 
+    tE=sub(position(curvei(2)),posE)
+    cmds.select(curvei(0),curvei(1))
+    cmds.move(tE[0],tE[1],tE[2],r=True)
+
+
+    ##print "LLenm()",getLLen()
+
+    ##posB=position(curvei(4))
+    ##posE=position(curvei(2))
+
+    ####print "LLenm()",getLLen()
+    #### pivot milieu des dorsales
+    ##cmds.select(clear=True)
+    ##cmds.select(curvei(2),curvei(4))
+    ##pivot=position(curvei(3))
+    ##cmds.rotate(value*0.3,0,0,pivot=pivot)
+    ##cmds.select(clear=True)
+    
+    ##posB2=position(curvei(4))
+    ##posE2=position(curvei(2))
+    ##tB=sub(posB2,posB)
+    ##tE=sub(posE2,posE)
+
+    ##print "LLenfr()",getLLen()
+
+    ##    #translation pour ramener les points extremes
+    ##cmds.select(clear=True)
+    ### 5 6 7 8
+    #cmds.select(curvei(5),curvei(6),curvei(7),curvei(8))
+    #cmds.move(tB[0],tB[1],tB[2],r=True)
+    #cmds.select(clear=True)
+    ### 0 1
+    #cmds.select(curvei(0),curvei(1))
+    #cmds.move(tE[0],tE[1],tE[2],r=True)
+    #cmds.select(clear=True)
+    ##print "LLenf()",getLLen()
 
 
 # TODO revoir l'idee de faire la rot lombaire en meme temps que la compression
@@ -444,6 +467,65 @@ def calcPosRelatifGDNum(numLocator,Cote=""):
     return calcPosRelatifGD(position(locator(numLocator)),Cote,numLocator)
 
 # garde en memoire le meilleur si marche pas bien
+def correctionRot(nGroup,nLocator,sliderList,HB,Croiss,Cote,nMax,precision):
+    locatorP=position(locator(nLocator))
+    f = calcPosRelatifHB if HB  else calcPosRelatifGD
+    distI=norm(sub(locatorP,getPoint(getParameter(locatorP))))
+    dist=distI
+    slider=sliderList[nGroup].slider
+    valInit=slider.sliderValue()
+    minSlider=slider.minValue
+    maxSlider=slider.maxValue
+    relatif=1
+    maxi=min(valInit+dist*0.1*(slider.maxValue-slider.minValue),maxSlider)
+    mini=max(valInit-dist*0.1*(slider.maxValue-slider.minValue),minSlider)
+    i=0
+    while i<nMax and abs(relatif)>0.01:
+        i+=1
+        testV=(mini+maxi)/2
+        #print "mini",mini,maxi,testV
+        slider.setValue(testV)
+        slider.update()
+        [relatif,dist,str]=f(locatorP,Cote=Cote,nLocator=nLocator)
+        if (relatif<0 and Croiss) or (relatif>0 and (not Croiss)):
+            maxi=testV
+        else:
+            mini=testV 
+    if distI<dist:
+        slider.setValue(valInit)
+        slider.update()
+        p("correctionRot failed",slider.label)
+
+def corrLGD(sliderList,nMax=10,precision=0.01):
+    correctionRot(6,0,sliderList,False,True,"L",nMax,precision)
+def corrLHB(sliderList,nMax=10,precision=0.01):
+    correctionRot(7,0,sliderList,True,False,"L",nMax,precision)
+def corrDGD(sliderList,nMax=10,precision=0.01):
+    correctionRot(4,1,sliderList,False,False,"",nMax,precision)
+def corrDHB(sliderList,nMax=10,precision=0.01):
+    correctionRot(5,1,sliderList,True,False,"",nMax,precision)
+def corrCGD(sliderList,nMax=10,precision=0.01):
+    correctionRot(2,4,sliderList,False,False,"C",nMax,precision)
+def corrCHB(sliderList,nMax=10,precision=0.01):
+    correctionRot(3,4,sliderList,True,False,"C",nMax,precision)
+def corrTGD(sliderList,nMax=10,precision=0.01):
+    correctionRot(10,5,sliderList,False,False,"C",nMax,precision)
+def corrTHB(sliderList,nMax=10,precision=0.01):
+    correctionRot(11,5,sliderList,True,False,"C",nMax,precision)
+def corrCompGD(sliderList,nMax=10,precision=0.01):
+    correctionRot(8,3,sliderList,False,False,"",nMax,precision)
+def corrComp(sliderList,nMax=10,precision=0.01):
+    correctionRot(9,3,sliderList,True,True,"",nMax,precision)
+
+
+
+
+    
+    
+
+
+            
+# garde en memoire le meilleur si marche pas bien
 #def correctionRot(sliderGrp,nButton,nLocator,Croiss=True,precision=10,Cote=""):
 #    locatorP=position(locator(nLocator))
 #    f = calcPosRelatifHB if nButton%2==sliderGrp.string2num("rotCHB")%2  else calcPosRelatifGD
@@ -473,66 +555,5 @@ def calcPosRelatifGDNum(numLocator,Cote=""):
 #        slider.setValue(valInit)
 #        slider.update()
 #        p("correctionRot failed",slider.label)
-
-# garde en memoire le meilleur si marche pas bien
-def correctionRot(nGroup,nLocator,sliderList,HB,Croiss,Cote,nMax,precision):
-    locatorP=position(locator(nLocator))
-    f = calcPosRelatifHB if HB  else calcPosRelatifGD
-    distI=norm(sub(locatorP,getPoint(getParameter(locatorP))))
-    dist=distI
-    slider=sliderList[nGroup].slider
-    valInit=slider.sliderValue()
-    minSlider=slider.minValue
-    maxSlider=slider.maxValue
-    relatif=1
-    maxi=min(valInit+dist*0.2*(slider.maxValue-slider.minValue),maxSlider)
-    mini=max(valInit-dist*0.2*(slider.maxValue-slider.minValue),minSlider)
-    i=0
-    while i<precision and abs(relatif)>0.01:
-        i+=1
-        testV=(mini+maxi)/2
-        #print "mini",mini,maxi,testV
-        slider.setValue(testV)
-        slider.update()
-        [relatif,dist,str]=f(locatorP,Cote=Cote,nLocator=nLocator)
-        if (relatif<0 and Croiss) or (relatif>0 and (not Croiss)):
-            maxi=testV
-        else:
-            mini=testV 
-    if distI<dist:
-        slider.setValue(valInit)
-        slider.update()
-        p("correctionRot failed",slider.label)
-
-def corrLGD(sliderList,nMax=10,precision=0.01):
-    correctionRot(6,0,sliderList,False,True,"L",precision)
-def corrLHB(sliderList,nMax=10,precision=0.01):
-    correctionRot(7,0,sliderList,True,False,"L",precision)
-def corrDGD(sliderList,nMax=10,precision=0.01):
-    correctionRot(4,1,sliderList,False,False,"",precision)
-def corrDHB(sliderList,nMax=10,precision=0.01):
-    correctionRot(5,1,sliderList,True,False,"",precision)
-def corrCGD(sliderList,nMax=10,precision=0.01):
-    correctionRot(2,4,sliderList,False,False,"C",precision)
-def corrCHB(sliderList,nMax=10,precision=0.01):
-    correctionRot(3,4,sliderList,True,False,"C",precision)
-def corrTGD(sliderList,nMax=10,precision=0.01):
-    correctionRot(10,5,sliderList,False,False,"C",precision)
-def corrTHB(sliderList,nMax=10,precision=0.01):
-    correctionRot(11,5,sliderList,True,False,"C",precision)
-def corrCompGD(sliderList,nMax=10,precision=0.01):
-    correctionRot(8,3,sliderList,False,False,"",precision)
-def corrComp(sliderList,nMax=10,precision=0.01):
-    correctionRot2(9,3,sliderList,True,True,"",precision)
-
-
-
-
-    
-    
-
-
-            
-
 
 

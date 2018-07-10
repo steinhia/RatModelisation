@@ -134,22 +134,25 @@ def placeAnglesCalcules(sliderGrp,nBoucles):
     locatorList=map(position,[locator(i) for i in range(6)])
 
     t=time.time()
-
+    print "TLEN",getTLen()
     for i in range(1):#nBoucles):
-            corrLGD(sliderGrp.sliderList)
-            corrCompGD(sliderGrp.sliderList)
-            corrCGD(sliderGrp.sliderList)
-            corrTGD(sliderGrp.sliderList)
+            corrLGD(sliderGrp.sliderList,nMax=5)
+            corrCompGD(sliderGrp.sliderList,nMax=5)
+            corrCGD(sliderGrp.sliderList,nMax=5)
+            corrTGD(sliderGrp.sliderList,nMax=5)
 
     print "apres GD",time.time()-t
     t=time.time()
-
+    print "TLEN",getTLen(),getLLen()
 
     for i in range(nBoucles):
-        #sliderGrp.do("compression",compression)
-        corrComp(sliderGrp.sliderList)
-        corrLHB(sliderGrp.sliderList)
-        corrCHB(sliderGrp.sliderList)
+
+        sliderGrp.do("compression",compression)
+        print "TLEN1",getTLen(),getLLen()
+        sliderGrp.do("rotLHB",angleLombaires)
+        print "TLEN2",getTLen(),getLLen()
+        sliderGrp.do("rotCHB",angleCervicales)
+        print "TLEN3",getTLen(),getLLen()
 
         #correctionRot(sliderGrp,sliderGrp.string2num("compression g"),locatorList[3],False)
         #correctionRot(sliderGrp,sliderGrp.string2num("rotLGD"),locatorList[0],True)
@@ -193,10 +196,10 @@ def Correction(sliderGrp):
 
 
         #correctionRot(sliderGrp,sliderGrp.string2num("compression g"),3,False)
-        corrCompGD(sliderGrp.sliderList)
-        corrLGD(sliderGrp.sliderList)
-        corrCGD(sliderGrp.sliderList)
-        corrTGD(sliderGrp.sliderList)
+        corrCompGD(sliderGrp.sliderList,nMax=5)
+        corrLGD(sliderGrp.sliderList,nMax=5)
+        corrCGD(sliderGrp.sliderList,nMax=5)
+        corrTGD(sliderGrp.sliderList,nMax=5)
 
 
 
@@ -220,6 +223,23 @@ def Correction(sliderGrp):
         #t=time.time()
 
         # on translate la courbe pour que la courbe coincide parfaitement au niveau des lombaires
+        for i in range(1):
+            sliderGrp.do("scale",ScaleFactor())
+            translateToCV(0,0)
+        ### on translate la courbe pour qu'elle repasse par le localisateur milieu
+            translateToLocator(2)
+            for _ in range(1):
+                corrCompGD(sliderGrp.sliderList,nMax=5)
+                corrComp(sliderGrp.sliderList,nMax=5)
+            for _ in range(1):
+                corrLGD(sliderGrp.sliderList,nMax=5)
+                corrLHB(sliderGrp.sliderList,nMax=5)
+            for i in range(2):
+                corrCHB(sliderGrp.sliderList,nMax=5)
+                corrTHB(sliderGrp.sliderList,nMax=5)
+                corrCGD(sliderGrp.sliderList,nMax=5)
+                corrTHB(sliderGrp.sliderList,nMax=5)
+
         for i in range(1):
             sliderGrp.do("scale",ScaleFactor())
             translateToCV(0,0)

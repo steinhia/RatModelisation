@@ -29,7 +29,7 @@ class Action(object):
         self.Cote=Cote
         self.CoteOpp=CoteOpp
 
-    def execute(self,ajust=True,*_):
+    def execute(self,ajust=True,nMax=10,*_):
         param=calcCVParameters()
         #orientation=calcOrientation(Cote=self.Cote)
         orientationOpp=calcOrientation(Cote=self.CoteOpp)
@@ -42,7 +42,7 @@ class Action(object):
         if self.mvt and ajust:
             setOrientation(0,self.Cote)
         cmds.select(clear=True)
-        self.executeAction(self)
+        self.executeAction(nMax=nMax)
         cmds.select(clear=True)
         if self.function!=setOrientation and self.mvt and ajust:
             setOrientation(orientationOpp,Cote=self.CoteOpp)
@@ -68,7 +68,8 @@ class Action(object):
 
 
 
-    def executeAction(self,*_):
+
+    def executeAction(self,nMax=10,*_):
         raise NotImplementedError
 
 class SimpleAction(Action):
@@ -110,14 +111,14 @@ class FunctionAction(Action):
         self.args=args
         self.mvt=mvt
 
-    def execute(self,ajust=True,*_):
-        Action.execute(self,ajust,self.args)
+    def execute(self,ajust=True,nMax=10,*_):
+        Action.execute(self,ajust,nMax)# rajouter args?
 
-    def executeAction(self,*_):
+    def executeAction(self,nMax=10,*_):
         if self.args==[] :
-            self.function(self.offset)
+            self.function(self.offset,nMax)
         else :
-            self.function(self.offset,self.args)
+            self.function(self.offset,self.args,nMax)
 
 
 

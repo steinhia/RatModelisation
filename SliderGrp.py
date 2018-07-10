@@ -26,11 +26,11 @@ class SliderGrp(object):
         if self.droites==[]:
             for i in range(2,12):
                 buttonList[i].create()
-                #self.droites.append(buttonList[i].calcDroite())
+                self.droites.append(buttonList[i].calcDroite())
         else :
             for i in range(2,12):
                 buttonList[i].create()
-                #buttonList[i].affectDroite(self.droites[i-2])
+                buttonList[i].affectDroite(self.droites[i-2])
         #checkParameters(param)
 
         cmds.setParent('..')
@@ -58,10 +58,10 @@ class SliderGrp(object):
             buttonRadio.create()
 
 
-    def do(self,string,value,updateText=True):
+    def do(self,string,value,updateText=True,nMax=30):
         button=self.string2button(string)
         button.slider2.setValue(value)
-        button.slider2.update(updateText)
+        button.slider2.update(updateText,nMax=nMax)
 
     def string2num(self,string):
         string=string.lower()
@@ -184,7 +184,7 @@ def createWindows(nameList,pointOnCurveList,locatorList,droites=[]):
 
     # compression
     buttonList.append(functionGroup(sliderList,8,names[8],-100,200,-40,50,0,0.00000001,setFcts[6],crvInfos,getFunction=fcts[8],Cote="",CoteOpp="L",functionCorr=corrCompGD))
-    buttonList.append(functionGroup(sliderList,9,names[9],0,50,0,80,0,0.00000001,setFcts[7],crvInfos,getFunction=fcts[9],Cote="",CoteOpp="L",functionCorr=corrComp))
+    buttonList.append(functionGroup(sliderList,9,names[9],0,15,0,80,0,0.00000001,setFcts[7],crvInfos,getFunction=fcts[9],Cote="",CoteOpp="L",functionCorr=corrComp))
 
     #tete
     buttonList.append(functionGroup(sliderList,10,names[10],-20,17,-90,90,0,0.00000001,setFcts[8],getFunction=angleTGD,Cote="C",CoteOpp="L",functionCorr=corrTGD))

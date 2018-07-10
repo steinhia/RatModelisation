@@ -248,7 +248,7 @@ def getTLen():
 
 def getLLen():
     beginP=getParameter(position(curvei(n2N("L6"))))
-    endP=getParameter(position(curvei(n2N("L1"))))
+    endP=getParameter(position(curvei(n2N("L4"))))
     return getLen(beginP,endP)[1]
 
 

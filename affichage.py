@@ -32,35 +32,35 @@ def HideListRest(args=[]):
     HideList.append(cmds.ls('*Sacrum*',r=True)) 
     return HideList
 
-def HideListHead(args=[]):
+def HideListHead(args=[],*_):
     HideList=['obj8_Crane_Exterior','obj181_Mandibule_Exterior','obj182_Mandibule_Crane','obj109_OsHyoide_Exterior']
     #HideList.append(cmds.ls('*Caudale*',r=True))
     #HideList.append(cmds.ls('*Sacrum*',r=True)) 
     return HideList  
                 
-def HideRestOfSkeleton(args=[]):
+def HideRestOfSkeleton(args=[],*_):
     HideList=HideListRest([])
     for i in HideList :
         cmds.hide(i)
     if(cmds.objExists("curve1")):
         cmds.showHidden("curve1",a=True)
         
-def ShowRestOfSkeleton(args=[]):
+def ShowRestOfSkeleton(args=[],*_):
     HideList=HideListRest([])
     for i in HideList :
         cmds.showHidden(i,a=True)
     
-def HideHeadAndTail(args=[]):
+def HideHeadAndTail(args=[],*_):
     HideList=HideListHead([])
     for i in HideList :
         cmds.hide(i)
 
-def ShowHeadAndTail(args=[]):
+def ShowHeadAndTail(args=[],*_):
     HideList=HideListHead([])
     for i in HideList :
         cmds.showHidden(i,a=True)      
     
-def HidePolygons(args=[]):
+def HidePolygons(args=[],*_):
     HideList=cmds.ls('*obj*',r=True)
     for i in HideList :
         if('joint' not in i):
@@ -68,7 +68,7 @@ def HidePolygons(args=[]):
     #if(not cmds.checkBox(self.boxJoint,q = True, v = True)):
         #   self.ShowSkeletonJoints()
    
-def ShowPolygons(args=[]):
+def ShowPolygons(args=[],*_):
     HideList=cmds.ls('*obj*',r=True)
     for i in HideList :
         cmds.showHidden(i,a=True)
@@ -77,12 +77,12 @@ def ShowPolygons(args=[]):
     #    HideHeadAndTail()
          
           
-def HideSkeletonJoints(args=[]):
+def HideSkeletonJoints(args=[],*_):
     for i in range(56) :
         if(cmds.objExists('joint'+str(i+1))):
             cmds.hide('joint'+str(i+1)) 
     
-def ShowSkeletonJoints(args=[]):
+def ShowSkeletonJoints(args=[],*_):
     HideList=cmds.ls('*joint*',r=True)
     for i in HideList :
         cmds.showHidden(i,a=True)
@@ -90,7 +90,7 @@ def ShowSkeletonJoints(args=[]):
         #   self.HidePolygons() 
 
 
-def colorSkeleton(nameList):
+def colorSkeleton(nameList,*_):
     mel.eval("shadingNode -asShader blinn -n blinn1;")
     mel.eval("sets -renderable true -noSurfaceShader true -empty -name blinn1SG;")
     mel.eval("connectAttr -f blinn1.outColor blinn1SG.surfaceShader;")
@@ -130,11 +130,6 @@ def HidePlane(*_):
     #    cmds.delete('curvePlane')
     if cmds.objExists('PosturePlane'):
         cmds.delete('PosturePlane')
-
-def press(*args):
-    selected = cmds.radioButtonGrp(rB, q=True, select=True)
-    print theList[selected ]
-
 
 def ShowPlane(paramList=[],*_):
     if paramList!=[] and paramList[2]=="On":
