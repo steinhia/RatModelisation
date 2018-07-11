@@ -54,7 +54,7 @@ class GeneralCalculs(object):
         mel.eval("sets -renderable true -noSurfaceShader true -empty -name blinn4SG;")
         mel.eval("connectAttr -f blinn4.outColor blinn4SG.surfaceShader;")
 
-        normal=np.cross(PostureVector(Cote),[0,1,0])
+        normal=np.cross(cls.PostureVector(liste,Cote),[0,1,0])
         name="PosturePlane"
         cmds.polyPlane(n=name,axis=normal, sx=1, sy=1, w=5, h=5)
         center=cmds.getAttr(name+'.center')[0]
@@ -133,36 +133,71 @@ class GeneralCalculs(object):
     # on projette le vecteur sur le plan formé par la verticale et le postureVector
     @classmethod
     def projPlanPosture3D(cls,liste,p1,p2,Cote=""):
-        normal=normalize(np.cross(PostureVector(Cote),[0,1,0]))
+        normal=normalize(np.cross(cls.PostureVector(liste,Cote),[0,1,0]))
         M=cls.PointOnPlane(liste,Cote)
-        p1Proj=projPoint3D(p1,M,normal,Cote)
-        p2Proj=projPoint3D(p2,M,normal,Cote)
+        p1Proj=projPoint3D(p1,M,normal)
+        p2Proj=projPoint3D(p2,M,normal)
         return sub(p2Proj,p1Proj)
 
         # on projette le vecteur sur le plan formé par la verticale et le postureVector
     @classmethod
-    def projPlanPosture2D(cls,liste,p1,p2,Cote=""):
-        normal=normalize(np.cross(PostureVector(Cote),[0,1,0]))
+    def projPoint3D(cls,liste,p,Cote=""):
+        normal=normalize(np.cross(cls.PostureVector(liste,Cote),[0,1,0]))
         M=cls.PointOnPlane(liste,Cote)
-        p1Proj=projPoint3D(p1,M,normal,Cote)
-        p2Proj=projPoint3D(p2,M,normal,Cote)
-        p1Proj2D=cls.getPlaneCoordinates(liste,p1Proj,Cote)
-        p2Proj2D=cls.getPlaneCoordinates(liste,p2Proj,Cote)
-        return sub(p2Proj2D,p1Proj2D)
-
-    @classmethod
-    def getPlaneCoordinates(cls,liste,p1,Cote=""):
-        v1=normalize(cls.projV(PostureVector(Cote)))
-        v2=[0,1,0]
-        return [np.dot(p1,v1),np.dot(p1,v2)]
+        #print "M",M,"Cote",str(Cote)
+        return projPoint3D(p,M,normal)
 
         # on projette le vecteur sur le plan formé par la verticale et le postureVector
     @classmethod
-    def projPtPV(cls,liste,p1,Cote=""):
-        normal=normalize(np.cross(PostureVector(Cote),[0,1,0]))
+    def projPlanPosture2D(cls,liste,p1,p2,Cote=""):
+        normal=normalize(np.cross(cls.PostureVector(liste,Cote),[0,1,0]))
         M=cls.PointOnPlane(liste,Cote)
-        p1Proj=projPoint3D(p1,M,normal,Cote)
-        return p1Proj
+        p1Proj=projPoint3D(p1,M,normal)
+        p2Proj=projPoint3D(p2,M,normal)
+        subv=sub(p2Proj,p1Proj)
+        #print cls.getPlaneCoordinates(liste,subv,Cote)
+        return cls.getPlaneCoordinates(liste,subv,Cote)
+
+    @classmethod
+    def getPlaneCoordinates(cls,liste,v,Cote=""):
+        b1=normalize(cls.projV(cls.PostureVector(liste,Cote)))
+        #print "base",b1,v
+        b2=[0,1,0]
+        return [np.dot(v,b1),np.dot(v,b2)]
+
+    #    # on projette le vecteur sur le plan formé par la verticale et le postureVector
+    #@classmethod
+    #def projPtPV(cls,liste,p1,Cote=""):
+    #    normal=normalize(np.cross(PostureVector(Cote),[0,1,0]))
+    #    M=cls.PointOnPlane(liste,Cote)
+    #    p1Proj=projPoint3D(p1,M,normal,Cote)
+    #    return p1Proj
+
+
+    @classmethod
+    def vector(cls,liste,string,*_):
+        if "Comp" in string:
+            return SubVector(liste[3],liste[2])
+        if "C" in string:
+            return SubVector(liste[4],liste[3])
+        if "D" in string:
+            return SubVector(liste[2],liste[1])
+        if "L" in string:
+            if 'locator' in liste[0]:
+                return SubVector(liste[2],liste[0])
+            else :
+                return SubVector(liste[1],liste[0])
+        if "T" in string:
+            return SubVector(liste[5],liste[4])
+
+    @classmethod
+    def angle(cls,liste,string,*_):
+        vect=cls.vector(liste,string)
+        if string=="CompHB":
+            return -cls.angleHB(liste,vect)
+        if "HB" in string:
+            return cls.angleHB(liste,vect)
+        return cls.angleGD(liste,vect)
 
 
     @classmethod
@@ -213,7 +248,7 @@ class GeneralCalculs(object):
         return cls.angleGD(liste,v)
 
     @classmethod
-    def angleComp(cls,liste,*_):
+    def angleCompHB(cls,liste,*_):
         v=SubVector(liste[3],liste[2])
         return -cls.angleHB(liste,v)
 

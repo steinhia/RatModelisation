@@ -31,38 +31,38 @@ class Action(object):
 
     def execute(self,ajust=True,nMax=10,*_):
         param=calcCVParameters()
-        #orientation=calcOrientation(Cote=self.Cote)
-        orientationOpp=calcOrientation(Cote=self.CoteOpp)
+        #orientation=getOrientation(Cote=self.Cote)
+        orientationOpp=getOrientation(Cote=self.CoteOpp)
         pos=getCurvePosition(Cote=self.CoteOpp)
-        posture=calcPosture(Cote=self.CoteOpp)
-        lenC=getCurveLength()
+        posture=getPosture(Cote=self.CoteOpp)
+        lenC=getLength()
         lenChain=getJointChainLength()
         jtParam=JointParameters()
-        cmds.select(clear=True)
+        clear()
         if self.mvt and ajust:
             setOrientation(0,self.Cote)
-        cmds.select(clear=True)
+        clear()
         self.executeAction(nMax=nMax)
-        cmds.select(clear=True)
+        clear()
         if self.function!=setOrientation and self.mvt and ajust:
             setOrientation(orientationOpp,Cote=self.CoteOpp)
         if self.mvt and ajust:
             #keepJointParameters(jtParam)
             newPos=getCurvePosition(Cote=self.CoteOpp)
-            newPosture=calcPosture(Cote=self.CoteOpp)
-            newLen=getCurveLength()
+            newPosture=getPosture(Cote=self.CoteOpp)
+            newLen=getLength()
             if self.keepCurveLength:
                 keepChainLengthValue(lenChain)
-                keepLengthValue(lenC,getCurvePosition())
+                setLength(lenC)
             else:
-                cL=getCurveLength()
+                cL=getLength()
                 rapport=cL/lenC
                 keepChainLengthValue(lenChain*rapport)
             if self.keepPosture :
                setPosture(posture,Cote=self.CoteOpp)
             if self.keepPosition:        
                 setCurvePosition(pos,Cote=self.CoteOpp)
-        cmds.select(clear=True)
+        clear()
 
 
 

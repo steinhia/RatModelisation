@@ -51,6 +51,12 @@ def name2Num(name):
     else:
         return -1
 
+def numSlider(name):
+    dico={"CGD":2,"CHB":3,"DGD":4,"DHB":5,"LGD":6,"LHB":7,"CompGD":8,"CompHB":9,"TGD":10,"THB":11}
+    if name in dico :
+        return dico[name]
+    return -1
+
 
 def n2N(name):
     liste=[abs(name2Num(name)-name2Num(num2NameCV(i))) for i in range(9)]
@@ -82,16 +88,27 @@ def num2Name(num):
     elif num==5:
         return 'Tete'
 
+
+def selectGui(*_):
+    res = cmds.promptDialog(message='Name of vertebrate:',button=['OK', 'Cancel'],\
+	defaultButton='OK',cancelButton='Cancel',dismissString='Cancel')
+    print res
+    if res=='OK':
+        name=cmds.promptDialog(query=True, text=True)
+        select(name)
+
 # select a vertebre
 def select(name):
     if name=='curve1':
         for i in range(MaxCV()):
             cmds.select(curvei(i),add=True)
     else:
-        pos=position(n2J(name))
-        param=getParameter(pos)
-        maya.mel.eval("doMenuNURBComponentSelection(\"curve1\", \"curveParameterPoint\");")
-        cmds.select('curve1.u['+str(param)+']',r=1)
+        joint=n2J(name)
+        if joint!=-1:
+            pos=position(joint)
+            param=getParameter(pos)
+            maya.mel.eval("doMenuNURBComponentSelection(\"curve1\", \"curveParameterPoint\");")
+            cmds.select('curve1.u['+str(param)+']',r=1)
 
 #def nCurveToJoint(num):
 #    dico={0:'joint1',1:'joint4',2:'joint7',3:'joint13',4:'joint19',5:'joint23',6:'joint26'}
@@ -276,16 +293,16 @@ def MaxCV():
 def calcAngles():
     res=[]
     res.append(getCurvePosition())
-    res.append(getCurveLength())
-    res.append(calcPosture())
-    res.append(calcOrientation())
+    res.append(getLength())
+    res.append(getPosture())
+    res.append(getOrientation())
     res.append(angleCHB())
     res.append(angleCGD())
     res.append(angleLHB())
     res.append(angleLGD())
     res.append(angleTHB())
     res.append(angleTGD())
-    res.append(angleComp())
+    res.append(angleCompHB())
     res.append(angleCompGD())
     return res
 
@@ -305,10 +322,13 @@ def JointParameters():
     return map(getParameter,JointPositions())
 
 def ScaleFactor():
-    return locatorLength()/locatorCurveLength()*getCurveLength()
+    return locatorLength()/locatorCurveLength()*getLength()
+
+def ScaleFactorCPOC():
+    return locatorLength()/locatorCPOCCurveLength()*getLength()
 
 
-def projPoint3D(p,pointOnPlane,normal,Cote=""):
+def projPoint3D(p,pointOnPlane,normal):
     MA=sub(p,pointOnPlane)
     dist=np.dot(normal,MA)/np.linalg.norm(normal)
     pProj=sub(p,pdt(dist,normal))
@@ -320,6 +340,9 @@ def ex(name):
 
 def mv(v,rel=False):
     cmds.move(v[0],v[1],v[2],r=rel)
+
+def clear():
+    cmds.select(clear=True)
 
 
 def projHor(v):

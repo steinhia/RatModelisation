@@ -18,44 +18,44 @@ class Evaluate(object):
     def execute(self):
         names=["pos","length","posture","rot C HB","rot C GD","rot D HB","rot D GD","rot L HB","rot L GD","compr"] 
 
-        # mesures sur la courbe
-        L=[]
-        L.append(getCurvePosition())
-        L.append(locatorCurveLength())
-        L.append(calcPosture())
-        L.append(angleCHB())
-        L.append(angleCGD())
-        L.append(angleDHB())
-        L.append(angleDGD())
-        L.append(angleLHB())
-        L.append(angleLGD())
-        L.append(angleComp())
+        ## mesures sur la courbe
+        #L=[]
+        #L.append(getCurvePosition())
+        #L.append(locatorCurveLength())
+        #L.append(calcPosture())
+        #L.append(angleCHB())
+        #L.append(angleCGD())
+        #L.append(angleDHB())
+        #L.append(angleDGD())
+        #L.append(angleLHB())
+        #L.append(angleLGD())
+        #L.append(angleComp())
 
-        # mesure avec les locators
-        l=[]
-        l.append(getLocatorCurvePosition())
-        l.append(locatorLength())
-        l.append(locatorPosture())
-        l.append(angleCHB())
-        l.append(angleCGD())
-        l.append(angleDHB())
-        l.append(angleDGD())
-        l.append(angleLHB())
-        l.append(angleLGD())
-        l.append(angleComp())
+        ## mesure avec les locators
+        #l=[]
+        #l.append(getLocatorCurvePosition())
+        #l.append(locatorLength())
+        #l.append(locatorPosture())
+        #l.append(angleCHB())
+        #l.append(angleCGD())
+        #l.append(angleDHB())
+        #l.append(angleDGD())
+        #l.append(angleLHB())
+        #l.append(angleLGD())
+        #l.append(angleComp())
 
         totalDiff=0
         totalDiffPrec=0
         totalDiffAngles=0
-        for i,mesure in enumerate(L):
-            if isinstance(mesure,list):
-                if norm(sub(mesure,l[i]))>0.005:
-                    print names[i],mesure,l[i]
-                totalDiffAngles+=norm(sub(mesure,l[i]))
-            else:
-                totalDiffAngles+=abs(mesure-l[i])
-                if abs(mesure-l[i])>0.005:
-                    print names[i],abs(mesure-l[i])
+        #for i,mesure in enumerate(L):
+        #    if isinstance(mesure,list):
+        #        if norm(sub(mesure,l[i]))>0.005:
+        #            print names[i],mesure,l[i]
+        #        totalDiffAngles+=norm(sub(mesure,l[i]))
+        #    else:
+        #        totalDiffAngles+=abs(mesure-l[i])
+        #        if abs(mesure-l[i])>0.005:
+        #            print names[i],abs(mesure-l[i])
 
         # position des differents locators / vertebres correspondantes
         posLoc=map(position,[locator(0),locator(1),locator(2),locator(3),locator(4)])

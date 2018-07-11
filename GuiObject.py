@@ -27,26 +27,20 @@ class GuiObject(object):
         raise NotImplementedError
 
 
-
-
-
-
 # on lui associe forcement un slider et un texte (courbure, orientation)
 # que des boutons reset
 class Group(GuiObject):
     
-    def __init__(self,label,label2,slider,sliderList,indiceText,valueReset,valueSetTo=0,slider2=-1,setOneFunction=-1,functionCorr=-1,corrArgs=[],*_):
-        GuiObject.__init__(self, label)
-        self.label2=label2        
+    def __init__(self,label,slider,sliderList,slider2=-1,corrArgs=[],*_):
+        GuiObject.__init__(self, label)     
         self.slider=slider
         self.slider2=slider2
         self.sliderList=sliderList
-        self.indiceText=indiceText
-        self.valueReset=valueReset # pas 0 mais valeur du slider 2 au debut
-        self.valueSetTo=valueSetTo # 0 ou autre
-        self.setOneFunction=setOneFunction
-        self.functionCorr=functionCorr
+        #self.indiceText=indiceText
+        #self.setOneFunction=setOneFunction
+        #self.functionCorr=functionCorr
         self.corrArgs=corrArgs
+        #self.functionSetAngle=functionSetAngle
 
       
     def create(self,*_):
@@ -57,12 +51,12 @@ class Group(GuiObject):
         if self.slider2!=-1:
             self.slider2.create()
             # on associe chaque texte a son slider
-            self.sliderList[self.indiceText].associate(self.slider,self.slider2)
-        self.GuiButton=cmds.button(label=self.label,command=partial(self.update,self.valueReset,True)) 
-        self.GuiButton2=cmds.button(label=self.label2,command=partial(self.update,self.valueSetTo,True)) 
-        if self.functionCorr!=-1:
+            self.sliderList[numSlider(self.label)].associate(self.slider,self.slider2)
+        #self.GuiButton=cmds.button(label=self.label,command=partial(self.update,self.valueReset,True)) 
+        #self.GuiButton2=cmds.button(label=self.label2,command=partial(self.update,self.valueSetTo,True)) 
+        if "HB" in self.label or "GD" in self.label:
             self.GuiButtonCorr=cmds.button(label="Corr",command=partial(self.updateCorr,self.corrArgs))
-
+            self.GuiButtonSetAngle=cmds.button(label="SetAngle",command=partial(setAngle,self.sliderList,self.label))
 
     def calcDroite(self,*_):
         slider=self.slider #slider1
@@ -78,11 +72,11 @@ class Group(GuiObject):
                 slider.update(False,True) # attention False necessaire
 
                 # si ne veut pas actualiser, doit utiliser la fonction de calcul
-                valy=self.sliderList[self.indiceText].fct()
+                valy=angleCrv(self.label)
                 # si aux extremes, prend pas en compte
 
-                slider2=self.sliderList[self.indiceText].slider2
-                if (valy<slider2.maxValue and valy>slider2.minValue) or True:
+                slider2=self.sliderList[numSlider(self.label)].slider2
+                if (slider2!=-1 and valy<slider2.maxValue and valy>slider2.minValue) or True:
                     x.append(val)
                     y.append(valy)
             slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
@@ -103,21 +97,21 @@ class Group(GuiObject):
     def affectDroite(self,droite):
         self.slider.dte=droite
 
-    # reset -> valueReset=2.53...
-    # set to 0 -> valueSetTo=0
-    # fait un update de chaque bouton
-    def update(self,value,updateText=True,*_):
-        currentValue=self.sliderValue()
-        if(currentValue!=value):
-            self.slider2.setValue(value)       
-            self.slider2.update(True) # a changer
-        if updateText:
-            for i in self.sliderList :
-                i.update(True)
+    ## reset -> valueReset=2.53...
+    ## set to 0 -> valueSetTo=0
+    ## fait un update de chaque bouton
+    #def update(self,value,updateText=True,*_):
+    #    currentValue=self.sliderValue()
+    #    if(currentValue!=value):
+    #        self.slider2.setValue(value)       
+    #        self.slider2.update(True) # a changer
+    #    if updateText:
+    #        for i in self.sliderList :
+    #            i.update(True)
 
     def updateCorr(self,updateText=True,*_):
-        if self.functionCorr!=-1 :
-            self.functionCorr(self.sliderList)
+        if "HB" in self.label or "GD" in self.label:
+            corr(self.sliderList,self.label)
             if updateText:
                 for i in self.sliderList :
                     i.update(True)
@@ -132,7 +126,7 @@ class Group(GuiObject):
         return self.slider2.sliderValue()
 
     def calcValue(self):
-        return self.sliderList[self.indiceText].fct(self.sliderList[self.indiceText].args)
+        return self.sliderList[numSlider(self.label)].fct(self.sliderList[numSlider(self.label)].args)
 
 
 
@@ -174,7 +168,7 @@ class SliderDuo(GuiObject):
     def __init__(self,label,fct,args,*_):
         GuiObject.__init__(self,label)
         self.fct=fct
-        self.args=args
+        #self.args=args
         self.slider=-1
         self.slider2=-1
 
@@ -182,11 +176,11 @@ class SliderDuo(GuiObject):
         self.slider=slider
         self.slider2=slider2
 
-    def update(self,slider1Update=True,*_):   
-        if self.args==[]:
+    def update(self,slider1Update=True,*_):  
+        if "HB" in self.label or "GD" in self.label:
+            value=angleCrv(self.label)
+        else:
             value=self.fct()
-        else :
-            value=self.fct(self.args)
         if self.slider2!=-1:
             self.slider2.setValue(value)
             self.slider2.value=value
@@ -301,6 +295,7 @@ class SliderAbs(Slider):
                     i.update(True)
                 else:
                     i.update(False)
+
 
     def setValue(self,val,*_):
         Slider.setValue(self,val)
