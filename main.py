@@ -55,7 +55,7 @@ nameList=['obj55_VertebreL6_Exterior','obj53_VertebreL5_Exterior','obj51_Vertebr
 pointOnCurveList=['L6','L4','T13','T8','T3','C5','C0','MilTete','Tete']  # mieux T13 sinon bosse T2 attention
 locatorList=['L6','L4','T13','T3','C0','Tete'] 
   
-sliderGrp=mainFct(pointOnCurveList,locatorList)
+#sliderGrp=mainFct(pointOnCurveList,locatorList)
 
 #sliderGrp.do("scale",10)
 #sliderGrp.do("z",-5)

@@ -60,12 +60,16 @@ class CurveNames(object):
         return eval("get"+str(name))
 
     @classmethod
+    def getFunctionLoc(self,name):
+        return eval("get"+str(name)+"Loc")
+
+    @classmethod
     def setFunction(self,name):
         return eval("set"+str(name))
 
     @classmethod
     def Numero(self,name):
-        dico={"X":12,"Y":13,"Z":14,"Scale":15,"Posture":16,"Orientation":17}
+        dico={"X":12,"Y":13,"Z":14,"Length":15,"Posture":16,"Orientation":17}
         if name in dico :
             return dico[name]
         return -1

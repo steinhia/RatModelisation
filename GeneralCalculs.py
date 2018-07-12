@@ -32,6 +32,20 @@ class GeneralCalculs(object):
             return pos
         return pos[num]
 
+    @classmethod
+    def getX(cls,liste,Cote="",*_):
+        return cls.getPosition(liste,0,Cote)
+
+    @classmethod
+    def getY(cls,liste,Cote="",*_):
+        return cls.getPosition(liste,1,Cote)
+
+
+    @classmethod
+    def getZ(cls,liste,Cote="",*_):
+        return cls.getPosition(liste,2,Cote)
+
+
             # TODO probleme vient de cet ordre de posture!!!!!
             #probleme avec t, plan légèrement decale a cause du point supplementaire, en tout cas pas axe de la tete
     @classmethod

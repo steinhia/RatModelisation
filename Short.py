@@ -322,10 +322,10 @@ def JointParameters():
     return map(getParameter,JointPositions())
 
 def ScaleFactor():
-    return locatorLength()/locatorCurveLength()*getLength()
+    return getLengthLoc()/locatorCurveLength()*getLength()
 
 def ScaleFactorCPOC():
-    return locatorLength()/locatorCPOCCurveLength()*getLength()
+    return getLengthLoc()/locatorCPOCCurveLength()*getLength()
 
 
 def projPoint3D(p,pointOnPlane,normal):

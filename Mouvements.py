@@ -16,12 +16,43 @@ def UndoGui(sliderList,*_):
 
 def setLength(newLengthvalue,numPivot=2):
     posInit=position(curvei(numPivot))
+
     L=cmds.arclen('curve1')
     scaleValue=newLengthvalue/L
     cmds.select('joint1',r=1,add=True)
+    #maya.mel.eval('ModObjectsMenu MayaWindow|mainModifyMenu;')
+    #maya.mel.eval('ProportionalModificationTool;')
+    #maya.mel.eval('setToolTo $gPropMod;')
+    #maya.mel.eval('propModValues PropMod;')
+    #maya.mel.eval('toolPropertyShow;')
+    #maya.mel.eval('changeToolIcon;')
+    #maya.mel.eval('dR_contextChanged;')
+    #maya.mel.eval('currentCtx;')
+    #maya.mel.eval('if(`exists dR_updateCommandPanel`) dR_updateCommandPanel;')
+    #maya.mel.eval('dR_updateToolSettings;')
+    #maya.mel.eval('EnterEditMode;')
+    #maya.mel.eval('ctxEditMode;')
+    #cmds.manipPivot( p=posInit )
+    #print getLLen(),getCLen(),getTLen()
+    ##cmds.scale(scaleValue,scaleValue,scaleValue,r=True,pivot=posInit)
+    #maya.mel.eval('propModTypeCallback 2;')
+    #maya.mel.eval('propModValues PropMod;')
+    #maya.mel.eval('toolPropertyShow;')
+    #maya.mel.eval('dR_updateToolSettings;')
+    #maya.mel.eval('propModCtx -e -pd 5 `currentCtx`;')
+    #maya.mel.eval('propModValues PropMod;')
+    #maya.mel.eval('toolPropertyShow;')
+    #maya.mel.eval('dR_updateToolSettings;')
     select('curve1')
-    cmds.scale(scaleValue,scaleValue,scaleValue,r=True,pivot=posInit)
+    cmds.propMove(px=1,py=1,pz=1,s=[scaleValue,scaleValue,scaleValue],pivot=posInit)
+    #print getLLen(),getCLen(),getTLen()
+    #cmds.manipPivot( r=True )
     clear()
+
+
+#    manipPivot -p -21.588785 33.082133 -2.598126 ;
+#scale -r -p -21.588785cm 33.082133cm -2.598126cm 0.951209 0.951209 0.951209 ;
+
 
 def keepChainLengthValue(newValue,L=[]):
     Length=getJointChainLength()
@@ -296,32 +327,10 @@ def setRot(theta,slider,nMax=30):
     return test
 
 def setAngle(sliderList,name,*_):
-    setRot(angleLoc(name),sliderList[numSlider(name)].slider)
-
-    
-#def setAngleLHB(sliderList,*_):
-#    setRot(angleLHBLoc(),sliderList[7].slider)
-#def setAngleCHB(sliderList,*_):
-#    setRot(angleCHBLoc(),sliderList[3].slider)
-#def setAngleDHB(sliderList,*_):
-#    setRot(angleDHBLoc(),sliderList[5].slider)
-#def setAngleTHB(sliderList,*_):
-#    setRot(angleTHBLoc(),sliderList[11].slider)
-#def setAngleCompHB(sliderList,*_):
-#    setRot(angleCompHBLoc(),sliderList[9].slider)
-#def setAngleLGD(sliderList,*_):
-#    setRot(angleLGDLoc(),sliderList[6].slider)
-#def setAngleCGD(sliderList,*_):
-#    setRot(angleCGDLoc(),sliderList[2].slider)
-#def setAngleDGD(sliderList,*_):
-#    setRot(angleDGDLoc(),sliderList[4].slider)
-#def setAngleTGD(sliderList,*_):
-#    setRot(angleTGDLoc(),sliderList[10].slider)
-#def setAngleCompGD(sliderList,*_):
-#    setRot(angleCompGDLoc(),sliderList[8].slider)
-
-
-
+    if "HB" in name or "GD" in name:
+        setRot(angleLoc(name),sliderList[numSlider(name)].slider)
+    else:
+        CurveNames.setFunction(name)(CurveNames.getFunctionLoc(name)())
 
 def parabolicRotation(theta,list):
     t=time.time()
@@ -376,24 +385,6 @@ def rot(theta,name,*_):
         rotCompHB(theta)
     elif name=="CompGD":
         parabolicRotation(theta*0.05,[num2Name(1),num2Name(2),pointOnCurveList[8],0,1,0])
-
-
-#def rotLHB(theta,L=[]):
-#    parabolicRotation(theta,[pointOnCurveList[1],pointOnCurveList[0],pointOnCurveList[1],1,0,0]) 
-#def rotLGD(theta,L=[]):
-#    parabolicRotationGD(theta,[pointOnCurveList[2],pointOnCurveList[0],pointOnCurveList[1],0,1,0])
-#def rotCHB(theta,L=[]):
-#    parabolicRotation(theta,[pointOnCurveList[4],pointOnCurveList[5],pointOnCurveList[8],1,0,0]) 
-#def rotCGD(theta,L=[]):
-#    parabolicRotationGD(theta,[pointOnCurveList[4],pointOnCurveList[5],pointOnCurveList[8],0,1,0])
-#def rotDHB(theta,L=[]):
-#    parabolicRotation(theta,[num2Name(2),num2Name(0),num2Name(1),1,0,0])
-#def rotDGD(theta,L=[]):
-#    parabolicRotationGD(theta,[num2Name(2),num2Name(0),num2Name(1),0,1,0])
-#def rotTHB(theta,L=[]):
-#    parabolicRotation(theta,[6,'Tete','Tete',1,0,0])
-#def rotTGD(theta,L=[]):
-    #parabolicRotationGD(theta,[6,'Tete','Tete',0,1,0])
 
 
 def rotCompGD(value,L=[]):
@@ -574,29 +565,6 @@ def corr(sliderList,name,nMax=20,precision=0.01):
         correctionRot(9,3,sliderList,True,True,"",nMax,precision)
     elif name=="CompGD":
         correctionRot(8,3,sliderList,False,False,"",nMax,precision)
-
-
-
-#def corrLGD(sliderList,nMax=20,precision=0.01):
-#    correctionRot(6,0,sliderList,False,True,"L",nMax,precision)
-#def corrLHB(sliderList,nMax=20,precision=0.01):
-#    correctionRot(7,0,sliderList,True,False,"L",nMax,precision)
-#def corrDGD(sliderList,nMax=20,precision=0.01):
-#    correctionRot(4,1,sliderList,False,False,"",nMax,precision)
-#def corrDHB(sliderList,nMax=20,precision=0.01):
-#    correctionRot(5,1,sliderList,True,False,"",nMax,precision)
-#def corrCGD(sliderList,nMax=20,precision=0.01):
-#    correctionRot(2,4,sliderList,False,False,"C",nMax,precision)
-#def corrCHB(sliderList,nMax=20,precision=0.01):
-#    correctionRot(3,4,sliderList,True,False,"C",nMax,precision)
-#def corrTGD(sliderList,nMax=20,precision=0.01):
-#    correctionRot(10,5,sliderList,False,False,"C",nMax,precision)
-#def corrTHB(sliderList,nMax=20,precision=0.01):
-#    correctionRot(11,5,sliderList,True,False,"C",nMax,precision)
-#def corrCompGD(sliderList,nMax=20,precision=0.01):
-#    correctionRot(8,3,sliderList,False,False,"",nMax,precision)
-#def corrCompHB(sliderList,nMax=20,precision=0.01):
-#    correctionRot(9,3,sliderList,True,True,"",nMax,precision)
 
 
 def translateToLocator(numLocator):

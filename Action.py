@@ -42,7 +42,9 @@ class Action(object):
         if self.mvt and ajust:
             setOrientation(0,self.Cote)
         clear()
+        #print getLLen(),getCLen(),getLLen()
         self.executeAction(nMax=nMax)
+        #print getLLen(),getCLen(),getLLen()
         clear()
         if self.function!=setOrientation and self.mvt and ajust:
             setOrientation(orientationOpp,Cote=self.CoteOpp)

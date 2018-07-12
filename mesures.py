@@ -14,69 +14,41 @@ execfile(path+"GeneralCalculs.py")
 #    return SubVector('locatorPlane2','locatorPlane1')
 
 
-def locatorPostureVector(Cote=""):
+def getPostureVectorLoc(Cote=""):
     locatorList=[locator(i) for i in range(6)]
     return GeneralCalculs.PostureVector(locatorList,Cote)
 
-def locatorPosture(Cote=""):
+def getPostureLoc(Cote=""):
     locatorList=[locator(i) for i in range(6)]
     return GeneralCalculs.getPosture(locatorList,Cote)
 
-def locatorOrientation(Cote=""):
+def getOrientationLoc(Cote=""):
     locatorList=[locator(i) for i in range(6)]
     return GeneralCalculs.getOrientation(locatorList,Cote)
 
-def getLocatorCurvePosition(num=-1,Cote=""):
+def getPositionLoc(num=-1,Cote=""):
     locatorList=[locator(i) for i in range(6)]
     return GeneralCalculs.getPosition(locatorList,num,Cote)
 
-def locatorLength():
+def getXLoc(Cote=""):
+    locatorList=[locator(i) for i in range(6)]
+    return GeneralCalculs.getX(locatorList,Cote)
+
+def getYLoc(Cote=""):
+    locatorList=[locator(i) for i in range(6)]
+    return GeneralCalculs.getY(locatorList,Cote)
+
+def getZLoc(Cote=""):
+    locatorList=[locator(i) for i in range(6)]
+    return GeneralCalculs.getZ(locatorList,Cote)
+
+def getLengthLoc():
     locatorList=[locator(i) for i in range(6)]
     return GeneralCalculs.getChainLength(locatorList)
 
 def angleLoc(string):
     locatorList=[locator(i) for i in range(6)]
     return GeneralCalculs.angle(locatorList,string)
-
-#def angleCHBLoc():
-#    locatorList=[locator(i) for i in range(6)]
-#    return GeneralCalculs.angleCHB(locatorList)
-
-#def angleCGDLoc():
-#    locatorList=[locator(i) for i in range(6)]
-#    return GeneralCalculs.angleCGD(locatorList)
-
-#def angleTHBLoc():
-#    locatorList=[locator(i) for i in range(6)]
-#    return GeneralCalculs.angleTHB(locatorList)
-
-#def angleTGDLoc():
-#    locatorList=[locator(i) for i in range(6)]
-#    return GeneralCalculs.angleTGD(locatorList)
-
-#def angleDHBLoc():
-#    locatorList=[locator(i) for i in range(6)]
-#    return GeneralCalculs.angleDHB(locatorList)
-
-#def angleDGDLoc():
-#    locatorList=[locator(i) for i in range(6)]
-#    return GeneralCalculs.angleDGD(locatorList)
-
-#def angleLHBLoc():
-#    locatorList=[locator(i) for i in range(6)]
-#    return GeneralCalculs.angleLHB(locatorList)
-
-#def angleLGDLoc():
-#    locatorList=[locator(i) for i in range(6)]
-#    return GeneralCalculs.angleLGD(locatorList)
-
-#def angleCompHBLoc():
-#    locatorList=[locator(i) for i in range(6)]
-#    return GeneralCalculs.angleCompHB(locatorList)
-
-#def angleCompGDLoc():
-#    locatorList=[locator(i) for i in range(6)]
-#    return GeneralCalculs.angleCompGD(locatorList)
 
 def HalfChainLengthC():
     locatorList=[locator(i) for i in range(6)]

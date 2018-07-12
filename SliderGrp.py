@@ -24,7 +24,7 @@ class SliderGrp(object):
 
         cmds.setParent('..')
         cmds.text("\nMouvement de la colonne")
-        cmds.rowColumnLayout(numberOfColumns=4,columnWidth=[(1,1),(2,300),(4,50),(5,50),(6,50)])
+        cmds.rowColumnLayout(numberOfColumns=4,columnWidth=[(1,300),(2,300),(4,50),(5,50),(6,50)])
 
         if self.droites==[]:
             for i in range(2,12):
@@ -59,6 +59,8 @@ class SliderGrp(object):
         self.GuiButtonSCPOC=cmds.button(label="ScaleCPOC",command=partial(scaleCPOCGui,self.sliderList))
         self.GuiButtonUndo=cmds.button(label="Undo",command=partial(UndoGui,self.sliderList))
         self.GuiButtonSelect=cmds.button(label="Select",command=selectGui)
+        self.GuiButtonSelect=cmds.button(label="Place",command=selectGui)
+        self.GuiButtonSelect=cmds.button(label="Place And Save",command=selectGui)
         # CheckBox
         cmds.setParent('..')
         cmds.rowColumnLayout( numberOfColumns=2,columnWidth=[(1, 200),(2,200)])
