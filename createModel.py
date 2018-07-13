@@ -198,8 +198,8 @@ def createCurve(pointOnCurveList,nameList):
     for curvePoint in pointOnCurveList :
         if curvePoint!=-1:
             KeepList.append(ClosestPoint(curvePoint))
-    point=getPoint(getParameter(position(n2J('C0')))+2)
-    KeepList.append(ClosestPoint(point))
+    #point=getPoint(getParameter(position(n2J('C0')))+0.2)
+    #KeepList.append(ClosestPoint(point))
     for i in range(maxCV-2,1,-1):
         newMaxCV=MaxCV()
         if(i not in KeepList and i!= newMaxCV):

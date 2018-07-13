@@ -57,6 +57,8 @@ class Group(GuiObject):
         if "HB" in self.label or "GD" in self.label:
             self.GuiButtonCorr=cmds.button(label="Corr",command=partial(self.updateCorr,self.corrArgs))
             self.GuiButtonSetAngle=cmds.button(label="SetAngle",command=partial(setAngle,self.sliderList,self.label))
+        elif numSlider(self.label)!=-1:
+            self.GuiButtonSetAngle=cmds.button(label="Set",command=partial(setParam,self.sliderList,self.label))
 
     def calcDroite(self,*_):
         slider=self.slider #slider1

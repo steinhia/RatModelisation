@@ -18,12 +18,11 @@ execfile(path+"Short.py")
 
 class Action(object):
 
-    def __init__(self,offset,Cote,CoteOpp,keepPosture,keepPosition,keepCurveLength,mvt=True,*_):
+    def __init__(self,offset,Cote,CoteOpp,keepPosition,keepCurveLength,mvt=True,*_):
         self.offset=offset
         #self.crvInfos=crvInfos #length position posture chainLength cLen
         self.mvt=mvt
         self.keepCurveLength=keepCurveLength
-        self.keepPosture=keepPosture
         self.keepPosition=keepPosition
         self.function=-1
         self.Cote=Cote
@@ -33,7 +32,7 @@ class Action(object):
         param=calcCVParameters()
         #orientation=getOrientation(Cote=self.Cote)
         orientationOpp=getOrientation(Cote=self.CoteOpp)
-        pos=getCurvePosition(Cote=self.CoteOpp)
+        pos=getPosition(Cote=self.CoteOpp)
         posture=getPosture(Cote=self.CoteOpp)
         lenC=getLength()
         lenChain=getJointChainLength()
@@ -50,18 +49,17 @@ class Action(object):
             setOrientation(orientationOpp,Cote=self.CoteOpp)
         if self.mvt and ajust:
             #keepJointParameters(jtParam)
-            newPos=getCurvePosition(Cote=self.CoteOpp)
+            newPos=getPosition(Cote=self.CoteOpp)
             newPosture=getPosture(Cote=self.CoteOpp)
             newLen=getLength()
             if self.keepCurveLength:
-                keepChainLengthValue(lenChain)
                 setLength(lenC)
+                keepChainLengthValue(lenChain)
+
             else:
                 cL=getLength()
                 rapport=cL/lenC
                 keepChainLengthValue(lenChain*rapport)
-            if self.keepPosture :
-               setPosture(posture,Cote=self.CoteOpp)
             if self.keepPosition:        
                 setCurvePosition(pos,Cote=self.CoteOpp)
         clear()
@@ -76,8 +74,8 @@ class Action(object):
 
 class SimpleAction(Action):
 
-    def __init__(self,offset,type,x,y,z,listOfSelection,Cote,CoteOpp,keepPosition,keepPosture=True,keepCurveLength=True,pivot=-1,mvt=True,*_): # pivot = position du pivot
-        Action.__init__(self,offset,Cote,CoteOpp,keepPosture,keepPosition,keepCurveLength) 
+    def __init__(self,offset,type,x,y,z,listOfSelection,Cote,CoteOpp,keepPosition,keepCurveLength=True,pivot=-1,mvt=True,*_): # pivot = position du pivot
+        Action.__init__(self,offset,Cote,CoteOpp,keepPosition,keepCurveLength) 
         self.type=type
         self.x=x
         self.y=y
@@ -101,14 +99,14 @@ class SimpleAction(Action):
             else :
                 cmds.rotate(self.offset,x=self.x,y=self.y,z=self.z,r=True,p=self.pivot)
         elif(self.type=='s'):
-            cmds.scale(self.offset,x=self.x,y=self.y,z=self.z,r=True,pivot=getCurvePosition()) # pivot ? 
+            cmds.scale(self.offset,x=self.x,y=self.y,z=self.z,r=True,pivot=getPosition()) # pivot ? 
     
 
 # les arguments de la fonction doivent etre une unique liste        
 class FunctionAction(Action):
 
-    def __init__(self,offset,function,Cote,CoteOpp,keepPosture,keepPosition,keepCurveLength=True,args=[],mvt=True,*_):
-        Action.__init__(self, offset,Cote,CoteOpp,keepPosture,keepPosition,keepCurveLength) 
+    def __init__(self,offset,function,Cote,CoteOpp,keepPosition,keepCurveLength=True,args=[],mvt=True,*_):
+        Action.__init__(self, offset,Cote,CoteOpp,keepPosition,keepCurveLength) 
         self.function=function
         self.args=args
         self.mvt=mvt

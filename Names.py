@@ -48,7 +48,7 @@ class Names(object):
 
     @classmethod
     def Numero(self,name):
-        dico={"CGD":2,"CHB":3,"DGD":4,"DHB":5,"LGD":6,"LHB":7,"CompGD":8,"CompHB":9,"TGD":10,"THB":11}
+        dico={"CGD":2,"CHB":3,"LGD":4,"LHB":5,"CompGD":6,"CompHB":7,"TGD":8,"THB":9}
         if name in dico :
             return dico[name]
         return -1
@@ -69,7 +69,7 @@ class CurveNames(object):
 
     @classmethod
     def Numero(self,name):
-        dico={"X":12,"Y":13,"Z":14,"Length":15,"Posture":16,"Orientation":17}
+        dico={"X":10,"Y":11,"Z":12,"Length":13,"Posture":14,"Orientation":15}
         if name in dico :
             return dico[name]
         return -1

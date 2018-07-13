@@ -14,32 +14,29 @@ sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
 path="C:/Users/alexa/Documents/alexandra/scripts/"
 
 
-
+# NAMES / NUM
 
 def curvei(i,curve='curve1'):
     return curve+'.cv['+str(i)+']'
 
+def posList():
+    if 'sliderGrp' in globals() and hasattr(sliderGrp, 'locatorList'):
+        return sliderGrp.locatorList
+    return [num2Name(i) for i in range(6)]
+
 def locator(i):
     return 'locatorAngle'+str(i)
+
+def locList():
+    return [locator(i) for i in range(5)]
 
 def joint(i):
     if i>0 and i<29:
         return 'joint'+str(i)
     return -1
 
-
-#pointOnCurveList=map(n2J,['L6','L3','T11','T8','T2','C4','C1'])
 def n2J(name):
-    #dico={'L6':'joint1', 'L5':'joint2','L4':'joint3','L3':'joint4','L2':'joint5','L1':'joint6','T13':'joint7', \
-    #    'T12':'joint8','T11':'joint9','T10':'joint10','T9':'joint11','T8':'joint12','T7':'joint13','T6':'joint14', \
-    #    'T5':'joint15','T4':'joint16','T3':'joint17','T2':'joint18','T1':'joint19','C7':'joint20','C6':'joint21',\
-    #    'C5':'joint22','C4':'joint23','C3':'joint24','C2':'joint25','C1':'joint26','C0':'joint27','Tete':'joint28'}
-    #if (not isinstance(name,list)) and name in dico :
-    #    return dico[name]
-    #else:
-    #    return -1
     return joint(name2Num(name))
-
 
 def name2Num(name):
     dico={'L6':1, 'L5':2,'L4':3,'L3':4,'L2':5,'L1':6,'T13':7, \
@@ -52,14 +49,14 @@ def name2Num(name):
         return -1
 
 def numSlider(name):
-    dico={"CGD":2,"CHB":3,"DGD":4,"DHB":5,"LGD":6,"LHB":7,"CompGD":8,"CompHB":9,"TGD":10,"THB":11}
+    dico={"CGD":2,"CHB":3,"LGD":4,"LHB":5,"CompGD":6,"CompHB":7,"TGD":8,"THB":9,"X":10,"Y":11,"Z":12,"Length":13,"Posture":14,"Orientation":15}
     if name in dico :
         return dico[name]
     return -1
 
 
 def n2N(name):
-    liste=[abs(name2Num(name)-name2Num(num2NameCV(i))) for i in range(9)]
+    liste=[abs(name2Num(name)-name2Num(num2NameCV(i))) for i in range(MaxCV())]
     return liste.index(min(liste))
 
 def nLoc2nCurve(num):
@@ -78,16 +75,20 @@ def num2Name(num):
     if num==0:
         return 'L6'
     elif num==1:
-        return 'L4'
-    elif num==2:
         return 'T12'
-    elif num==3:
+    elif num==2:
         return 'T2'
-    elif num==4:
+    elif num==3:
         return 'C0'
-    elif num==5:
+    elif num==4:
         return 'Tete'
 
+
+
+
+
+
+# MAYA TOOLS
 
 def selectGui(*_):
     res = cmds.promptDialog(message='Name of vertebrate:',button=['OK', 'Cancel'],\
@@ -107,13 +108,35 @@ def select(name):
         if joint!=-1:
             pos=position(joint)
             param=getParameter(pos)
-            maya.mel.eval("doMenuNURBComponentSelection(\"curve1\", \"curveParameterPoint\");")
+            maya.mel.eval('doMenuNURBComponentSelection("curve1", "curveParameterPoint");')
             cmds.select('curve1.u['+str(param)+']',r=1)
+            print "select "+name
+
+def selectCVGui(*_):
+    res = cmds.promptDialog(message='Num of CV point:',button=['OK', 'Cancel'],\
+	defaultButton='OK',cancelButton='Cancel',dismissString='Cancel')
+    if res=='OK':
+        num=int(cmds.promptDialog(query=True, text=True))
+        selectCV(num)
+
+# select a vertebre
+def selectCV(num):
+    if num>-1 and num<MaxCV():
+        maya.mel.eval('doMenuNURBComponentSelection("curve1", "controlVertex");')
+        cmds.select('curve1.cv['+str(num)+']',r=1)
+        print "select curve1.cv["+str(num)+"]"
 
 #def nCurveToJoint(num):
 #    dico={0:'joint1',1:'joint4',2:'joint7',3:'joint13',4:'joint19',5:'joint23',6:'joint26'}
+def ex(name):
+    path="C:/Users/alexa/Documents/alexandra/scripts/"
+    execfile(path+name)
 
+def mv(v,rel=False):
+    cmds.move(v[0],v[1],v[2],r=rel)
 
+def clear():
+    cmds.select(clear=True)
 
 def position(name):
     if cmds.objExists(name):
@@ -124,13 +147,110 @@ def position(name):
     else:
         return -1
     # nom de la vertebre (objet existe pas)  
-   
-    
+
 def CVPosition(name):
     if 'locator' in name:
         return position(name)
     return position(curvei(n2N(name)))
 
+def calcCVParameters():
+    maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
+    return [getParameter(position(curvei(i))) for i in range(maxCV)]
+
+def CVParam(num):
+    return getParameter(position(curvei(num)))
+
+def calcCVPositions():
+    res=[]
+    for i in range(MaxCV()):
+        res.append(position(curvei(i)))
+    return res
+
+def MaxCV():
+    return cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
+
+def JointPositions():
+    res=[]
+    for i in range(28):
+        res.append(position('joint'+str(i+1)))
+    return res
+
+def JointParameters():
+    return map(getParameter,JointPositions())
+
+def getPoint(parameter):
+    return cmds.pointOnCurve( 'curve1', pr=parameter, p=True )
+
+def getPointHor(parameter):
+    return cmds.pointOnCurve( 'curve2', pr=parameter, p=True )
+    
+def getParameter(location):
+    cmds.setAttr("nearestPointOnCurveGetParam.inPosition", location[0], location[1], location[2], type="double3") 
+    uParam = cmds.getAttr("nearestPointOnCurveGetParam.parameter")
+    return uParam
+
+def getParameterProj(location):
+    cmds.setAttr("nearestPointOnCurveHorGetParam.inPosition", location[0], location[1], location[2], type="double3") 
+    uParam = cmds.getAttr("nearestPointOnCurveHorGetParam.parameter")
+    return uParam
+
+def nearestPoint(name): 
+    if isinstance(name,list):
+        location=name
+    else:
+        location=position(name)
+
+    cmds.setAttr("nearestPointOnCurveGetParam.inPosition", location[0], location[1], location[2], type="double3") 
+    wParam = cmds.getAttr("nearestPointOnCurveGetParam.position")
+    return wParam[0]
+
+def nearestPointHor(name):
+    location=position(name)
+    cmds.setAttr("nearestPointOnCurveHorGetParam.inPosition", location[0], location[1], location[2], type="double3") 
+    wParam = cmds.getAttr("nearestPointOnCurveHorGetParam.position")
+    return wParam[0]
+
+def distLocCrv(num):
+    posLoc=position(locator(num))
+    CPOC=nearestPoint(locator(num))
+    return norm(sub(posLoc,CPOC))
+
+# peut pas prendre une distance a cause du scale, plutot parametre
+def distCVV():
+    res=[]
+    for i in range(MaxCV()):
+        cvPosCPOC=nearestPoint(curvei(i))
+        vertPos=position(num2NameCV(i))
+        res.append(abs(getParameter(cvPosCPOC)-getParameter(vertPos)))
+    return [norm(res),res]
+
+
+def calcAngles():
+#    res=[]
+#    res.append(getPosition())
+#    res.append(getLength())
+#    res.append(getPosture())
+#    res.append(getOrientation())
+#    res.append(angleCHB())
+#    res.append(angleCGD())
+#    res.append(angleLHB())
+#    res.append(angleLGD())
+#    res.append(angleTHB())
+#    res.append(angleTGD())
+#    res.append(angleCompHB())
+#    res.append(angleCompGD())
+#    return res
+    return []
+
+
+
+
+
+
+
+
+# SIMPLE CALCULS
+    
 def norm(vect) : 
     norm=0.0
     for i in vect:
@@ -151,13 +271,13 @@ def dotProduct(vect1,vect2):
     return res   
 
 def pdt(scalaire,vect):
-    return [vect[i]*scalaire for i in range(len(vect))]
+    return [v*scalaire for v in vect]
 
 def sum(vect1,vect2):
-    return [vect1[i]+vect2[i] for i in range(len(vect1))]
+    return [v1+v2 for v1,v2 in zip(vect1,vect2)]#vect1[i]+vect2[i] for i in range(len(vect1))]
     
 def sub(vect1,vect2):
-    return [vect1[i]-vect2[i] for i in range(len(vect1))]
+        return [v1-v2 for v1,v2 in zip(vect1,vect2)]
 
 def SubVector(name1,name2):
     pos1=position(name1)
@@ -194,53 +314,17 @@ def valPrincDeg(theta):
         theta2 -= 360.0
     return theta2
 
-#def angle_between(v1,v2):
-#    dot=dotProduct(v1,v2)
-#    if dot<-1:
-#        dot=-1
-#    if dot>1:
-#        dot=1
-#    return np.sign(np.cross(v1,v2))*np.degrees(math.acos(dot/(norm(v1)*norm(v2))))
-
-def getPoint(parameter):
-    return cmds.pointOnCurve( 'curve1', pr=parameter, p=True )
-
-def getPointHor(parameter):
-    return cmds.pointOnCurve( 'curve2', pr=parameter, p=True )
-    
-def getParameter(location):
-    cmds.setAttr("nearestPointOnCurveGetParam.inPosition", location[0], location[1], location[2], type="double3") 
-    uParam = cmds.getAttr("nearestPointOnCurveGetParam.parameter")
-    return uParam
-
-def getParameterProj(location):
-    cmds.setAttr("nearestPointOnCurveHorGetParam.inPosition", location[0], location[1], location[2], type="double3") 
-    uParam = cmds.getAttr("nearestPointOnCurveHorGetParam.parameter")
-    return uParam
-
-def nearestPoint(name): 
-    location=position(name)
-    cmds.setAttr("nearestPointOnCurveGetParam.inPosition", location[0], location[1], location[2], type="double3") 
-    wParam = cmds.getAttr("nearestPointOnCurveGetParam.position")
-    return wParam[0]
-
-def nearestPointHor(name):
-    location=position(name)
-    cmds.setAttr("nearestPointOnCurveHorGetParam.inPosition", location[0], location[1], location[2], type="double3") 
-    wParam = cmds.getAttr("nearestPointOnCurveHorGetParam.position")
-    return wParam[0]
-    
-
-def defPivot():
-    pt=getCurvePosition()
-    cmds.setAttr('curve1.scalePivot',pt[0],pt[1],pt[2])
-    cmds.setAttr('curve1.rotatePivot',pt[0],pt[1],pt[2])
-
 def maxDiff(val1,val2):
     Sub=map(abs,sub(val1,val2))
     maxi=max(Sub)
     i=Sub.index(maxi)
     return [i,maxi]
+
+def projHor(v):
+    return [v[0],v[2]]
+
+def projHor3D(v):
+    return [v[0],0,v[2]]
 
 def p(string,value1=[],value2=[],value3=[],value4=[],value5=[],value6=[]):
     res=str(string)
@@ -264,92 +348,31 @@ def p(string,value1=[],value2=[],value3=[],value4=[],value5=[],value6=[]):
         res+=str(value6)
     print res
 
-def getMilieu(name1,name2):
-    if isinstance(name1,str):
-        pt1=position(name1)
-        pt2=position(name2)
-        return (pdt(0.5,sum(pt1,pt2)))
-    else:
-        return (pdt(0.5,sum(name1,name2)))
-
-def getBarycentre(name1,name2,poids1):
-    pt1=position(name1)
-    pt2=position(name2)
-    return (sum(pdt(poids1,pt1),pdt(1-poids1,pt2)))
-
-def prec(a,n):
-    return float(format(a, '.'+str(n)+'f'))
-
-def calcCVParameters():
-    maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
-    return [getParameter(position(curvei(i))) for i in range(maxCV)]
-
-def CVParam(num):
-    return getParameter(position(curvei(num)))
-
-def MaxCV():
-    return cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
-
-def calcAngles():
-    res=[]
-    res.append(getCurvePosition())
-    res.append(getLength())
-    res.append(getPosture())
-    res.append(getOrientation())
-    res.append(angleCHB())
-    res.append(angleCGD())
-    res.append(angleLHB())
-    res.append(angleLGD())
-    res.append(angleTHB())
-    res.append(angleTGD())
-    res.append(angleCompHB())
-    res.append(angleCompGD())
-    return res
-
-def calcCVPositions():
-    res=[]
-    for i in range(MaxCV()):
-        res.append(position(curvei(i)))
-    return res
-
-def JointPositions():
-    res=[]
-    for i in range(28):
-        res.append(position('joint'+str(i+1)))
-    return res
-
-def JointParameters():
-    return map(getParameter,JointPositions())
-
-def ScaleFactor():
-    return getLengthLoc()/locatorCurveLength()*getLength()
-
-def ScaleFactorCPOC():
-    return getLengthLoc()/locatorCPOCCurveLength()*getLength()
 
 
-def projPoint3D(p,pointOnPlane,normal):
-    MA=sub(p,pointOnPlane)
-    dist=np.dot(normal,MA)/np.linalg.norm(normal)
-    pProj=sub(p,pdt(dist,normal))
-    return pProj
-
-def ex(name):
-    path="C:/Users/alexa/Documents/alexandra/scripts/"
-    execfile(path+name)
-
-def mv(v,rel=False):
-    cmds.move(v[0],v[1],v[2],r=rel)
-
-def clear():
-    cmds.select(clear=True)
+#def angle_between(v1,v2):
+#    dot=dotProduct(v1,v2)
+#    if dot<-1:
+#        dot=-1
+#    if dot>1:
+#        dot=1
+#    return np.sign(np.cross(v1,v2))*np.degrees(math.acos(dot/(norm(v1)*norm(v2))))
 
 
-def projHor(v):
-    return [v[0],v[2]]
 
-def projHor3D(v):
-    return [v[0],0,v[2]]
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     
         

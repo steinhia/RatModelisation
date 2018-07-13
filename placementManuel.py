@@ -2,168 +2,132 @@
 
 import sys
 sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
-
+import maya
 
 import time
 import maya.mel as mel
 import inspect
 
 path="C:/Users/alexa/Documents/alexandra/scripts/"
-execfile(path+"main.py")
 execfile(path+"mesures.py")
-execfile(path+"EvalClass.py")
-
-def placageOpti():
-    min=100000
-    iMin=-1
-    for j in range(45,65):
-        res=placageManuel(2,j)
-        if res<min:
-            min=res
-            iMin=j
-    print iMin
-    print min
-    return iMin
-
-
-
-def ajustePos():
-    # position des differents locators / vertebres correspondantes
-    posLoc=map(position,[locator(0),locator(1),locator(2),locator(3),locator(4)])
-    pos=map(num2Name,range(5))
-    pos=map(position,pos)
-    subPos=[0,0,0]
-    for i,posi in enumerate(pos):
-        val=sub(posLoc[i],posi)
-        #print val
-        subPos=sum(subPos,val)
-    subPos=pdt(0.2,subPos)
-    select('curve1')
-    cmds.move(subPos[0],subPos[1],subPos[2],r=True)
-
-def resetCurve(length,pos,jtPos):
-    setLength(length)     
-    for i,posi in enumerate(pos):
-        cmds.select(curvei(i))
-        cmds.move(posi[0],posi[1],posi[2])
-    for i,posj in enumerate(jtPos):
-        cmds.select('joint'+str(i+1))
-        cmds.move(posj[0],posj[1],posj[2])
-
-def calcPosCV():
-    pos=[]
-    for i in range(MaxCV()):
-        pos.append(position(curvei(i)))
-    return pos  
-
-def placeTete():
-    C0OnCurve=nearestPoint('locatorAngle4')
-    p("C0OnCurve",C0OnCurve)
-    posTeteOnCurve=position('Tete')
-    posTeteLocator=position(locator(4))
-    v1=sub(posTeteOnCurve,C0OnCurve)
-    v2=sub(posTeteLocator,C0OnCurve)
-    angle=angleHB(v1,v2)
-    cmds.select(curvei(7))
-    cmds.rotate(angle,0,0,pivot=C0OnCurve)
 
 
 
 
+# ALGO DE CORRECTION
 
-def correctionPos(sliderGrp,nPoint,locator):
-    for i in range(10):
-        vect=sub(locator,getPoint(getParameter(locator)))
-        cmds.select(curvei(nPoint))
-        cmds.move(vect[0],vect[1],vect[2],r=True)
+def calcPosRelatifHB(locator,Cote="",nLocator=-1):
+    #orientation=getOrientation(Cote)
+    parLocOnCurve=getParameter(locator)
+    locatorOnCurve=getPoint(parLocOnCurve)
 
-def ajustePosCurvePoints():
-    ajustePosOneCurvePoint(0,0)
-    ajustePosOneCurvePoint(4,6)
-
-def ajustePosCurvePointsInt():
-    ajustePosOneCurvePoint(1,1)
-    ajustePosOneCurvePoint(2,2)
-    ajustePosOneCurvePoint(3,4)
+    vect=sub(locator,locatorOnCurve)
+    vectProj=projPlanPosture3DLocator(locatorOnCurve,locator,Cote)
+    vectProj2D=projPlanPosture2DLocator(locatorOnCurve,locator,Cote)
 
 
-def ajustePosOneCurvePoint(numLocator,numPoint):
-    t=position(locator(numLocator))
-    cmds.select(curvei(numPoint))
-    cmds.move(t[0],t[1],t[2])
+    tan=normalize(getTangent(locatorOnCurve))
+    if nLocator==0:
+        tan=pdt(-1,tan)
+    #tanProj=projPlanPosture3DLocator(locatorOnCurve,sum(locatorOnCurve,tan),Cote)
+    tanProj2D=projPlanPosture2DLocator(locatorOnCurve,sum(locatorOnCurve,tan),Cote)
 
-def placeAnglesCalcules(sliderList,nBoucles):
-    #compression=angleLoc("CompHB")
-    #compressionGD=angleLoc("CompGD")
 
-    #angleCervicales=angleLoc("CHB")
-    #angleCervicalesGD=angleLoc("CGD")
-    #angleTete=angleLoc("THB")
-    #angleTeteGD=angleLoc("TGD")
+    #p("vectProj3D2D",projPlanPosture3D(locatorOnCurve,sum(locatorOnCurve,tan),Cote))
+    #p("locOn",locatorOnCurve,vectProj,tanProj,"finTan",str(sum(locatorOnCurve,tanProj)))
+    #print "tan2D",vectProj2D,tanProj2D
+    #p("vect",str(vectAngle),"tan",str(tanAngle),"angle",str(angleHB2V(vectProj,tanProj)),str(valPrincDeg(tanAngle-vectAngle)))
 
-    #angleLombaires=angleLoc("LHB")
-    #angleLombairesGD=angleLoc("LGD")
+    # angle du locator vers la courbe
+    angle=angle2D(vectProj2D,tanProj2D) #angleHB2V(vectProj,tanProj)
+    if angle<0:
+        string="courbe dessous"
+    else:
+        string="courbe dessus"
+    return [angle,norm(vectProj)*angle/100.0,string]
 
-    #posture=getPostureLoc()
-    #orientation=getOrientationLoc()
-    #pos=getPositionLoc()
 
-    oldParamC=getParameter(position(curvei(5)))
-    oldParamD=getParameter(position(curvei(3)))
-    param=calcCVParameters()
+def calcPosRelatifGD(locatorPosition,Cote="",nLocator=-1):
+    par=getParameterProj(projHor3D(locatorPosition))
+    locatorOnCurve=getPoint(par)
+    tan=projHor(getTangent(locatorOnCurve))
+    vect=projHor(sub(locatorOnCurve,locatorPosition))
+    if angle2D(tan,vect)<0:
+        string="courbe a gauche"
+    else:
+        string="courbe a droite"
+    return [angle2D(tan,vect),norm(vect),string]
 
-    setAngle(sliderList,"Orientation")
-    setAngle(sliderList,"Length")
-    setAngle(sliderList,"X")
-    setAngle(sliderList,"Y")
-    setAngle(sliderList,"Z")
+def calcPosRelatifHBNum(numLocator,Cote=""):
+    return calcPosRelatifHB(position(locator(numLocator)),Cote,numLocator)
 
-    # on place d'abord les angles GD -> plus facile a placer maintenant
-    locatorList=map(position,[locator(i) for i in range(6)])
+def calcPosRelatifGDNum(numLocator,Cote=""):
+    return calcPosRelatifGD(position(locator(numLocator)),Cote,numLocator)
 
-    t=time.time()
-    #print "TLEN",getTLen()
-    for i in range(1):#nBoucles):
-            corr(sliderList,"LGD")
-            corr(sliderList,"CompGD")
-            corr(sliderList,"CGD")
-            corr(sliderList,"TGD")
+# garde en memoire le meilleur si marche pas bien
+def correctionRot(nGroup,nLocator,sliderList,HB,Croiss,Cote,nMax,precision,tour=0,coeff=0.5):
+    locatorP=position(locator(nLocator))
+    f = calcPosRelatifHB if HB  else calcPosRelatifGD
+    distI=norm(sub(locatorP,getPoint(getParameter(locatorP))))
+    dist=distI
+    slider=sliderList[nGroup].slider
+    valInit=slider.sliderValue()
+    minSlider=slider.minValue
+    maxSlider=slider.maxValue
+    relatif=1
+    maxi=min(valInit+dist*coeff*(slider.maxValue-slider.minValue),maxSlider)
+    mini=max(valInit-dist*coeff*(slider.maxValue-slider.minValue),minSlider)
+    i=0
+    while i<nMax and abs(dist)>0.01 and abs(mini-maxi)>precision*0.01:
+        i+=1
+        testV=(mini+maxi)/2
+        slider.setValue(testV)
+        slider.update()
+        [relatif,dist,str]=f(locatorP,Cote=Cote,nLocator=nLocator)
+        if (relatif<0 and Croiss) or (relatif>0 and (not Croiss)):
+            maxi=testV
+        else:
+            mini=testV 
+    if distI<dist:
+        if tour==0 :
+            correctionRot(nGroup,nLocator,sliderList,HB,Croiss,Cote,nMax,precision,tour=1,coeff=coeff*2)
+        else:
+            slider.setValue(valInit)
+            slider.update()
+            p("correctionRot failed",slider.label)
 
-    print "apres GD",time.time()-t
-    t=time.time()
-    #print "TLEN",getTLen(),getLLen()
-
-    for i in range(1):#nBoucles):
-
-        setAngle(sliderList,"CompHB")
-        #print "TLEN1",getTLen(),getLLen()
-        setAngle(sliderList,"LHB")
-        #print "TLEN2",getTLen(),getLLen()
-        setAngle(sliderList,"CHB")
-        #print "TLEN3",getTLen(),getLLen()
-        setAngle(sliderList,"THB")
-
-    #print "apres setRot",time.time()-t
-    #t=time.time()
-
-    #setAngle("orientation",orientation)
-    setAngle(sliderList,"Length")
-    setAngle(sliderList,"X")
-    setAngle(sliderList,"Y")
-    setAngle(sliderList,"Z")
-
-    #print "apres fin",time.time()-t
-    #t=time.time()
+def corr(sliderList,name,nMax=20,precision=0.01):
+    if name=="LHB":
+        correctionRot(5,0,sliderList,True,False,"L",nMax,precision) 
+    elif name=="LGD":
+        correctionRot(4,0,sliderList,False,True,"L",nMax,precision)
+    elif name=="CHB":
+        correctionRot(3,3,sliderList,True,False,"C",nMax,precision) 
+    elif name=="CGD":
+        correctionRot(2,3,sliderList,False,False,"C",nMax,precision)
+    elif name=="DHB":
+        correctionRot(5,1,sliderList,True,False,"",nMax,precision)
+    elif name=="DGD":    
+        correctionRot(4,1,sliderList,False,False,"",nMax,precision)
+    elif name=="THB":
+        correctionRot(9,4,sliderList,True,False,"C",nMax,precision)
+    elif name=="TGD":
+        correctionRot(8,4,sliderList,False,False,"C",nMax,precision)
+    elif name=="CompHB":
+        correctionRot(7,2,sliderList,True,True,"",nMax,precision)
+    elif name=="CompGD":
+        correctionRot(6,2,sliderList,False,False,"",nMax,precision)
 
 def Correction(sliderList):
-    locatorList=map(position,[locator(i) for i in range(6)])
+    locatorList=map(position,locList())
 
     ##t=time.time()
 
     for _ in range(2):
             translateToLocator(0)
-            translateToLocator(2)
-            setAngle(sliderList,"Length")
+            translateToLocator(1)
+            setAngle(sliderList,"Scale")
+
 
     #correctionRot(sliderGrp,sliderGrp.string2num("compression g"),3,False)
     corr(sliderList,"CompGD",nMax=10)
@@ -178,7 +142,7 @@ def Correction(sliderList):
     #    setAngle("scale",ScaleFactor())
     #    translateToCV(0,0)
     ### on translate la courbe pour qu'elle repasse par le localisateur milieu
-    #    translateToLocator(2)
+    #    translateToLocator(1)
         #corr(sliderGrp.sliderList,"LGD")
         #corr(sliderGrp.sliderList,"CompGD")
         #corr(sliderGrp.sliderList,"CGD")
@@ -197,56 +161,57 @@ def Correction(sliderList):
         for _ in range(2):
             translateToCV(0,0)
     #        ### on translate la courbe pour qu'elle repasse par le localisateur milieu
-            translateToLocator(2)
-            setAngle(sliderList,"Length")
+            translateToLocator(1)
+            setAngle(sliderList,"Scale")
         for _ in range(1):
             corr(sliderList,"LGD",nMax=5)
             corr(sliderList,"LHB",nMax=5)
         for _ in range(1):
             corr(sliderList,"CompGD",nMax=5)
             corr(sliderList,"CompHB",nMax=5)
-        for _ in range(2):
+
+        for _ in range(1):
             corr(sliderList,"CGD",nMax=5)
             corr(sliderList,"CHB",nMax=5)
             corr(sliderList,"TGD",nMax=5)
             corr(sliderList,"THB",nMax=5)
 
-    for _ in range(1):
+    for _ in range(0):
         translateToLocator(0)
-        translateToLocator(2)
-        #translateToLocator(4)
-        #translateToLocator(2)
+        translateToLocator(1)
+        #translateToLocator(3)
+        #translateToLocator(1)
         #translateToLocator(0)
-        #translateToLocator(2)
+        #translateToLocator(1)
 
         #print "apres corr",time.time()-t
     #t=time.time() 
 
 
-    for i in range(3):
+    for i in range(0):
         #translateToCV(6,4)
-        translateToLocator(4)
         translateToLocator(3)
-        setAngle(sliderList,"Length") # TODO!!!!! CPOC
+        translateToLocator(2)
+        setAngle(sliderList,"ScaleCPOC") # TODO!!!!! CPOC
     ### on translate la courbe pour qu'elle repasse par le localisateur milieu
  # autre locator reference ?
-        #for _ in range(1):
-        #    translateToLocator(2)
-        #    corr(sliderGrp.sliderList,"CompGD")
-        #    corr(sliderGrp.sliderList,"CompHB")
-        #for _ in range(1):
-        #    corr(sliderGrp.sliderList,"LGD")
-        #    corr(sliderGrp.sliderList,"LHB")
-        #for i in range(2):
-        #    corr(sliderGrp.sliderList,"CGD",nMax=5)
-        #    corr(sliderGrp.sliderList,"CHB",nMax=5)
-        #    corr(sliderGrp.sliderList,"TGD",nMax=5)
-        #    corr(sliderGrp.sliderList,"THB",nMax=5)
+        for _ in range(1):
+            translateToLocator(1)
+            corr(sliderGrp.sliderList,"CompGD")
+            corr(sliderGrp.sliderList,"CompHB")
+        for _ in range(1):
+            corr(sliderGrp.sliderList,"LGD")
+            corr(sliderGrp.sliderList,"LHB")
+        for i in range(2):
+            corr(sliderGrp.sliderList,"CGD",nMax=5)
+            corr(sliderGrp.sliderList,"CHB",nMax=5)
+            corr(sliderGrp.sliderList,"TGD",nMax=5)
+            corr(sliderGrp.sliderList,"THB",nMax=5)
 
     #for i in range(1):
     #    for _ in range(2):
     #        translateToCV(0,0)
-    #        translateToLocator(2)
+    #        translateToLocator(1)
     #        setAngle("scale",ScaleFactorCPOC())
     ## on translate la courbe pour qu'elle repasse par le localisateur milieu
         #for _ in range(1):
@@ -271,17 +236,165 @@ def Correction(sliderList):
         #t=time.time() 
 
         #for _ in range(1): 
-        #    translateToLocator(3)
-        #    translateToLocator(2)
-        #    translateToLocator(4) 
         #    translateToLocator(2)
         #    translateToLocator(1)
-        #    translateToLocator(2)
+        #    translateToLocator(3) 
+        #    translateToLocator(1)
 
-            #translateToLocator(3)
             #translateToLocator(2)
+            #translateToLocator(1)
 
-        t=time.time()
+
+
+
+# TRANSLATIONS
+
+def translateToLocator(numLocator):
+    posLoc=position(locator(numLocator))
+    posLocOnCurve=nearestPoint(locator(numLocator))
+    t=sub(posLoc,posLocOnCurve)
+    select('curve1')
+    cmds.move(t[0],t[1],t[2],r=True)
+    clear()
+
+def translateToLocatorGui(sliderList,*_):
+    num=-1
+    result = cmds.promptDialog(message='Num of Locator:',button=['OK', 'Cancel'],\
+	defaultButton='OK',cancelButton='Cancel',dismissString='Cancel')
+    if result == 'OK' :
+	    num=int(cmds.promptDialog(query=True, text=True))
+    if num>-1 and num<6:
+        translateToLocator(num)
+    #update position Gui
+    for i in range(12,15):
+        sliderList[i].update()
+
+    
+def translateToCV(numCV,numLocator):
+    posCV=nearestPoint(curvei(numCV))
+    posLoc=position(locator(numLocator))
+    diff=sub(posLoc,posCV)
+    select('curve1')
+    cmds.move(diff[0],diff[1],diff[2],r=True)
+    clear()
+
+    
+def translateToCVGui(sliderList,*_):
+    num=-1
+    result = cmds.promptDialog(message='Num of Locator:',button=['OK', 'Cancel'],\
+	defaultButton='OK',cancelButton='Cancel',dismissString='Cancel')
+    if result == 'OK' :
+	    num=int(cmds.promptDialog(query=True, text=True))
+    if num==0:
+        translateToCV(0,0)
+    elif num==2:
+        translateToCV(2,1)
+    elif num==3:
+        translateToCV(4,2)
+    elif num==4:
+        translateToCV(6,3)
+    elif num==5:
+        translateToCV(8,4)
+    #update position Gui
+    for i in range(12,15):
+        sliderList[i].update()
+
+def ajustePos():
+    # position des differents locators / CPOC
+    t=time.time()
+    posLoc=map(position,locList())
+    posLoc=[posLoc[i] for i in range(6) if i!=1]
+    for i in range(5):
+        pos=map(nearestPoint,posLoc)
+        subPos=[0,0,0]
+        for posi,posiloc in zip(pos,posLoc):
+            val=sub(posiloc,posi)
+            subPos=sum(subPos,val)
+        subPos=pdt(1.0/5.0,subPos)
+        if np.linalg.norm(subPos)<0.01:
+            print i, time.time()-t
+            return
+        select('curve1')
+        cmds.move(subPos[0],subPos[1],subPos[2],r=True)
+
+
+
+
+
+
+
+
+# PLACEMENT ANGLES
+
+def placeAnglesCalcules(sliderList,nBoucles=1):
+
+    oldParamC=getParameter(position(curvei(5)))
+    oldParamD=getParameter(position(curvei(3)))
+    param=calcCVParameters()
+
+    setAngle(sliderList,"Orientation")
+    setAngle(sliderList,"Scale")
+    setAngle(sliderList,"X")
+    setAngle(sliderList,"Y")
+    setAngle(sliderList,"Z")
+
+    # on place d'abord les angles GD -> plus facile a placer maintenant
+    locatorList=map(position,locList())
+
+    t=time.time()
+    print "ddeb",distCVV()
+    for i in range(1):#nBoucles):
+            corr(sliderList,"LGD")
+            corr(sliderList,"CompGD")
+            corr(sliderList,"CGD")
+            corr(sliderList,"TGD")
+
+    #print "apres GD",time.time()-t
+    #t=time.time()
+
+    for i in range(1):#nBoucles):
+        print "dfin1",distCVV()
+        setAngle(sliderList,"CompHB")
+        print "dfin2",distCVV()
+        #print "TLEN1",getTLen(),getLLen()
+        setAngle(sliderList,"LHB")
+        print "dfin3",distCVV()
+        setAngle(sliderList,"CHB")
+        print "dfin4",distCVV()
+        setAngle(sliderList,"THB")
+        print "dfin5",distCVV()
+    print "dfin",distCVV()
+
+    #setAngle("orientation",orientation)
+    setAngle(sliderList,"Scale")
+    setAngle(sliderList,"X")
+    setAngle(sliderList,"Y")
+    setAngle(sliderList,"Z")
+
+
+
+
+
+
+
+
+
+# GESTION COURBE
+
+def resetCurve(length,CVpos,jtPos):
+    setLength(length)     
+    for i,posi in enumerate(CVpos):
+        cmds.select(curvei(i))
+        cmds.move(posi[0],posi[1],posi[2])
+    for i,posj in enumerate(jtPos):
+        cmds.select('joint'+str(i+1))
+        cmds.move(posj[0],posj[1],posj[2])
+
+def calcPosCV():
+    pos=[]
+    for i in range(MaxCV()):
+        pos.append(position(curvei(i)))
+    return pos  
 
 def setOneCurve():
     for j in range(maxCV()):
@@ -297,13 +410,6 @@ def setAllCurves():
     for i in range(20):
         cmds.currentTime(i*10, edit=True )
         setOneCurve()
-
- 
-def isSet():
-    res=0
-    res+=cmds.getAttr('posCV.pos0X')+cmds.getAttr('posCV.pos1X')+cmds.getAttr('posCV.pos1X')
-    return res!=0
-
 
 def saveKeys():
         # setKey pour enregistrer la position de la courbe a chaque instant
@@ -324,45 +430,42 @@ def saveKeys():
         mel.eval('setKeyframe { "ValeurAngles.'+n+'" };')
 
         
-    # on enregistre les positions des points de contrôle
-    for i in range(maxCV()):
+    # on enregistre les positions des points de controle
+    for i in range(MaxCV()):
         pos=position(curvei(i))
         cmds.setAttr('posCV.pos'+str(i)+'X',pos[0])
         cmds.setAttr('posCV.pos'+str(i)+'Y',pos[1])
         cmds.setAttr('posCV.pos'+str(i)+'Z',pos[2])
         mel.eval('setKeyframe { "posCV.pos'+str(i)+'" };')
 
-def Placement(length,CVpos,jtPos,save=True,evaluate=True):
-    resetCurve(length,CVpos,jtPos)
-    placeAnglesCalcules(sliderGrp.sliderList,1)
-    Correction(sliderGrp.sliderList)
+def Placement(sliderList,length,CVpos,jtPos,save,evaluate=True):
+    #resetCurve(length,CVpos,jtPos)
+    placeAnglesCalcules(sliderList,1)
+    Correction(sliderList)
     if save:
         saveKeys()
-    if evaluate:
+    if evaluate and False:
         a=Evaluate()
         evaluation=a.execute()
 
 
-maxCV = MaxCV
-sliderGrp=mainFct(pointOnCurveList,locatorList)
-droites=sliderGrp.droites
-par=calcCVParameters() 
-CVpos=calcPosCV()
-jtPos=JointPositions()
-jtParam=JointParameters()
-length=getLength()
 
-#setAllCurves()
-for i in range(0,1):
-    t=time.time()
-    cmds.currentTime(90, edit=True )
-    sliderGrp=mainFct(pointOnCurveList,locatorList,reset=True,droites=droites)
-    checkParameters(par,CVpos,jtPos,jtParam)
-    Placement(length,CVpos,jtPos)
 
-    print "time",time.time()-t
-cmds.select('locatorAngle1')
-cmds.hide()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
    

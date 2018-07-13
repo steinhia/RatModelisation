@@ -21,13 +21,13 @@ class GeneralCalculs(object):
     @classmethod
     def getPosition(cls,liste,num=-1,Cote="",*_):
         if Cote=="C":
-            pos=CVPosition(liste[4])
+            pos=CVPosition(liste[3])
         elif Cote=="L":
             pos=CVPosition(liste[0])
         elif Cote=="T":
-            pos=CVPosition(liste[5])
+            pos=CVPosition(liste[4])
         else:
-            pos=position(liste[2])
+            pos=position(liste[1])
         if num<0 or num>2:
             return pos
         return pos[num]
@@ -51,13 +51,13 @@ class GeneralCalculs(object):
     @classmethod
     def PostureVector(cls,liste,Cote="",*_):
         if Cote=="C":
-            return normalize(sub(CVPosition(liste[4]),CVPosition(liste[3])))
+            return normalize(sub(CVPosition(liste[3]),CVPosition(liste[2])))
         elif Cote=="L":
-            return normalize(sub(CVPosition(liste[2]),CVPosition(liste[0])))
+            return normalize(sub(CVPosition(liste[1]),CVPosition(liste[0])))
         elif Cote=="T":
-            return normalize(sub(CVPosition(liste[5]),CVPosition(liste[4])))
+            return normalize(sub(CVPosition(liste[4]),CVPosition(liste[3])))
         else:
-            return normalize(sub(CVPosition(liste[4]),CVPosition(liste[0])))
+            return normalize(sub(CVPosition(liste[3]),CVPosition(liste[0])))
 
 
     @classmethod
@@ -135,13 +135,13 @@ class GeneralCalculs(object):
     def PointOnPlane(cls,liste,Cote="",*_):
         #posture change orientation, pas l'inverse
         if Cote=="C":
-            p=CVPosition(liste[4])
+            p=CVPosition(liste[3])
         elif Cote=="L":
             p=CVPosition(liste[0])
         elif Cote=="T":
-            p=CVPosition(liste[5])
+            p=CVPosition(liste[4])
         else:
-            p=CVPosition(liste[2])
+            p=CVPosition(liste[1])
         return p
        
     # on projette le vecteur sur le plan formé par la verticale et le postureVector
@@ -191,18 +191,18 @@ class GeneralCalculs(object):
     @classmethod
     def vector(cls,liste,string,*_):
         if "Comp" in string:
-            return SubVector(liste[3],liste[2])
-        if "C" in string:
-            return SubVector(liste[4],liste[3])
-        if "D" in string:
             return SubVector(liste[2],liste[1])
+        if "C" in string:
+            return SubVector(liste[3],liste[2])
         if "L" in string:
             if 'locator' in liste[0]:
-                return SubVector(liste[2],liste[0])
+                return SubVector(liste[1],liste[0])
             else :
                 return SubVector(liste[1],liste[0])
         if "T" in string:
-            return SubVector(liste[5],liste[4])
+            return SubVector(liste[4],liste[3])
+        if "D" in string:
+            return SubVector(liste[1],liste[1])
 
     @classmethod
     def angle(cls,liste,string,*_):
@@ -211,34 +211,35 @@ class GeneralCalculs(object):
             return -cls.angleHB(liste,vect)
         if "HB" in string:
             return cls.angleHB(liste,vect)
-        return cls.angleGD(liste,vect)
+        else:
+            return cls.angleGD(liste,vect)
 
 
     @classmethod
     def angleCHB(cls,liste,pointOnCurveList=[],*_):
-        v=SubVector(liste[4],liste[3])
+        v=SubVector(liste[3],liste[2])
         return cls.angleHB(liste,v)
        
 
     @classmethod
     def angleCGD(cls,liste,pointOnCurveList=[],*_):
-        v=SubVector(liste[4],liste[3])
+        v=SubVector(liste[3],liste[2])
         return cls.angleGD(liste,v)
 
     @classmethod
     def angleDHB(cls,liste,*_):
-        v=SubVector(liste[2],liste[1])
+        v=SubVector(liste[1],liste[1])
         return cls.angleHB(liste,v)
 
     @classmethod
     def angleDGD(cls,liste,*_):
-        v=SubVector(liste[2],liste[1])
+        v=SubVector(liste[1],liste[1])
         return cls.angleGD(liste,v)
 
     @classmethod
     def angleLHB(cls,liste,*_):
         if 'locator' in liste[0]:
-            v=SubVector(liste[2],liste[0])
+            v=SubVector(liste[1],liste[0])
         else :
             v=SubVector(liste[1],liste[0])
         return cls.angleHB(liste,v)
@@ -246,29 +247,29 @@ class GeneralCalculs(object):
     @classmethod
     def angleLGD(cls,liste,*_):
         if 'locator' in liste[0]:
-            v=SubVector(liste[2],liste[0])
+            v=SubVector(liste[1],liste[0])
         else :
             v=SubVector(liste[1],liste[0])
         return cls.angleGD(liste,v)
 
     @classmethod
     def angleTHB(cls,liste,*_):
-        v=SubVector(liste[5],liste[4])
+        v=SubVector(liste[4],liste[3])
         return cls.angleHB(liste,v)
 
     @classmethod
     def angleTGD(cls,liste,*_):
-        v=SubVector(liste[5],liste[4])
+        v=SubVector(liste[4],liste[3])
         return cls.angleGD(liste,v)
 
     @classmethod
     def angleCompHB(cls,liste,*_):
-        v=SubVector(liste[3],liste[2])
+        v=SubVector(liste[2],liste[1])
         return -cls.angleHB(liste,v)
 
     @classmethod
     def angleCompGD(cls,liste,*_):
-        v=SubVector(liste[3],liste[2])
+        v=SubVector(liste[2],liste[1])
         return cls.angleGD(liste,v)
 
     @classmethod

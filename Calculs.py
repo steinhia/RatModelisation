@@ -66,34 +66,37 @@ def calcCentroid(name):
 
 
 # CALCULS SUR LA COURBE
-          
+
+def ScaleFactor():
+    return getLengthLoc()/locatorCurveLength()*getLength()
+
+def ScaleFactorCPOC():
+    return getLengthLoc()/locatorCPOCCurveLength()*getLength()
+
+         
 # orientation par rapport au corps et pas la tete
-def getCurvePosition(num=-1,Cote=""):
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.getPosition(positionList,num,Cote=Cote)
+def getPosition(num=-1,Cote=""):
+    return GeneralCalculs.getPosition(posList(),num,Cote=Cote)
 
 def getX(Cote=""):
-    return getCurvePosition(0,Cote=Cote)
+    return getPosition(0,Cote=Cote)
 def getY(Cote=""):
-    return getCurvePosition(1,Cote=Cote)
+    return getPosition(1,Cote=Cote)
 def getZ(Cote=""):
-    return getCurvePosition(2,Cote=Cote)
+    return getPosition(2,Cote=Cote)
 
 def getLength(L=[]):
     return cmds.arclen("curve1") 
 
 def PostureVector(Cote=""):
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.PostureVector(positionList,Cote=Cote)
+    return GeneralCalculs.PostureVector(posList(),Cote=Cote)
 
 # en degres   
 def getPosture(Cote=""):
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.getPosture(positionList,Cote=Cote)
+    return GeneralCalculs.getPosture(posList(),Cote=Cote)
 
 def getOrientation(Cote=""):
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.getOrientation(positionList,Cote=Cote)
+    return GeneralCalculs.getOrientation(posList(),Cote=Cote)
    
 def calcCourbure(L):
     [v1,v2]=L
@@ -115,24 +118,25 @@ def calcLordoseL(L=[]):
     return -calcCourbure([pointOnCurveList[3],pointOnCurveList[1]])
 
 def projPlanPosture(v,Cote=""):
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.projPlanPosture(positionList,v,Cote)
+    return GeneralCalculs.projPlanPosture(posList(),v,Cote)
 
 def projPlanPosture3D(p1,p2,Cote=""):
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.projPlanPosture3D(positionList,p1,p2,Cote)
+    return GeneralCalculs.projPlanPosture3D(posList(),p1,p2,Cote)
 
 def projPlanPosture2D(p1,p2,Cote=""):
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.projPlanPosture2D(positionList,p1,p2,Cote)
+    return GeneralCalculs.projPlanPosture2D(posList(),p1,p2,Cote)
 
 def projPtPV(p1,Cote=""):
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.projPtPV(positionList,p1,Cote)
+    return GeneralCalculs.projPtPV(posList(),p1,Cote)
+
+def projPoint3D(p,pointOnPlane,normal):
+    MA=sub(p,pointOnPlane)
+    dist=np.dot(normal,MA)/np.linalg.norm(normal)
+    pProj=sub(p,pdt(dist,normal))
+    return pProj
 
 def createCurvePlane(Cote=""):
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.createPlane(positionList,Cote)
+    return GeneralCalculs.createPlane(posList(),Cote)
 
 def angle2D(v1, v2):
     v1_n=normalize(v1)
@@ -143,8 +147,8 @@ def angle2D(v1, v2):
     return np.degrees(angle) 
 
 def angleHB(v1,PV=False):
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.angleHB(positionList,v1,PV)
+   
+    return GeneralCalculs.angleHB(posList(),v1,PV)
 
 # voir signe, chercher comment définir
 # anglebetween maya!!
@@ -165,46 +169,45 @@ def angleGD(v1,v2):
 
 
 def angleCrv(string,*_):
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.angle(positionList,string)
+    return GeneralCalculs.angle(posList(),string)
 
 #def angleCHB():
-#    positionList=[num2Name(i) for i in range(6)]
+#    posList()
 #    return GeneralCalculs.angleCHB(positionList,pointOnCurveList)
 #def angleCGD():
-#    positionList=[num2Name(i) for i in range(6)]
+#    posList()
 #    return GeneralCalculs.angleCGD(positionList,pointOnCurveList)
 #def angleDHB():
-#    positionList=[num2Name(i) for i in range(6)]
+#    posList()
 #    return GeneralCalculs.angleDHB(positionList)
 #def angleDGD():
-#    positionList=[num2Name(i) for i in range(6)]
+#    posList()
 #    return GeneralCalculs.angleDGD(positionList)
 #def angleLHB():
-#    positionList=[num2Name(i) for i in range(6)]
+#    posList()
 #    return GeneralCalculs.angleLHB(positionList)
 #def angleLGD():
-#    positionList=[num2Name(i) for i in range(6)]
+#    posList()
 #    return GeneralCalculs.angleLGD(positionList)
 
 #def angleTHB():
-#    positionList=[num2Name(i) for i in range(6)]
+#    posList()
 #    liste=[num2Name(i) for i in range(6)]
-#    v=SubVector(liste[5],liste[4])
+#    v=SubVector(liste[4],liste[3])
 #    l=norm([v[0],v[2]])
 #    sens=np.sign(np.dot(projHor3D(v),projHor3D(GeneralCalculs.PostureVector(liste))))
 #    #print "vlsens",v,l,np.dot(projHor3D(v),projHor3D(GeneralCalculs.PostureVector(liste))),angle2D([l,0],[sens*l,v[1]]),projHor3D(GeneralCalculs.PostureVector(liste))
 #    return GeneralCalculs.angleTHB(positionList)
 
 #def angleTGD():
-#    positionList=[num2Name(i) for i in range(6)]
+#    posList()
 #    return GeneralCalculs.angleTGD(positionList)
 
 #def angleCompHB():
-#    positionList=[num2Name(i) for i in range(6)]
+#    posList()
 #    return GeneralCalculs.angleCompHB(positionList)
 #def angleCompGD():
-#    positionList=[num2Name(i) for i in range(6)]
+#    posList()
 #    return GeneralCalculs.angleCompGD(positionList)
 
 
@@ -285,28 +288,24 @@ def getJointChainLength(L=[]):
     return len
 
 def locatorCurveLength():
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs().getChainLength(positionList) 
+    return GeneralCalculs().getChainLength(posList()) 
 
 def locatorCPOCCurveLength():
-    posList=map(nearestPoint,[locator(i) for i in range(6)])
+    posList=map(nearestPoint,locList())
     posList=[posList[i] for i in range(6) if i!=1]
     length=0
     for i in range(len(posList)-1):
         length+=distance(posList[i],posList[i+1])
     return length
 
-def HalfChainCurveLengthL():
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.HalfChainLengthL(positionList)
+def HalfChainCurveLengthL():  
+    return GeneralCalculs.HalfChainLengthL(posList())
 
 def HalfChainCurveLengthC():
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.HalfChainLengthC(positionList)
+    return GeneralCalculs.HalfChainLengthC(posList())
 
 def RapportChainCurveLength():
-    positionList=[num2Name(i) for i in range(6)]
-    return GeneralCalculs.RapportChainLength(positionList)
+    return GeneralCalculs.RapportChainLength(posList())
 
 def RapportCurveLength():
     return RapportChainCurveLength()/RapportChainLength()
@@ -481,11 +480,11 @@ def EvalPositionLocator2():
 # aucun sens parce que projection seulement pour un vecteur
 #def angleGD(v1,v2):
 #    v=sub(v1,v2)
-#    positionList=[num2Name(i) for i in range(6)]
+#    posList()
 #    return GeneralCalculs.angleGD2D(positionList,v)
 #def angleHB(v1,v2):
 #    v=SubVector(v1,v2)
-#    positionList=[num2Name(i) for i in range(6)]
+#    posList()
 #    return GeneralCalculs.angleHB(positionList,v)
 
 #def angleHB(v):

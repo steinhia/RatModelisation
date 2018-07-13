@@ -15,70 +15,70 @@ execfile(path+"GeneralCalculs.py")
 
 
 def getPostureVectorLoc(Cote=""):
-    locatorList=[locator(i) for i in range(6)]
+    locatorList=locList()
     return GeneralCalculs.PostureVector(locatorList,Cote)
 
 def getPostureLoc(Cote=""):
-    locatorList=[locator(i) for i in range(6)]
+    locatorList=locList()
     return GeneralCalculs.getPosture(locatorList,Cote)
 
 def getOrientationLoc(Cote=""):
-    locatorList=[locator(i) for i in range(6)]
+    locatorList=locList()
     return GeneralCalculs.getOrientation(locatorList,Cote)
 
 def getPositionLoc(num=-1,Cote=""):
-    locatorList=[locator(i) for i in range(6)]
+    locatorList=locList()
     return GeneralCalculs.getPosition(locatorList,num,Cote)
 
 def getXLoc(Cote=""):
-    locatorList=[locator(i) for i in range(6)]
+    locatorList=locList()
     return GeneralCalculs.getX(locatorList,Cote)
 
 def getYLoc(Cote=""):
-    locatorList=[locator(i) for i in range(6)]
+    locatorList=locList()
     return GeneralCalculs.getY(locatorList,Cote)
 
 def getZLoc(Cote=""):
-    locatorList=[locator(i) for i in range(6)]
+    locatorList=locList()
     return GeneralCalculs.getZ(locatorList,Cote)
 
 def getLengthLoc():
-    locatorList=[locator(i) for i in range(6)]
+    locatorList=locList()
     return GeneralCalculs.getChainLength(locatorList)
 
 def angleLoc(string):
-    locatorList=[locator(i) for i in range(6)]
+    locatorList=locList()
     return GeneralCalculs.angle(locatorList,string)
 
 def HalfChainLengthC():
-    locatorList=[locator(i) for i in range(6)]
+    locatorList=locList()
     return GeneralCalculs.HalfChainLengthC(locatorList)
 
 def HalfChainLengtL():
-    locatorList=[locator(i) for i in range(6)]
+    locatorList=locList()
     return GeneralCalculs.HalfChainLengthL(locatorList)
 
 def RapportChainLength():
-    locatorList=[locator(i) for i in range(6)]
+    locatorList=locList()
     return GeneralCalculs.RapportChainLength(locatorList)
 
 def createLocatorPlane(Cote=""):
-    locatorList=[locator(i) for i in range(6)]
+    locatorList=locList()
     return GeneralCalculs.createPlane(locatorList,Cote)
 
 def projPoint3DLocator(p,Cote=""):
-    locatorList=[locator(i) for i in range(6)]
+    locatorList=locList()
     return GeneralCalculs.projPoint3D(p,locatorList,v,Cote)
 
 def projPlanPostureLocator(v,Cote=""):
-    locatorList=[locator(i) for i in range(6)]
+    locatorList=locList()
     return GeneralCalculs.projPlanPosture(locatorList,v,Cote)
 
 def projPlanPosture3DLocator(p1,p2,Cote=""):
-    locatorList=[locator(i) for i in range(6)]
+    locatorList=locList()
     return GeneralCalculs.projPlanPosture3D(locatorList,p1,p2,Cote)
 
 def projPlanPosture2DLocator(p1,p2,Cote=""):
-    locatorList=[locator(i) for i in range(6)]
+    locatorList=locList()
     return GeneralCalculs.projPlanPosture2D(locatorList,p1,p2,Cote)
     

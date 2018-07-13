@@ -6,10 +6,6 @@ import sys
 sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
 
 
-path="C:/Users/alexa/Documents/alexandra/scripts/"
-import main
-reload(main)
-
 class Evaluate(object):
     
     def __init(self,*_):
@@ -20,7 +16,7 @@ class Evaluate(object):
 
         ## mesures sur la courbe
         #L=[]
-        #L.append(getCurvePosition())
+        #L.append(getPosition())
         #L.append(locatorCurveLength())
         #L.append(calcPosture())
         #L.append(angleCHB())
