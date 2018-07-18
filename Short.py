@@ -19,15 +19,20 @@ path="C:/Users/alexa/Documents/alexandra/scripts/"
 def curvei(i,curve='curve1'):
     return curve+'.cv['+str(i)+']'
 
-def posList():
+def posList(Cote=""):
     if 'sliderGrp' in globals() and hasattr(sliderGrp, 'locatorList'):
         return sliderGrp.locatorList
     return [num2Name(i) for i in range(6)]
 
+def POCList():
+    if 'sliderGrp' in globals() and hasattr(sliderGrp, 'locatorList'):
+        return sliderGrp.pointOnCurveList
+    return -1
+
 def locator(i):
     return 'locatorAngle'+str(i)
 
-def locList():
+def locList(Cote=""):
     return [locator(i) for i in range(5)]
 
 def joint(i):
@@ -113,14 +118,15 @@ def select(name):
             print "select "+name
 
 def selectCVGui(*_):
-    res = cmds.promptDialog(message='Num of CV point:',button=['OK', 'Cancel'],\
+    res = cmds.promptDialog(message='Name of CV point:',button=['OK', 'Cancel'],\
 	defaultButton='OK',cancelButton='Cancel',dismissString='Cancel')
     if res=='OK':
-        num=int(cmds.promptDialog(query=True, text=True))
-        selectCV(num)
+        name=cmds.promptDialog(query=True, text=True)
+        selectCV(name)
 
 # select a vertebre
-def selectCV(num):
+def selectCV(name):
+    num=n2N(name)
     if num>-1 and num<MaxCV():
         maya.mel.eval('doMenuNURBComponentSelection("curve1", "controlVertex");')
         cmds.select('curve1.cv['+str(num)+']',r=1)
@@ -168,6 +174,9 @@ def calcCVPositions():
 
 def MaxCV():
     return cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
+
+def MaxParam():
+    return cmds.getAttr("curve1.maxValue")
 
 def JointPositions():
     res=[]

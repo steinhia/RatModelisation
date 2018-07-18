@@ -55,11 +55,10 @@ class Action(object):
             if self.keepCurveLength:
                 setLength(lenC)
                 keepChainLengthValue(lenChain)
-
             else:
                 cL=getLength()
                 rapport=cL/lenC
-                keepChainLengthValue(lenChain*rapport)
+                #keepChainLengthValue(lenChain*rapport)
             if self.keepPosition:        
                 setCurvePosition(pos,Cote=self.CoteOpp)
         clear()

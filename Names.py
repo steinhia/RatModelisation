@@ -2,7 +2,10 @@ class Names(object):
     
     @classmethod
     def getFunction(self,name):
-        return eval("angle"+str(name))
+        if "GD" in name or "HB" in name:
+            return eval("angle"+str(name))
+        return eval("get"+str(name))
+
     @classmethod
     def getValue(self,name):
         return angleCrv(name)

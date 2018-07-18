@@ -39,7 +39,7 @@ class SliderGrp(object):
 
         cmds.setParent('..')
         cmds.text("\nParametres de la courbe")
-        cmds.rowColumnLayout(numberOfColumns=3,columnWidth=[(1,1),(2,300),(4,50),(5,50),(6,50)])
+        cmds.rowColumnLayout(numberOfColumns=5,columnWidth=[(1,1),(2,300),(3,50),(4,50),(5,50)])
         for i in range(10,len(buttonList)):
             buttonList[i].create()
         cmds.setParent('..')
@@ -53,13 +53,14 @@ class SliderGrp(object):
             buttonRadio.create()
 
         cmds.setParent('..')
-        cmds.rowColumnLayout( numberOfColumns=2,columnWidth=[(1, 100),(2,100)])
+        cmds.rowColumnLayout( numberOfColumns=3,columnWidth=[(1, 100),(2,100)])
         self.GuiButtonTTL=cmds.button(label="TranslateToLocator",command=partial(translateToLocatorGui,self.sliderList))
         self.GuiButtonTTCV=cmds.button(label="TranslateToCV",command=partial(translateToCVGui,self.sliderList))
-        self.GuiButtonS=cmds.button(label="Scale",command=partial(scaleGui,self.sliderList))
+        self.GuiButtonTTCV=cmds.button(label="TranslateExtrema",command=partial(translateToExtremaGui,self.sliderList))
+        self.GuiButtonS=cmds.button(label="ScaleSegment",command=partial(scaleGui,self.sliderList))
         self.GuiButtonSCPOC=cmds.button(label="ScaleCPOC",command=partial(scaleCPOCGui,self.sliderList))
+        self.GuiButtonRedo=cmds.button(label="ScaleExtremities",command=partial(scale2DGui,self.sliderList))
         self.GuiButtonUndo=cmds.button(label="Undo",command=partial(UndoGui,self.sliderList))
-        self.GuiButtonRedo=cmds.button(label="")
         self.GuiButtonSelect=cmds.button(label="Select",command=selectGui)
         self.GuiButtonSelect=cmds.button(label="SelectCV",command=selectCVGui)
         length=getLength();CVpos=calcPosCV();jtPos=JointPositions()
@@ -189,20 +190,20 @@ def createWindows(nameList,pointOnCurveList,locatorList,droites=[]):
 
     # TODO garder les 2 keep=False fait planter les tests
     # cervicales GD HB TODO position tete par rapport  au sol ou aux dorsales (tenir tete droite) -> 2 fonctions align with et setstraight ?
-    buttonList.append(functionGroup(sliderList,names[2],-10,10,-60,60,0))
-    buttonList.append(functionGroup(sliderList,names[3],-10,10,-60,60,0))
+    buttonList.append(functionGroup(sliderList,names[2],-6,6,-60,60,0))
+    buttonList.append(functionGroup(sliderList,names[3],-5,5,-60,60,0))
 
     ## dorsales GD HB -> dorsales HB = dorsales + lombaires
     #buttonList.append(functionGroup(sliderList,names[4],-8,8,-30,50,0))
     #buttonList.append(functionGroup(sliderList,names[5],-8,8,-30,50,0))
 
     #lombaires
-    buttonList.append(functionGroup(sliderList,names[4],-20,20,-60,60,0))
-    buttonList.append(functionGroup(sliderList,names[5],-20,20,-60,60,0))
+    buttonList.append(functionGroup(sliderList,names[4],-5,5,-60,60,0))
+    buttonList.append(functionGroup(sliderList,names[5],0,10,-60,60,0))
 
     # compression
-    buttonList.append(functionGroup(sliderList,names[6],-100,200,-40,50,0))
-    buttonList.append(functionGroup(sliderList,names[7],0,15,0,80,0))
+    buttonList.append(functionGroup(sliderList,names[6],-4,4,-40,50,0))
+    buttonList.append(functionGroup(sliderList,names[7],0,6,0,80,0))
 
     #tete
     buttonList.append(functionGroup(sliderList,names[8],-20,17,-90,90,0))
@@ -214,11 +215,12 @@ def createWindows(nameList,pointOnCurveList,locatorList,droites=[]):
     buttonList.append(postureGroup(sliderList,names[10],-60,60,keepPosition=False,keepCurveLength=False))
     buttonList.append(postureGroup(sliderList,names[11],-60,60,keepPosition=False,keepCurveLength=False))
     buttonList.append(postureGroup(sliderList,names[12],-60,60,keepPosition=False,keepCurveLength=False))
-    # scaling
-    buttonList.append(postureGroup(sliderList,names[13],1,30,keepCurveLength=False,keepPosition=True,))
+
     # posture generale
     buttonList.append(postureGroup(sliderList,names[14],-90,90,keepPosition=True,keepCurveLength=True))
     buttonList.append(postureGroup(sliderList,names[15],-180,180,keepPosition=True,keepCurveLength=True))
+    # scaling
+    buttonList.append(postureGroup(sliderList,names[13],1,30,keepCurveLength=False,keepPosition=True,))
 
     # checkBox pour la gestion d'affichage
     checkBoxList=[]

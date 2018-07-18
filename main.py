@@ -54,9 +54,10 @@ nameList=['obj55_VertebreL6_Exterior','obj53_VertebreL5_Exterior','obj51_Vertebr
             'obj29_VertebreT3_Exterior','obj74_VertebreT2_Exterior','obj72_VertebreT1_Exterior',\
             'obj70_VertebreC7_Exterior','obj69_VertebreC6_Exterior','obj103_VertebreC5_Exterior','obj105_VertebreC4_Exterior', \
             'obj107_VertebreC3_Exterior','obj47_VertebreC2_Axis_Exterior','obj45_VertebreC1_Atlas_Exterior']
-pointOnCurveList=['L6','L4','L1','T9','T5','C7','C1','Tete'] 
+pointOnCurveList=['L6','L4','L1','T10','T4','C6','C0','Tete'] 
 #pointOnCurveList=['L6','L4','T13','T8','T3','C5','C0','MilTete','Tete'] # mieux T13 sinon bosse T2 attention
-locatorList=['L6','L1','T5','C1','Tete'] 
+locatorList=[pointOnCurveList[i] for i in range(8) if i not in [1,3,5]]
+
   
 maxCV = MaxCV()
 sliderGrp=mainFct(pointOnCurveList,locatorList)
@@ -72,17 +73,15 @@ jtParam=JointParameters()
 #setAllCurves()
 for i in range(0,1):
     t=time.time()
-    cmds.currentTime(90, edit=True )
+    cmds.currentTime(0, edit=True )
     resetCurve(length,CVpos,jtPos)
     sliderGrp=mainFct(pointOnCurveList,locatorList,reset=True,droites=droites)
-    print "d2",distCVV()
     checkParameters(par,CVpos,jtPos,jtParam)
+    #print getCLen()
     Placement(sliderGrp.sliderList,length,CVpos,jtPos,save=True)
-    print "d3",distCVV()
-
-    print "time",time.time()-t
-
-
+    #print getCLen()
+    cmds.hide('curveShape2->arcLengthDimension2')
+    cmds.hide('curveShape1->arcLengthDimension1')
 #sliderGrp.do("scale",10)
 #sliderGrp.do("z",-5)
 

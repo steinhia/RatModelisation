@@ -98,7 +98,6 @@ class GeneralCalculs(object):
     @classmethod
     def getChainLength(cls,liste,*_):
         posList=map(position,liste)
-        posList=[posList[i] for i in range(len(posList)) if i!=1]
         length=0
         for i in range(len(posList)-1):
             length+=distance(posList[i],posList[i+1])
@@ -191,14 +190,14 @@ class GeneralCalculs(object):
     @classmethod
     def vector(cls,liste,string,*_):
         if "Comp" in string:
-            return SubVector(liste[2],liste[1])
+            if 'locator' in liste[0] :
+                return SubVector(liste[2],liste[1])
+            else:
+                return SubVector(pointOnCurveList[6],pointOnCurveList[3]) # liste[2] a gauche
         if "C" in string:
             return SubVector(liste[3],liste[2])
         if "L" in string:
-            if 'locator' in liste[0]:
-                return SubVector(liste[1],liste[0])
-            else :
-                return SubVector(liste[1],liste[0])
+            return SubVector(liste[1],liste[0])
         if "T" in string:
             return SubVector(liste[4],liste[3])
         if "D" in string:
@@ -211,7 +210,7 @@ class GeneralCalculs(object):
             return -cls.angleHB(liste,vect)
         if "HB" in string:
             return cls.angleHB(liste,vect)
-        else:
+        elif "GD" in string:
             return cls.angleGD(liste,vect)
 
 

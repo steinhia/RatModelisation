@@ -12,9 +12,24 @@ class Evaluate(object):
         self.label="eval1"
 
     def execute(self):
-        names=["pos","length","posture","rot C HB","rot C GD","rot D HB","rot D GD","rot L HB","rot L GD","compr"] 
+        names=["Position","Length","Posture","X","Y","Z"]
+        names2=["CHB","CGD","LHB","LGD","CompHB","CompGD"] 
+        
 
         ## mesures sur la courbe
+        L=[]
+        for name in names :
+            L.append()
+
+        for name in names2:
+            L.append(angleCrv(name))
+
+        l=[]
+        for name in names :
+            L.append()
+
+        for name in names2:
+            L.append(angleLoc(name))
         #L=[]
         #L.append(getPosition())
         #L.append(locatorCurveLength())

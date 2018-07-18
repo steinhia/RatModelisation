@@ -195,9 +195,11 @@ def createCurve(pointOnCurveList,nameList):
     cmds.delete('curve1' , ch = 1)
     KeepList=[]
     maxCV = MaxCV()
-    for curvePoint in pointOnCurveList :
-        if curvePoint!=-1:
+    for i,curvePoint in enumerate(pointOnCurveList) :
+        if i!=6 and curvePoint!=-1:
             KeepList.append(ClosestPoint(curvePoint))
+        if i==6 and curvePoint!=-1:
+            KeepList.append(ClosestPoint(getPoint(getParameter(position(curvePoint))+1)))
     #point=getPoint(getParameter(position(n2J('C0')))+0.2)
     #KeepList.append(ClosestPoint(point))
     for i in range(maxCV-2,1,-1):

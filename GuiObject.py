@@ -57,8 +57,12 @@ class Group(GuiObject):
         if "HB" in self.label or "GD" in self.label:
             self.GuiButtonCorr=cmds.button(label="Corr",command=partial(self.updateCorr,self.corrArgs))
             self.GuiButtonSetAngle=cmds.button(label="SetAngle",command=partial(setAngle,self.sliderList,self.label))
+        # orientation et position
         elif numSlider(self.label)!=-1:
             self.GuiButtonSetAngle=cmds.button(label="Set",command=partial(setParam,self.sliderList,self.label))
+            if self.label!="Length":
+                self.GuiButtonSetAngle=cmds.button(label="Set L",command=partial(setParam,self.sliderList,self.label,"L"))
+                self.GuiButtonSetAngle=cmds.button(label="Set C",command=partial(setParam,self.sliderList,self.label,"C"))
 
     def calcDroite(self,*_):
         slider=self.slider #slider1
@@ -82,7 +86,7 @@ class Group(GuiObject):
                     x.append(val)
                     y.append(valy)
             slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
-            if abs(1.0-abs(r_value))>0.01 or abs(slope)<0.1:
+            if abs(1.0-abs(r_value))>0.01 or abs(slope)<0.02:
                 print "pas de droite pour ",slider.label, r_value, slope, intercept
             else:
                 print "droite ok",slider.label, r_value, slope, intercept

@@ -67,11 +67,41 @@ def calcCentroid(name):
 
 # CALCULS SUR LA COURBE
 
-def ScaleFactor():
+def getScale():
+    #print getLengthLoc(),locatorCurveLength(),getLength()
     return getLengthLoc()/locatorCurveLength()*getLength()
 
-def ScaleFactorCPOC():
+
+# trouver une solution car locator bouge pas
+def ScaleFactorL():
+    pL=pointOnCurveList
+    return (distance(locator(0),locator(1))+distance(locator(1),locator(2)))/(distance(pL[0],pL[2])+distance(pL[2],pL[3]))*getLength()
+
+def getScaleCPOC():
     return getLengthLoc()/locatorCPOCCurveLength()*getLength()
+
+def getScaleTot():
+    d1=distance(projHor(position(locator(0))),projHor(position(locator(4))))
+    d2=distance(projHor(position(curvei(0))),projHor(position(curvei(7))))
+    sf=d1/d2*getLength()
+    return sf
+
+def getScaleComp():
+    d1=abs(position(locator(1))[1]-position(locator(2))[1])
+    d2=abs(position(locator(1))[1]-findLowestPointC()[1])
+    sf=d1/d2*getLength()
+    return sf
+
+def ScaleFactor2D():
+    posLocT=position(locator(4))
+    posLocL=position(locator(0))
+
+    posCrvT=position(curvei(8))
+    posCrvL=position(curvei(0))
+
+    distLoc=norm(projHor3D(sub(posLocT,posLocL)))
+    distCrv=norm(projHor3D(sub(posCrvT,posCrvL)))
+    return getLength()*distLoc/distCrv
 
          
 # orientation par rapport au corps et pas la tete
@@ -233,6 +263,9 @@ def getTangent(name): # nom ou position directement
     # tangente a la courbe en ce point
     return cmds.pointOnCurve( 'curve1', pr=param,tangent=True )
 
+
+
+
 def getLen(beginP,endP):
     cmds.setAttr ('arcLengthDimension1.uParamValue', beginP)
     distBegin = cmds.getAttr ('arcLengthDimension1.al')
@@ -290,9 +323,14 @@ def getJointChainLength(L=[]):
 def locatorCurveLength():
     return GeneralCalculs().getChainLength(posList()) 
 
+# distance sur la courbe
 def locatorCPOCCurveLength():
-    posList=map(nearestPoint,locList())
-    posList=[posList[i] for i in range(6) if i!=1]
+    posList=[]
+    posList.append(position(curvei(0)))
+    posList+=map(nearestPoint,locList()[1:-1])
+    posList.append(position(curvei(7)))
+    print posList
+    # pour les premiers et derniers points, on prend les points exacts, car ils doivent correspondre, pas passer par
     length=0
     for i in range(len(posList)-1):
         length+=distance(posList[i],posList[i+1])
