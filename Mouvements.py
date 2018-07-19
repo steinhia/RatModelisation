@@ -99,7 +99,12 @@ def scale2DGui(sliderList,*_):
     sliderList[13].update()
 
 def scaleExtremitiesGui(sliderList,*_):
-    sf=getScaleTot()
+    sf=getScaleExtremities()
+    setLength(sf)
+    sliderList[13].update()
+
+def scaleCompGui(sliderList,*_):
+    sf=getScaleComp()
     setLength(sf)
     sliderList[13].update()
 
@@ -374,14 +379,14 @@ def parabolicRotation(theta,list):
             pivotPos=position(curvei(i+1))
             angle=math.atan(dist)**1*5 # carre c'est trop
             cmds.select(curvei(i),add=True) # pas de add car la rotation est deja calculee en fonction de la distance
-            cmds.rotate(theta*dist*10,r=True,p=pivotPos,x=x,y=y,z=z)
+            cmds.rotate(theta*4,r=True,p=pivotPos,x=x,y=y,z=z)
     else:
         for i in range(end,begin-1,-1):
             dist=(abs(i-pivotNum))
             pivotPos=position(curvei(i-1))
             angle=math.atan(dist)**1*5 # carre c'est trop
             cmds.select(curvei(i),add=True) # pas de add car la rotation est deja calculee en fonction de la distance
-            cmds.rotate(theta*5,r=True,p=pivotPos,x=x,y=y,z=z)
+            cmds.rotate(theta*4,r=True,p=pivotPos,x=x,y=y,z=z)
 
         # TODO revoir difference, pas si importante 
 def parabolicRotationGD(theta,list,*_):
@@ -401,9 +406,9 @@ def parabolicRotationGD(theta,list,*_):
 
 def rot(theta,name,*_):
     if name=="LHB":
-        parabolicRotation(theta,[1,0,1,1,0,0]) 
+        parabolicRotation(theta,[2,0,1,1,0,0]) # 2 0 1
     elif name=="LGD":
-        parabolicRotation(theta,[2,0,1,0,1,0])# 3 0 2
+        parabolicRotation(theta,[3,0,2,0,1,0])# 3 0 2
     elif name=="CHB":
         parabolicRotation(theta,[4,5,7,1,0,0]) 
     elif name=="CGD":
@@ -423,27 +428,69 @@ def rot(theta,name,*_):
 #    parabolicRotation(value*0.05,[num2Name(2),num2Name(3),pointOnCurveList[8],0,1,0]) 
 def rotCompHB(value,crvInfos=[]):
 
+
+
     # trans que pour les cervicales!!!
-    nPivot=2
+    nPivot=1
     pivot=position(curvei(nPivot))#n2N(num2Name(2))))
 
+    # quelles positions a garder?
     posB=position(curvei(4))
-    posE=position(curvei(2))
+    posE=position(curvei(1))
 
-    #parabolicRotation(value*0,[pointOnCurveList[2],pointOnCurveList[2],pointOnCurveList[3],1,0,0])
-    parabolicRotation(-value,[2,2,4,1,0,0])
+    pos3=position(curvei(3))
+    pos2=position(curvei(2))
+
+    #cmds.select(curvei(2))
+    #cmds.move(0,value*0.0,value*0.5,r=True)
+    #cmds.select(curvei(3))
+    #cmds.move(0,-value*0.5,value*2,r=True)
+    #cmds.select(curvei(2))
+    #cmds.move(0,-value*0.25,value*1,r=True)
 
 
+    #cmds.select(curvei(1))
+    #cmds.move(0,value*0,value*3,r=True)
 
-    
+    #cmds.select(curvei(3))
+    #cmds.move(0,-value*0.5,+value,r=True)
+
+    #t3=sub(position(curvei(3)),pos3)
+    #cmds.select(curvei(4),curvei(5),curvei(6),curvei(7))
+    #cmds.move(t3[0],t3[1],t3[2],r=True)
+
+    #t2=sub(position(curvei(2)),pos2)
+    #cmds.select(curvei(0),curvei(1))
+    ##cmds.move(t2[0],t2[1],t2[2],r=True)
+    #cmds.select(curvei(0),curvei(1))
+    #cmds.move(t2[0],t2[1],t2[2],r=True)
+
+
+    parabolicRotation(-value,[1,2,4,1,0,0])
+    ##cmds.select(curvei(2),curvei(4))
+    ##cmds.rotate(-value*10,0,0,r=True,pivot=position(curvei(3)))
+
+
     #translation pour ramener les points extremes
     tB=sub(position(curvei(4)),posB)
     cmds.select(curvei(5),curvei(6),curvei(7))
     cmds.move(tB[0],tB[1],tB[2],r=True)
 
-    tE=sub(position(curvei(2)),posE)
-    cmds.select(curvei(0),curvei(1))
+    tE=sub(position(curvei(1)),posE)
+    cmds.select(curvei(0))
     cmds.move(tE[0],tE[1],tE[2],r=True)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     ##print "LLenm()",getLLen()

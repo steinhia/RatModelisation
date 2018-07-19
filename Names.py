@@ -42,7 +42,7 @@ class Names(object):
     @classmethod
     def CoteOpp(self,name):
         prefix=name[0]
-        if prefix=="L":
+        if prefix=="L" :
             return "C"
         if prefix=="C" or prefix=="T" or "Comp" in name:
             return "L"

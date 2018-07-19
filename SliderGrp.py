@@ -59,13 +59,14 @@ class SliderGrp(object):
         self.GuiButtonTTCV=cmds.button(label="TranslateExtrema",command=partial(translateToExtremaGui,self.sliderList))
         self.GuiButtonS=cmds.button(label="ScaleSegment",command=partial(scaleGui,self.sliderList))
         self.GuiButtonSCPOC=cmds.button(label="ScaleCPOC",command=partial(scaleCPOCGui,self.sliderList))
-        self.GuiButtonRedo=cmds.button(label="ScaleExtremities",command=partial(scale2DGui,self.sliderList))
-        self.GuiButtonUndo=cmds.button(label="Undo",command=partial(UndoGui,self.sliderList))
+        self.GuiButtonRedo=cmds.button(label="ScaleExtremities",command=partial(scaleExtremitiesGui,self.sliderList))
+        self.GuiButtonRedo=cmds.button(label="ScaleComp",command=partial(scaleCompGui,self.sliderList))
         self.GuiButtonSelect=cmds.button(label="Select",command=selectGui)
         self.GuiButtonSelect=cmds.button(label="SelectCV",command=selectCVGui)
         length=getLength();CVpos=calcPosCV();jtPos=JointPositions()
         self.GuiButtonSelect=cmds.button(label="Place",command=partial(Placement,self.sliderList,length,CVpos,jtPos,False))
         self.GuiButtonSelect=cmds.button(label="Place And Save",command=partial(Placement,self.sliderList,length,CVpos,jtPos,True))
+        self.GuiButtonUndo=cmds.button(label="Undo",command=partial(UndoGui,self.sliderList))
         # CheckBox
         cmds.setParent('..')
         cmds.rowColumnLayout( numberOfColumns=2,columnWidth=[(1, 200),(2,200)])
@@ -199,10 +200,10 @@ def createWindows(nameList,pointOnCurveList,locatorList,droites=[]):
 
     #lombaires
     buttonList.append(functionGroup(sliderList,names[4],-5,5,-60,60,0))
-    buttonList.append(functionGroup(sliderList,names[5],0,10,-60,60,0))
+    buttonList.append(functionGroup(sliderList,names[5],0,5,-60,60,0))
 
     # compression
-    buttonList.append(functionGroup(sliderList,names[6],-4,4,-40,50,0))
+    buttonList.append(functionGroup(sliderList,names[6],-10,10,-40,50,0))
     buttonList.append(functionGroup(sliderList,names[7],0,6,0,80,0))
 
     #tete

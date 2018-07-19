@@ -193,7 +193,7 @@ class GeneralCalculs(object):
             if 'locator' in liste[0] :
                 return SubVector(liste[2],liste[1])
             else:
-                return SubVector(pointOnCurveList[6],pointOnCurveList[3]) # liste[2] a gauche
+                return SubVector(pointOnCurveList[4],pointOnCurveList[2]) # liste[2] a gauche
         if "C" in string:
             return SubVector(liste[3],liste[2])
         if "L" in string:

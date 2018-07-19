@@ -54,7 +54,7 @@ nameList=['obj55_VertebreL6_Exterior','obj53_VertebreL5_Exterior','obj51_Vertebr
             'obj29_VertebreT3_Exterior','obj74_VertebreT2_Exterior','obj72_VertebreT1_Exterior',\
             'obj70_VertebreC7_Exterior','obj69_VertebreC6_Exterior','obj103_VertebreC5_Exterior','obj105_VertebreC4_Exterior', \
             'obj107_VertebreC3_Exterior','obj47_VertebreC2_Axis_Exterior','obj45_VertebreC1_Atlas_Exterior']
-pointOnCurveList=['L6','L4','L1','T10','T4','C6','C0','Tete'] 
+pointOnCurveList=['L6','L4','T13','T8','T3','C4','C0','Tete'] 
 #pointOnCurveList=['L6','L4','T13','T8','T3','C5','C0','MilTete','Tete'] # mieux T13 sinon bosse T2 attention
 locatorList=[pointOnCurveList[i] for i in range(8) if i not in [1,3,5]]
 
@@ -73,7 +73,7 @@ jtParam=JointParameters()
 #setAllCurves()
 for i in range(0,1):
     t=time.time()
-    cmds.currentTime(0, edit=True )
+    cmds.currentTime(100, edit=True )
     resetCurve(length,CVpos,jtPos)
     sliderGrp=mainFct(pointOnCurveList,locatorList,reset=True,droites=droites)
     checkParameters(par,CVpos,jtPos,jtParam)

@@ -80,9 +80,9 @@ def ScaleFactorL():
 def getScaleCPOC():
     return getLengthLoc()/locatorCPOCCurveLength()*getLength()
 
-def getScaleTot():
-    d1=distance(projHor(position(locator(0))),projHor(position(locator(4))))
-    d2=distance(projHor(position(curvei(0))),projHor(position(curvei(7))))
+def getScaleExtremities():
+    d1=distance(projHor(position(locator(0))),projHor(position(locator(3))))
+    d2=distance(projHor(position(curvei(0))),projHor(position(curvei(6))))
     sf=d1/d2*getLength()
     return sf
 

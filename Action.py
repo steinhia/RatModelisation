@@ -62,6 +62,7 @@ class Action(object):
             if self.keepPosition:        
                 setCurvePosition(pos,Cote=self.CoteOpp)
         clear()
+        #select('curve1')
 
 
 

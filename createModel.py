@@ -199,7 +199,7 @@ def createCurve(pointOnCurveList,nameList):
         if i!=6 and curvePoint!=-1:
             KeepList.append(ClosestPoint(curvePoint))
         if i==6 and curvePoint!=-1:
-            KeepList.append(ClosestPoint(getPoint(getParameter(position(curvePoint))+1)))
+            KeepList.append(ClosestPoint(getPoint(getParameter(position(curvePoint)))))
     #point=getPoint(getParameter(position(n2J('C0')))+0.2)
     #KeepList.append(ClosestPoint(point))
     for i in range(maxCV-2,1,-1):
