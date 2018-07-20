@@ -44,7 +44,7 @@ def getZLoc(Cote=""):
 
 def getLengthLoc():
     locatorList=locList()
-    return GeneralCalculs.getChainLength(locatorList)
+    return GeneralCalculs.getLength(locatorList)
 
 def angleLoc(string):
     locatorList=locList()

@@ -86,27 +86,40 @@ def setLength2D(val,*_):
 def scaleGui(sliderList,*_):
     sf=getScale()
     setLength(sf)
-    sliderList[13].update()
+    sliderList[11].update()
 
 def scaleCPOCGui(sliderList,*_):
     sf=getScaleCPOC()
     setLength(sf)
-    sliderList[13].update()
+    sliderList[11].update()
 
 def scale2DGui(sliderList,*_):
     sf=ScaleFactor2D()
     setLength2D(sf)
-    sliderList[13].update()
+    sliderList[11].update()
 
 def scaleExtremitiesGui(sliderList,*_):
     sf=getScaleExtremities()
     setLength(sf)
-    sliderList[13].update()
+    sliderList[11].update()
+
+def scaleOffsetGui(sliderList,*_):
+    num=-1
+    result = cmds.promptDialog(title="scaleOffset",message='Enter the scale Factor : ',button=['OK', 'Cancel'],\
+	defaultButton='OK',cancelButton='Cancel',dismissString='Cancel')
+    if result == 'OK' :
+	    num=float(cmds.promptDialog(query=True, text=True))
+    if num>0.1 and num<5:
+        sf=getScale()
+        setLength(sf*num)
+        sliderList[11].update()
+    else:
+        print "Please choose a number near 1"
 
 def scaleCompGui(sliderList,*_):
     sf=getScaleComp()
     setLength(sf)
-    sliderList[13].update()
+    sliderList[11].update()
 
 def recalageTangent(numLocator,numPoint):
     for i in range(2):
@@ -171,7 +184,7 @@ def keepCLen(newCLen):
         pos=position(curvei(5))
         a=getCLen()
         sc=newCLen/a
-        cmds.select(curvei(4),curvei(5),curvei(6))
+        cmds.select(curvei(4),curvei(5),curvei(6),curvei(6))
         cmds.scale(sc,sc,sc,pivot=pos)
         sc=newCLen/a
 
@@ -230,7 +243,7 @@ def setOrientation(ThetaVoulu,Cote=""):
 
 #def keepGroupLen(Len2,Ncurve):
 #    #for i in range(5):
-#        #keepOneLen(curvei(2),curvei(5),Len1,Ncurve,beginPD,endPD)
+#        #keepOneLen(curvei(3),curvei(5),Len1,Ncurve,beginPD,endPD)
 #    beginPC=getParameter(position(curvei(n2N("C7"))))
 #    endPC=getParameter(position(curvei(n2N("C1"))))
 #    keepOneLen(curvei(4),curvei(6),Len2,Ncurve,beginPC,endPC)
@@ -352,11 +365,19 @@ def setAngle(sliderList,name,offset=1,*_):
         setRot(angleLoc(name),sliderList[numSlider(name)].slider)
     elif "Scale" in name:
         setLength(eval("get"+name)()*offset)
-    #elif name=="ScaleCPOC":
-    #    setLength(getScaleCPOC()*offset)
-    #elif name=="ScaleComp"
     else:
         CurveNames.setFunction(name)(CurveNames.getFunctionLoc(name)())
+    for sliderDuo in sliderList:
+        sliderDuo.update()
+    clear()
+
+def setValue(sliderList,name,param,*_):
+    if "HB" in name or "GD" in name:
+        setRot(param[numSlider(name)],sliderList[numSlider(name)].slider)
+    elif "Scale" in name:
+        setLength(param[13])
+    else:
+        CurveNames.setFunction(name)(param[numSlider(name)])
     for sliderDuo in sliderList:
         sliderDuo.update()
     clear()
@@ -368,47 +389,70 @@ def setParam(sliderList,name,Cote="",*_):
     clear()
 
 
+#def parabolicRotation(theta,list):
+#    t=time.time()
+#    [pivotNum,begin,end,x,y,z]=list
+#    pivotPos=position(curvei(pivotNum))
+
+#    if begin<pivotNum:
+#        print "pivot",pivotNum
+#        for i in range(begin,end+1):
+#            print i
+#            dist=(abs(i-pivotNum))
+#            pivotPos=position(curvei(i+1))
+#            angle=math.atan(dist)**1*5 # carre c'est trop
+#            cmds.select(curvei(i),add=True) # pas de add car la rotation est deja calculee en fonction de la distance
+#            cmds.rotate(theta*angle,r=True,p=pivotPos,x=x,y=y,z=z)
+#    else:
+#        print "pivot",pivotNum
+#        for i in range(end,begin-1,-1):
+#            print i
+#            dist=(abs(i-pivotNum))
+#            pivotPos=position(curvei(i-1))
+#            angle=math.atan(dist)**1*5 # carre c'est trop
+#            cmds.select(curvei(i),add=True) # pas de add car la rotation est deja calculee en fonction de la distance
+#            cmds.rotate(theta*5,r=True,p=pivotPos,x=x,y=y,z=z)
+
 def parabolicRotation(theta,list):
     t=time.time()
     [pivotNum,begin,end,x,y,z]=list
     pivotPos=position(curvei(pivotNum))
 
     if begin<pivotNum:
+        #print "pivot",pivotNum
         for i in range(begin,end+1):
+            #print "pivot point",i+1,i
             dist=(abs(i-pivotNum))
             pivotPos=position(curvei(i+1))
             angle=math.atan(dist)**1*5 # carre c'est trop
             cmds.select(curvei(i),add=True) # pas de add car la rotation est deja calculee en fonction de la distance
-            cmds.rotate(theta*4,r=True,p=pivotPos,x=x,y=y,z=z)
+            cmds.rotate(theta*angle,r=True,p=pivotPos,x=x,y=y,z=z)
     else:
+        #print "pivot",pivotNum
         for i in range(end,begin-1,-1):
+            #print "pivot point",i-1,i
             dist=(abs(i-pivotNum))
             pivotPos=position(curvei(i-1))
             angle=math.atan(dist)**1*5 # carre c'est trop
             cmds.select(curvei(i),add=True) # pas de add car la rotation est deja calculee en fonction de la distance
-            cmds.rotate(theta*4,r=True,p=pivotPos,x=x,y=y,z=z)
+            cmds.rotate(theta*5,r=True,p=pivotPos,x=x,y=y,z=z)
 
         # TODO revoir difference, pas si importante 
 def parabolicRotationGD(theta,list,*_):
     t=time.time()
-    [pivotName,begin,end,x,y,z]=list
-    if isinstance(pivotName,str):
-        nPivot=n2N(pivotName)
-        pivot=position(curvei(nPivot))
-    else:
-        nPivot=pivotName
-        pivot=position(curvei(pivotName))
-    for i in range(n2N(end),n2N(begin)-1,-1):
-        dist=(abs(i-nPivot))
+    [pivotNum,begin,end,x,y,z]=list
+    pivotPos=position(curvei(pivotNum))
+    for i in range(end,begin-1,-1):
+        dist=(abs(i-pivotNum))
         angle=math.atan(dist)**1*5 # carre c'est trop
-        cmds.select(curvei(i),add=True) # pas de add car la rotation est deja calculee en fonction de la distance
-    cmds.rotate(theta*dist*0.5,r=True,p=pivot,x=0,y=1,z=0)
+        cmds.select(curvei(i)) # pas de add car la rotation est deja calculee en fonction de la distance
+        cmds.rotate(theta*angle*0.5,r=True,p=pivotPos,x=x,y=y,z=y)
 
 def rot(theta,name,*_):
     if name=="LHB":
-        parabolicRotation(theta,[2,0,1,1,0,0]) # 2 0 1
+        parabolicRotation(theta*3,[1,0,0,1,0,0]) # 2 0 1
     elif name=="LGD":
-        parabolicRotation(theta,[3,0,2,0,1,0])# 3 0 2
+        parabolicRotation(theta,[1,0,1,0,1,0])# 3 0 2
     elif name=="CHB":
         parabolicRotation(theta,[4,5,7,1,0,0]) 
     elif name=="CGD":
@@ -420,13 +464,24 @@ def rot(theta,name,*_):
     elif name=="CompHB":
         rotCompHB(theta)
     elif name=="CompGD":
-        parabolicRotation(theta,[1,2,7,0,1,0])
+        # ca ou rotaiton puis decalege -> plus stable pour recalage C T TODO
+        rotCompGD(theta)
 
+
+
+def rotCompGD(theta,*_):
+    #posC=position(curvei(5))
+    parabolicRotationGD(theta,[2,3,7,0,1,0])
+    #tC=sub(position(curvei(5)),posC)
+    #cmds.select(curvei(6),curvei(7))
+    #cmds.move(tC[0],tC[1],tC[2],r=True)
+
+#def rotCGD(theta,*_):
 
 
 #def rotCompGD(value,L=[]):
 #    parabolicRotation(value*0.05,[num2Name(2),num2Name(3),pointOnCurveList[8],0,1,0]) 
-def rotCompHB(value,crvInfos=[]):
+def rotCompHB(value,*_):
 
 
 
@@ -439,13 +494,13 @@ def rotCompHB(value,crvInfos=[]):
     posE=position(curvei(1))
 
     pos3=position(curvei(3))
-    pos2=position(curvei(2))
+    pos2=position(curvei(1))
 
-    #cmds.select(curvei(2))
+    #cmds.select(curvei(3))
     #cmds.move(0,value*0.0,value*0.5,r=True)
     #cmds.select(curvei(3))
     #cmds.move(0,-value*0.5,value*2,r=True)
-    #cmds.select(curvei(2))
+    #cmds.select(curvei(3))
     #cmds.move(0,-value*0.25,value*1,r=True)
 
 
@@ -459,7 +514,7 @@ def rotCompHB(value,crvInfos=[]):
     #cmds.select(curvei(4),curvei(5),curvei(6),curvei(7))
     #cmds.move(t3[0],t3[1],t3[2],r=True)
 
-    #t2=sub(position(curvei(2)),pos2)
+    #t2=sub(position(curvei(3)),pos2)
     #cmds.select(curvei(0),curvei(1))
     ##cmds.move(t2[0],t2[1],t2[2],r=True)
     #cmds.select(curvei(0),curvei(1))
@@ -467,63 +522,23 @@ def rotCompHB(value,crvInfos=[]):
 
 
     parabolicRotation(-value,[1,2,4,1,0,0])
-    ##cmds.select(curvei(2),curvei(4))
+    ##cmds.select(curvei(3),curvei(4))
     ##cmds.rotate(-value*10,0,0,r=True,pivot=position(curvei(3)))
+
 
 
     #translation pour ramener les points extremes
     tB=sub(position(curvei(4)),posB)
-    cmds.select(curvei(5),curvei(6),curvei(7))
+    cmds.select(curvei(5),curvei(6),curvei(6),curvei(7))
     cmds.move(tB[0],tB[1],tB[2],r=True)
 
-    tE=sub(position(curvei(1)),posE)
-    cmds.select(curvei(0))
-    cmds.move(tE[0],tE[1],tE[2],r=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    ##print "LLenm()",getLLen()
-
-    ##posB=position(curvei(4))
-    ##posE=position(curvei(2))
-
-    ####print "LLenm()",getLLen()
-    #### pivot milieu des dorsales
-    ##clear()
-    ##cmds.select(curvei(2),curvei(4))
-    ##pivot=position(curvei(3))
-    ##cmds.rotate(value*0.3,0,0,pivot=pivot)
-    ##clear()
-    
-    ##posB2=position(curvei(4))
-    ##posE2=position(curvei(2))
-    ##tB=sub(posB2,posB)
-    ##tE=sub(posE2,posE)
-
-    ##print "LLenfr()",getLLen()
-
-    ##    #translation pour ramener les points extremes
-    ##clear()
-    ### 5 6 7 8
-    #cmds.select(curvei(5),curvei(6),curvei(7))
-    #cmds.move(tB[0],tB[1],tB[2],r=True)
-    #clear()
-    ### 0 1
+    #tE=sub(position(curvei(3)),posE)
     #cmds.select(curvei(0),curvei(1))
     #cmds.move(tE[0],tE[1],tE[2],r=True)
-    #clear()
-    ##print "LLenf()",getLLen()
+
+
+
+
 
 
 # TODO revoir l'idee de faire la rot lombaire en meme temps que la compression
@@ -536,9 +551,6 @@ def rotCompHB(value,crvInfos=[]):
     #cmds.select(curvei(3))
     #cmds.move(0,0,angle,r=True)
     #clear()
-
-
-
 
 
 

@@ -82,7 +82,7 @@ def getScaleCPOC():
 
 def getScaleExtremities():
     d1=distance(projHor(position(locator(0))),projHor(position(locator(3))))
-    d2=distance(projHor(position(curvei(0))),projHor(position(curvei(6))))
+    d2=distance(projHor(position(curvei(0))),projHor(position(curvei(7))))
     sf=d1/d2*getLength()
     return sf
 
@@ -128,25 +128,6 @@ def getPosture(Cote=""):
 def getOrientation(Cote=""):
     return GeneralCalculs.getOrientation(posList(),Cote=Cote)
    
-def calcCourbure(L):
-    [v1,v2]=L
-    rot1=getTangent(n2J(v1)) #n2J
-    rot2=getTangent(n2J(v2))
-    #return angleHB(rot2,rot1)
-    return np.degrees(rot2[1]-rot1[1])
-
-# en deg
-def calcLordoseC(L=[]):
-    return calcCourbure([pointOnCurveList[6],pointOnCurveList[4]])
-
-# en deg
-def calcCyphoseD(L=[]):
-    return calcCourbure(['T1','L1'])
-
-# en deg
-def calcLordoseL(L=[]):
-    return -calcCourbure([pointOnCurveList[3],pointOnCurveList[1]])
-
 def projPlanPosture(v,Cote=""):
     return GeneralCalculs.projPlanPosture(posList(),v,Cote)
 
@@ -201,45 +182,6 @@ def angleGD(v1,v2):
 def angleCrv(string,*_):
     return GeneralCalculs.angle(posList(),string)
 
-#def angleCHB():
-#    posList()
-#    return GeneralCalculs.angleCHB(positionList,pointOnCurveList)
-#def angleCGD():
-#    posList()
-#    return GeneralCalculs.angleCGD(positionList,pointOnCurveList)
-#def angleDHB():
-#    posList()
-#    return GeneralCalculs.angleDHB(positionList)
-#def angleDGD():
-#    posList()
-#    return GeneralCalculs.angleDGD(positionList)
-#def angleLHB():
-#    posList()
-#    return GeneralCalculs.angleLHB(positionList)
-#def angleLGD():
-#    posList()
-#    return GeneralCalculs.angleLGD(positionList)
-
-#def angleTHB():
-#    posList()
-#    liste=[num2Name(i) for i in range(6)]
-#    v=SubVector(liste[4],liste[3])
-#    l=norm([v[0],v[2]])
-#    sens=np.sign(np.dot(projHor3D(v),projHor3D(GeneralCalculs.PostureVector(liste))))
-#    #print "vlsens",v,l,np.dot(projHor3D(v),projHor3D(GeneralCalculs.PostureVector(liste))),angle2D([l,0],[sens*l,v[1]]),projHor3D(GeneralCalculs.PostureVector(liste))
-#    return GeneralCalculs.angleTHB(positionList)
-
-#def angleTGD():
-#    posList()
-#    return GeneralCalculs.angleTGD(positionList)
-
-#def angleCompHB():
-#    posList()
-#    return GeneralCalculs.angleCompHB(positionList)
-#def angleCompGD():
-#    posList()
-#    return GeneralCalculs.angleCompGD(positionList)
-
 
 def getDistCVPoint():
     maxCV = cmds.getAttr("curve1.spans")+cmds.getAttr("curve1.degree")
@@ -247,7 +189,7 @@ def getDistCVPoint():
     for i in range(maxCV):
         cvPos=getPoint(getParameter(position(curvei(i))))
         vertPos=getPoint(getParameter(position(n2J(pointOnCurveList[i]))))
-        res.append(norm(sub(cvPos,vertPos)))
+        res.append(distance(cvPos,vertPos))
     return res
 
 def getTangent(name): # nom ou position directement
@@ -321,7 +263,7 @@ def getJointChainLength(L=[]):
     return len
 
 def locatorCurveLength():
-    return GeneralCalculs().getChainLength(posList()) 
+    return GeneralCalculs().getLength(posList()) 
 
 # distance sur la courbe
 def locatorCPOCCurveLength():
@@ -329,7 +271,6 @@ def locatorCPOCCurveLength():
     posList.append(position(curvei(0)))
     posList+=map(nearestPoint,locList()[1:-1])
     posList.append(position(curvei(7)))
-    print posList
     # pour les premiers et derniers points, on prend les points exacts, car ils doivent correspondre, pas passer par
     length=0
     for i in range(len(posList)-1):
@@ -373,7 +314,7 @@ def checkParameters(CVparam=[],CVpos=[],jtPos=[],jtParam=[],angles=[],printOK=Fa
     if CVpos!=[]:
         newCVpos=calcCVPositions()
         for (cvpos,cvposnew) in zip(CVpos,newCVpos):
-            if norm(sub(cvpos,cvposnew))>0.00001:
+            if distance(cvpos,cvposnew)>0.00001:
                 res=False
                 print "cv position bouge",cvpos,cvposnew
             else:
@@ -382,7 +323,7 @@ def checkParameters(CVparam=[],CVpos=[],jtPos=[],jtParam=[],angles=[],printOK=Fa
     if jtPos!=[]:
         newJtpos=JointPositions()
         for (jtpos,jtposnew) in zip(jtPos,newJtpos):
-            if norm(sub(jtpos,jtposnew))>0.00001:
+            if distance(jtpos,jtposnew)>0.00001:
                 res=False
                 print "joint position bouge",jtpos,jtposnew
             else:
@@ -513,50 +454,5 @@ def EvalPositionLocator2():
 
     
 
-
-
-# aucun sens parce que projection seulement pour un vecteur
-#def angleGD(v1,v2):
-#    v=sub(v1,v2)
-#    posList()
-#    return GeneralCalculs.angleGD2D(positionList,v)
-#def angleHB(v1,v2):
-#    v=SubVector(v1,v2)
-#    posList()
-#    return GeneralCalculs.angleHB(positionList,v)
-
-#def angleHB(v):
-#    l=norm([v[0],v[2]])
-#    if l==0:
-#        return 90*np.sign(v[1])
-#    return angle2D([l,0],[l,v[1]])
-
-#def vect3DTo2D(v):
-#    return [norm([v[0],v[2]]),v[1]]    
-
-#def angleHB2DWithSign(v):
-#    if abs(v[0])>abs(v[0]):
-#        l=norm([v[0],v[2]])*np.sign(v[0])
-#    else:
-#        l=norm([v[0],v[2]])*np.sign(v[2])
-#    if l==0:
-#        return 90*np.sign(v[1])
-#    return angle2D([abs(l),0],[l,v[1]])
-
-#def angleHBOld(v1,v2):
-#    angle1=RadToDeg(math.atan2(v1[1],v1[2]))
-#    angle2=RadToDeg(math.atan2(v2[1],v2[2]))
-#    return valPrincDeg(angle1-angle2)
-
-#def angleGDOld(v1,v2):
-#    angle1=RadToDeg(math.atan2(v1[0],v1[2]))
-#    angle2=RadToDeg(math.atan2(v2[0],v2[2]))
-#    return valPrincDeg(angle1-angle2)
-
-
-#def angleHB(v1,v2):
-#    angle1=np.degrees(math.atan2(v1[1],v1[2]))
-#    angle2=np.degrees(math.atan2(v2[1],v2[2]))
-#    return valPrincDeg(angle2-angle1)
 
 

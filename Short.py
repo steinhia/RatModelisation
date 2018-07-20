@@ -25,9 +25,12 @@ def posList(Cote=""):
     return [num2Name(i) for i in range(6)]
 
 def POCList():
-    if 'sliderGrp' in globals() and hasattr(sliderGrp, 'locatorList'):
+    if 'sliderGrp' in globals() and hasattr(sliderGrp, 'pointOnCurveList'):
         return sliderGrp.pointOnCurveList
     return -1
+
+def curveList():
+    return [curvei(i) for i in range(MaxCV())]
 
 def locator(i):
     return 'locatorAngle'+str(i)
@@ -53,11 +56,12 @@ def name2Num(name):
     else:
         return -1
 
+def paramList():
+    return ['CGD','CHB','LGD','LHB','CompGD','CompHB','TGD','THB','X','Y','Z','Posture','Orientation','Length']
+
 def numSlider(name):
-    dico={"CGD":2,"CHB":3,"LGD":4,"LHB":5,"CompGD":6,"CompHB":7,"TGD":8,"THB":9,"X":10,"Y":11,"Z":12,"Length":13,"Posture":14,"Orientation":15}
-    if name in dico :
-        return dico[name]
-    return -1
+    l=paramList()
+    return l.index(name)
 
 
 def n2N(name):
@@ -87,6 +91,11 @@ def num2Name(num):
         return 'C0'
     elif num==4:
         return 'Tete'
+
+
+
+
+
 
 
 
@@ -132,8 +141,6 @@ def selectCV(name):
         cmds.select('curve1.cv['+str(num)+']',r=1)
         print "select curve1.cv["+str(num)+"]"
 
-#def nCurveToJoint(num):
-#    dico={0:'joint1',1:'joint4',2:'joint7',3:'joint13',4:'joint19',5:'joint23',6:'joint26'}
 def ex(name):
     path="C:/Users/alexa/Documents/alexandra/scripts/"
     execfile(path+name)
@@ -222,7 +229,7 @@ def nearestPointHor(name):
 def distLocCrv(num):
     posLoc=position(locator(num))
     CPOC=nearestPoint(locator(num))
-    return norm(sub(posLoc,CPOC))
+    return distance(posLoc,CPOC)
 
 # peut pas prendre une distance a cause du scale, plutot parametre
 def distCVV():
@@ -232,29 +239,6 @@ def distCVV():
         vertPos=position(num2NameCV(i))
         res.append(abs(getParameter(cvPosCPOC)-getParameter(vertPos)))
     return [norm(res),res]
-
-
-def calcAngles():
-#    res=[]
-#    res.append(getPosition())
-#    res.append(getLength())
-#    res.append(getPosture())
-#    res.append(getOrientation())
-#    res.append(angleCHB())
-#    res.append(angleCGD())
-#    res.append(angleLHB())
-#    res.append(angleLGD())
-#    res.append(angleTHB())
-#    res.append(angleTGD())
-#    res.append(angleCompHB())
-#    res.append(angleCompGD())
-#    return res
-    return []
-
-
-
-
-
 
 
 
@@ -299,6 +283,9 @@ def distance(v1,v2):
         v2=position(v2)
     v=sub(v1,v2)
     return norm(v)  
+
+def getMilieu(v1,v2):
+    return pdt(0.5,sum(v1,v2))
 
 def pi():
     return 3.14159265359
@@ -358,14 +345,6 @@ def p(string,value1=[],value2=[],value3=[],value4=[],value5=[],value6=[]):
     print res
 
 
-
-#def angle_between(v1,v2):
-#    dot=dotProduct(v1,v2)
-#    if dot<-1:
-#        dot=-1
-#    if dot>1:
-#        dot=1
-#    return np.sign(np.cross(v1,v2))*np.degrees(math.acos(dot/(norm(v1)*norm(v2))))
 
 
 

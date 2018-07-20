@@ -17,36 +17,26 @@ execfile(path+"mesures.py")
 # ALGO DE CORRECTION
 
 def calcPosRelatifHB(locator,Cote="",nLocator=-1,exact=False):
-    #orientation=getOrientation(Cote)
-    if exact and False:
-        locatorOnCurve=position('C0')
+    if exact:
+        locatorOnCurve=position('C1')
     else:
         parLocOnCurve=getParameter(locator)
         locatorOnCurve=getPoint(parLocOnCurve)
     vect=sub(locator,locatorOnCurve)
-    vectProj=projPlanPosture3DLocator(locatorOnCurve,locator,Cote)
     vectProj2D=projPlanPosture2DLocator(locatorOnCurve,locator,Cote)
 
 
     tan=normalize(getTangent(locatorOnCurve))
     if nLocator==0:
         tan=pdt(-1,tan)
-    #tanProj=projPlanPosture3DLocator(locatorOnCurve,sum(locatorOnCurve,tan),Cote)
     tanProj2D=projPlanPosture2DLocator(locatorOnCurve,sum(locatorOnCurve,tan),Cote)
-
-
-    #p("vectProj3D2D",projPlanPosture3D(locatorOnCurve,sum(locatorOnCurve,tan),Cote))
-    #p("locOn",locatorOnCurve,vectProj,tanProj,"finTan",str(sum(locatorOnCurve,tanProj)))
-    #print "tan2D",vectProj2D,tanProj2D
-    #p("vect",str(vectAngle),"tan",str(tanAngle),"angle",str(angleHB2V(vectProj,tanProj)),str(valPrincDeg(tanAngle-vectAngle)))
-
     # angle du locator vers la courbe
-    angle=angle2D(vectProj2D,tanProj2D) #angleHB2V(vectProj,tanProj)
+    angle=angle2D(vectProj2D,tanProj2D)
     if angle<0:
         string="courbe dessous"
     else:
         string="courbe dessus"
-    return [angle,norm(vectProj)*angle/100.0,string]
+    return [angle,norm(vectProj2D)*angle/100.0,string]
 
 
 def calcPosRelatifGD(locatorPosition,Cote="",nLocator=-1,exact=False):
@@ -70,7 +60,10 @@ def calcPosRelatifGDNum(numLocator,Cote=""):
 def correctionRot(nGroup,nLocator,sliderList,HB,Croiss,Cote,nMax,precision,tour=0,coeff=0.5,exact=False):
     locatorP=position(locator(nLocator))
     f = calcPosRelatifHB if HB  else calcPosRelatifGD
-    distI=norm(sub(locatorP,getPoint(getParameter(locatorP))))
+    if exact:
+        distI=distance(locatorP,findHighestPointT())
+    else:
+        distI=distance(locatorP,getPoint(getParameter(locatorP)))
     dist=distI
     slider=sliderList[nGroup].slider
     valInit=slider.sliderValue()
@@ -103,7 +96,7 @@ def correctionCompHB(sliderList):
     locatorP=position(locator(2))
     Low=findLowestPointC()
     dist=distance(Low,locatorP)
-    slider=sliderList[7].slider
+    slider=sliderList[5].slider
     valInit=slider.sliderValue()
     minSlider=slider.minValue
     maxSlider=slider.maxValue
@@ -123,21 +116,21 @@ def correctionCompHB(sliderList):
             maxi=mil
     Low=findLowestPointC()
     locatorOnCrvP=nearestPoint(locatorP)
-    if abs(getParameter(locatorOnCrvP)-getParameter(Low))>0.2 or abs(locatorP[1]-locatorOnCrvP[1])>0.3: 
+    if abs(getParameter(locatorOnCrvP)-getParameter(Low))>0.2 or abs(Low[1]-locatorP[1])>0.2: 
         print "deuxieme correction",abs(getParameter(locatorOnCrvP)-getParameter(Low))
         #correctionCompHBTete(sliderList)
         correctionRot(7,2,sliderList,True,True,"",nMax=20,precision=0.01)
         Low=findLowestPointC()
         locatorOnCrvP=nearestPoint(locatorP)
-        if abs(getParameter(locatorOnCrvP)-getParameter(Low))>0.1:
+        if abs(getParameter(locatorOnCrvP)-getParameter(Low))>0.1 and abs(Low[1]-locatorOnCrvP[1])<0.5:
             print "troisieme correction"
-            #correctionCompHBTete(sliderList)
+            correctionCompHBTete(sliderList)
 
 def correctionCompHBTete(sliderList):
     locatorP=position(locator(3))
-    High=position('C0')
+    High=position('C1')
     dist=distance(High,locatorP)
-    slider=sliderList[7].slider
+    slider=sliderList[5].slider
     valInit=slider.sliderValue()
     minSlider=slider.minValue
     maxSlider=slider.maxValue
@@ -160,26 +153,70 @@ def correctionCompHBTete(sliderList):
 
 def corr(sliderList,name,nMax=20,precision=0.01):
     if name=="LHB":
-        correctionRot(5,0,sliderList,True,False,"L",nMax,precision) 
+        correctionRot(3,0,sliderList,True,False,"L",nMax,precision) 
     elif name=="LGD":
-        correctionRot(4,0,sliderList,False,True,"L",nMax,precision)
+        correctionRot(2,0,sliderList,False,True,"L",nMax,precision)
     elif name=="CHB":
-        correctionRot(3,3,sliderList,True,False,"C",nMax,precision,exact=True) 
+        correctionRot(1,3,sliderList,True,False,"C",nMax,precision,exact=True) 
+        if CMalCorrige():
+            correctionRot(1,3,sliderList,True,False,"C",nMax,precision,exact=False) 
     elif name=="CGD":
-        correctionRot(2,3,sliderList,False,False,"C",nMax,precision,exact=False)
-    elif name=="DHB":
-        correctionRot(5,1,sliderList,True,False,"",nMax,precision)
-    elif name=="DGD":    
-        correctionRot(4,1,sliderList,False,False,"",nMax,precision)
+        correctionRot(0,3,sliderList,False,False,"C",nMax,precision,exact=False)
     elif name=="THB":
-        correctionRot(9,4,sliderList,True,False,"C",nMax,precision)
+        correctionRot(7,4,sliderList,True,False,"C",nMax,precision)
     elif name=="TGD":
-        correctionRot(8,4,sliderList,False,False,"C",nMax,precision)
+        correctionRot(6,4,sliderList,False,False,"C",nMax,precision)
     elif name=="CompHB":
         #correctionRot(7,2,sliderList,True,True,"",nMax,precision,Lowest=True)
         correctionCompHB(sliderList)
     elif name=="CompGD":
-        correctionRot(6,2,sliderList,False,False,"",nMax,precision)
+        correctionRot(4,2,sliderList,False,False,"",nMax,precision)
+
+def CMalCorrige():
+    POC=nearestPoint(locator(3))
+    parPOC=getParameter(POC)
+    parC0=getParameter(position('C0'))
+    if parPOC-parC0>0.2:
+        #print "CMalCorrige",parPOC-parC0
+        return True
+    return False
+
+
+def isCorrectExtrema():
+    res=True
+    posCrv=getPosition()
+    translateToHighestPointL()
+    if distance(posCrv,getPosition())>0.1:
+        res=False
+        print "Extremum lombaire mal place",distance(posCrv,getPosition())
+    translateToLowestPointC()
+    if distance(posCrv,getPosition())>0.1:
+        res=False
+        print "Extremum cervical mal place",distance(posCrv,getPosition())
+    return res
+    setPosition(posCrv)
+
+def isCorrectCV():
+    res=True
+    posCrv=getPosition()
+    translateToCV(0,0)
+    if distance(posCrv,getPosition())>0.1:
+        res=False
+        print "CV lombaire mal place",distance(posCrv,getPosition())
+    translateToCV(6,3)
+    if distance(posCrv,getPosition())>0.1:
+        res=False
+        print "CV cervical mal place",distance(posCrv,getPosition())
+    translateToCV(7,4)
+    if distance(posCrv,getPosition())>0.1:
+        res=False
+        print "CV tete mal place",distance(posCrv,getPosition())
+    return res
+    setPosition(posCrv)
+
+
+
+
 
 def Correction(sliderList):
     ##t=time.time()
@@ -192,34 +229,80 @@ def Correction(sliderList):
 
 
     #b utilise translate to extream C car ca corrige en partie l'incertitude sur la compresison juste avant -> ou l'utiliser?
-
     for _ in range(2):
-            translateToHighestPointL()
-            corr(sliderList,"LGD")
-            corr(sliderList,"LHB")            
-            translateToCV(0,0)
+        for _ in range(2):
+                translateToHighestPointL()
+                corr(sliderList,"LGD")
+                corr(sliderList,"LHB")            
+                #translateToCV(0,0)
+                #translateToLocator(1)
+                #corr(sliderList,"LGD")
+                #corr(sliderList,"LHB")
+
+        for _ in range(2):
+            setAngle(sliderList,"Scale")
             translateToLocator(1)
-            corr(sliderList,"LGD")
-            corr(sliderList,"LHB")
+            corr(sliderList,"CompGD")
+            corr(sliderList,"CGD")
+            corr(sliderList,"TGD")
+            corr(sliderList,"CompHB")
 
-    for _ in range(2):
-        translateToLocator(1)
+        setAngle(sliderList,"ScaleComp")
+        corr(sliderList,"LHB")
+        corr(sliderList,"CHB")
+        corr(sliderList,"THB")
+
+        posCrv=getPosition()
+        for _ in range(3):
+            translateToLowestPointC()
+            translateToLocator(1)
+        # correction GD
+        corr(sliderList,"LGD")
         corr(sliderList,"CompGD")
         corr(sliderList,"CGD")
         corr(sliderList,"TGD")
-        corr(sliderList,"CompHB")
 
-        translateToCV(0,0)
-        translateToLocator(1)
-        corr(sliderList,"LGD")
-        corr(sliderList,"LHB")
+        # correction HB
+        for _ in range(2):
+            corr(sliderList,"LHB")
+            corr(sliderList,"CHB")
+            corr(sliderList,"THB")
 
-    corr(sliderList,"CompGD")
-    corr(sliderList,"CGD")
-    corr(sliderList,"CHB")
-    for _ in range(2):
-        corr(sliderList,"TGD")
-        corr(sliderList,"THB")
+        # besoin ScaleCPOC
+        if abs(getScaleCPOC()/getLength()-1)>0.05:
+            setAngle(sliderList,"ScaleCPOC")
+            corr(sliderList,"LGD")
+            corr(sliderList,"CompGD")
+            corr(sliderList,"CGD")
+            corr(sliderList,"TGD")
+
+        # jonction Cervicales/Tete mal placee
+        if distance(position(locator(3)),position('C0'))>0.5:
+            translateToCV(6,3)
+            corr(sliderList,"LGD")
+            corr(sliderList,"CompGD")
+            corr(sliderList,"CGD")
+            corr(sliderList,"TGD")
+            corr(sliderList,"LHB")
+            corr(sliderList,"CHB")
+            corr(sliderList,"THB")
+
+
+
+    #    translateToCV(0,0)
+    #    translateToLocator(1)
+    #    corr(sliderList,"LGD")
+    #    corr(sliderList,"LHB")
+
+    #corr(sliderList,"CompGD")
+    #corr(sliderList,"CGD")
+    #corr(sliderList,"CHB")
+    #for _ in range(2):
+    #    corr(sliderList,"TGD")
+    #    corr(sliderList,"THB")
+
+
+
 
 
 
@@ -238,7 +321,7 @@ def Correction(sliderList):
 
     ## si besoin compresion commence plus tard, decale au niveau des cervicales
     #if distance(position(locator(3)),position('C0'))>0.1:
-    #    decalageCervicales()
+    #    ()
     #    translateToCV(6,3)
     #    for _ in range(2):
     #        corr(sliderList,"TGD")
@@ -386,31 +469,6 @@ def Correction(sliderList):
     #        corr(sliderList,"THB",nMax=15)
 
 
-
-
-
-    #for i in range(2):
-    #    for _ in range(2):
-    #        translateToCV(0,0)
-    #        translateToLocator(1)
-    #        setAngle(sliderList,"Scale")
-    ### on translate la courbe pour qu'elle repasse par le localisateur milieu
-    #    for _ in range(1):
-    #        corr(sliderList,"CompGD")
-    #    #    corr(sliderGrp.sliderList,"CompHB")
-    #    for _ in range(1):
-    #        corr(sliderList,"LGD")
-    #        corr(sliderList,"LHB")
-    #    for _ in range(2):
-    #        corr(sliderList,"CGD")
-    #        corr(sliderList,"CHB")
-    #    for _ in range(2):
-    #        corr(sliderList,"TGD")
-    #        corr(sliderList,"THB")
-    #setAngle(sliderList,"Scale")
-    # a ce moment la typiquement tout ok sauf creux des cervicales -> scaling base uniquement sur les lombaires
-
-
     #hGui(sliderList)
 
     #for _ in range(2):
@@ -471,36 +529,6 @@ def Correction(sliderList):
  #           corr(sliderList,"TGD",nMax=5)
  #           corr(sliderList,"THB",nMax=5)
 
- #   #for _ in range(0):
- #   #    translateToLocator(0)
- #   #    translateToLocator(1)
- #       #translateToLocator(3)
- #       #translateToLocator(1)
- #       #translateToLocator(0)
- #       #translateToLocator(1)
-
- #       #print "apres corr",time.time()-t
- #   #t=time.time() 
-
-
- #   for i in range(2):
- #       setAngle(sliderList,"Scale") # TODO!!!!! CPOC
- #       translateToCV(7,4)
- #       translateToLocator(1)
-
- #   ### on translate la courbe pour qu'elle repasse par le localisateur milieu
- ## autre locator reference ?
- #       for _ in range(1):
- #           corr(sliderGrp.sliderList,"CompGD")
- #           corr(sliderGrp.sliderList,"CompHB")
- #       for _ in range(1):
- #           corr(sliderGrp.sliderList,"LGD")
- #           corr(sliderGrp.sliderList,"LHB")
- #       for i in range(2):
- #           corr(sliderGrp.sliderList,"TGD",nMax=5)
- #           corr(sliderGrp.sliderList,"THB",nMax=5)
- #           #corr(sliderGrp.sliderList,"CGD",nMax=5)
- #           #corr(sliderGrp.sliderList,"CHB",nMax=5)
 
     #for i in range(1):
     #    for _ in range(2):
@@ -521,22 +549,6 @@ def Correction(sliderList):
         #    corr(sliderGrp.sliderList,"TGD")
         #    corr(sliderGrp.sliderList,"THB")
 
-
-
-
-        #print getCLen(),getTLen()
-
-        #print "apres corrT",time.time()-t
-        #t=time.time() 
-
-        #for _ in range(1): 
-        #    translateToLocator(2)
-        #    translateToLocator(1)
-        #    translateToLocator(3) 
-        #    translateToLocator(1)
-
-            #translateToLocator(2)
-            #translateToLocator(1)
 
 
     # svt pb cervicales mal calees car tete passe
@@ -581,9 +593,17 @@ def placeAnglesCalcules(sliderList,nBoucles=1):
         corr(sliderList,"TGD")
     setAngle(sliderList,"Scale")
 
-    setAngle(sliderList,"X")
-    setAngle(sliderList,"Y")
-    setAngle(sliderList,"Z")
+    translateToHighestPointL()
+    # replace GD
+    for _ in range(3):
+        translateToLocator(1)
+        corr(sliderList,"LGD")
+        corr(sliderList,"CompGD")
+        corr(sliderList,"CGD")
+        corr(sliderList,"TGD")
+
+
+    
 
 
 
@@ -606,7 +626,7 @@ def translateToLocatorGui(sliderList,*_):
     if num>-1 and num<6:
         translateToLocator(num)
     #update position Gui
-    for i in range(12,15):
+    for i in range(10,13):
         sliderList[i].update()
 
     
@@ -637,7 +657,7 @@ def translateToCVGui(sliderList,*_):
     elif num==4:
         translateToCV(7,4)
     #update position Gui
-    for i in range(12,15):
+    for i in range(10,13):
         sliderList[i].update()
 
 def translateToExtremaGui(sliderList,*_):
@@ -693,6 +713,7 @@ def findLowestPointC():
         else:
             maxParam=mil
     return getPoint(mil)
+
 
 def translateToLowestPointC():
     posLoc=position(locator(2))
@@ -775,23 +796,11 @@ def ajustePos():
             subPos=sum(subPos,val)
         subPos=pdt(1.0/5.0,subPos)
         if np.linalg.norm(subPos)<0.01:
-            print i, time.time()-t
             return
         select('curve1')
         cmds.move(subPos[0],subPos[1],subPos[2],r=True)
 
-def decalageCervicales():
-    pC0=getParameter(position('C0'))
-    pLow=getParameter(findHighestPointT())
-    diff=pLow-pC0
-    for i in range(1,28):
-        t=getPoint(getParameter(position('joint'+str(i)))+1.0/27.0*diff)
-        cmds.select('joint'+str(i))
-        cmds.move(t[0],t[1],t[2])
-    # remet la tete
-    cmds.select('joint28')
-    t=position(curvei(7))
-    cmds.move(t[0],t[1],t[2])
+
 
 
 
@@ -851,7 +860,7 @@ def calcPosCV():
     return pos  
 
 def setOneCurve():
-    for j in range(maxCV()):
+    for j in range(MaxCV()):
         posj=cmds.getAttr('posCV.pos'+str(j))[0]
         cmds.select(curvei(j))
         cmds.move(posj[0],posj[1],posj[2])
@@ -897,44 +906,14 @@ def Placement(sliderList,length,CVpos,jtPos,save,evaluate=True):
     placeAnglesCalcules(sliderList,1)
     Correction(sliderList)
     if save:
-        saveKeys()
+        1#saveKeys()
     if evaluate and False:
         a=Evaluate()
-        evaluation=a.execute()
+        #evaluation=a.execute()
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   
-                #correctionRot(sliderGrp,sliderGrp.string2num("rotCHB"),4,False,Cote="C")
-                #correctionRot(sliderGrp,sliderGrp.string2num("rotTHB"),5,False,Cote="C")
-                #correctionRot(sliderGrp,sliderGrp.string2num("rotCGD"),4,False,Cote="C")
-                #correctionRot(sliderGrp,sliderGrp.string2num("rotTGD"),5,False,Cote="C")
-                #correctionRot(sliderGrp,sliderGrp.string2num("rotLGD"),0,True,Cote="L")
-                #correctionRot(sliderGrp,sliderGrp.string2num("rotLHB"),0,False,Cote="L")
-                #correctionRot(sliderGrp,sliderGrp.string2num("rotLGD"),0,True)
-                #correctionRot(sliderGrp,sliderGrp.string2num("rotTGD"),5,False)
-                #correctionRot(sliderGrp,sliderGrp.string2num("rotCGD"),4,False)
-                #correctionRot(sliderGrp,sliderGrp.string2num("compression g"),3,False)
-                #correctionRot(sliderGrp,sliderGrp.string2num("compression g"),3,False)
-                #correctionRot(sliderGrp,sliderGrp.string2num("compression"),3)
     
 #p("param fin",param)
         
@@ -985,3 +964,78 @@ def Placement(sliderList,length,CVpos,jtPos,save,evaluate=True):
 
     #p("duree placage : "+str(time.time()-t))      
     #p("param debut",param) 
+
+
+# TODO : reussir a replacer les joints correctement
+def placeCrvTranslations(*_):
+    # on sauvegarde la position des points de controle
+    CVList=[]
+    for i in range(MaxCV()):
+        CVList.append(position(curvei(i)))
+
+    posL6=position(locator(0))
+    posTete=position(locator(4))
+    posL4=position(locator(1))
+    posT13=sum(posL6,pdt(1.5,sub(posL4,posL6)))
+    posT13[1]=(posL6[1]+posL4[1])/2.0
+    posC5=position(locator(2))
+    posC0=position(locator(3))
+    posT3=sum(posC0,pdt(1.5,sub(posC5,posC0)))
+    posT3[1]=(posL6[1]+posC5[1])/2.0
+    posT8=getMilieu(posT3,posT13)
+    cmds.select(curvei(0))
+    mv(posL6)
+    cmds.select(curvei(1))
+    mv(posL4)
+    cmds.select(curvei(2))
+    mv(posT13)
+    cmds.select(curvei(3))
+    cmds.select(curvei(4))
+    mv(posT3)
+    cmds.select(curvei(5))
+    mv(posC5)
+    cmds.select(curvei(6))
+    mv(posC0)
+    cmds.select(curvei(7))
+    mv(posTete)
+
+    # deplace avec les nearestPoint
+    for _ in range(3):
+        posC02=sub(posC0,getPoint(getParameter(position(locator(3)))))
+        posC52=sub(posC5,getPoint(getParameter(position(locator(2)))))
+        posL42=sub(posL4,getPoint(getParameter(position(locator(1)))))
+        cmds.select(curvei(5))
+        mv(posC52,rel=True)
+        cmds.select(curvei(6))
+        mv(posC02,rel=True)
+        cmds.select(curvei(1))
+        mv(posL42,rel=True)
+
+    CVListApprox=[]
+    for i in range(MaxCV()):
+        CVListApprox.append(position(curvei(i)))
+
+    paramList=getAllParameters()
+
+    # on rétablit la position des CV
+    for i in range(MaxCV()):
+        cmds.select(curvei(i))
+        mv(CVList[i])
+    return paramList
+
+
+def getAllParameters():
+    l=OperationsList()
+    res=[]
+    for i in l:
+        res.append(Names.getFunction(i)())
+    return res
+
+
+def setAllParameters(sliderList,*_):
+    1# a completer
+
+
+
+
+

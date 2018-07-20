@@ -52,8 +52,6 @@ class Group(GuiObject):
             self.slider2.create()
             # on associe chaque texte a son slider
             self.sliderList[numSlider(self.label)].associate(self.slider,self.slider2)
-        #self.GuiButton=cmds.button(label=self.label,command=partial(self.update,self.valueReset,True)) 
-        #self.GuiButton2=cmds.button(label=self.label2,command=partial(self.update,self.valueSetTo,True)) 
         if "HB" in self.label or "GD" in self.label:
             self.GuiButtonCorr=cmds.button(label="Corr",command=partial(self.updateCorr,self.corrArgs))
             self.GuiButtonSetAngle=cmds.button(label="SetAngle",command=partial(setAngle,self.sliderList,self.label))
@@ -103,17 +101,6 @@ class Group(GuiObject):
     def affectDroite(self,droite):
         self.slider.dte=droite
 
-    ## reset -> valueReset=2.53...
-    ## set to 0 -> valueSetTo=0
-    ## fait un update de chaque bouton
-    #def update(self,value,updateText=True,*_):
-    #    currentValue=self.sliderValue()
-    #    if(currentValue!=value):
-    #        self.slider2.setValue(value)       
-    #        self.slider2.update(True) # a changer
-    #    if updateText:
-    #        for i in self.sliderList :
-    #            i.update(True)
 
     def updateCorr(self,updateText=True,*_):
         if "HB" in self.label or "GD" in self.label:
@@ -134,40 +121,6 @@ class Group(GuiObject):
     def calcValue(self):
         return self.sliderList[numSlider(self.label)].fct(self.sliderList[numSlider(self.label)].args)
 
-
-
-#class Button(GuiObject):
-
-#    def __init__(self,label,function,functionArgs):
-#        GuiObject.__init__(self, label)
-#        self.function=function
-#        self.functionArgs=functionArgs
-
-#    def create(self,*_):
-#        self.GuiButton=cmds.button(label=self.label,command=partial(self.update,self.functionArgs)) 
-
-#    def update(self,updateText=True,*_):
-#        function(functionArgs)
-#        if updateText:
-#            for i in self.sliderList :
-#                i.update(True)
-
-
-
-
-class ButtonGlobal(GuiObject):
-
-    def __init__(self,label,nameList,pointOnCurveList=[]):
-        GuiObject.__init__(self, label)
-        #self.buttonList=buttonList
-        self.GuiButton=cmds.button(label=self.label,command=partial(self.update)) 
-        self.nameList=nameList
-        self.pointOnCurveList=pointOnCurveList
-
-    def update(self,*_):
-        #cmds.window(title ="Modelisation de la colonne du rat",le=50,te=50,width=400,height=450)
-        sliderGrp=mainFct()
-        #cmds.showWindow(sliderGrp.window)
 
 # valeur d'un champ a partir d'une fonction (courbure etc)
 class SliderDuo(GuiObject):
@@ -268,7 +221,7 @@ class SliderOffset(Slider):
         return Slider.sliderValue(self)
 
     def setActionWithoutMoving(self,testValue,ajust=True):
-        self.action.offset=self.value-testValue
+        self.action.offset=(self.value-testValue)
         self.value=testValue
         self.action.execute(ajust=ajust)
 
@@ -293,7 +246,7 @@ class SliderAbs(Slider):
      
     def update(self,updateText=True,ajust=True,nMax=10,*_):
         self.value=self.sliderValue()
-        self.action.offset=self.value
+        self.action.offset=self.value 
         self.action.execute(ajust,nMax)
         if updateText:
             for i in self.sliderList:
@@ -325,7 +278,6 @@ class CheckBox(GuiObject):
         self.args=args
 
     def create(self):
-
         self.CheckBox=cmds.checkBox(label=self.label,onc=self.CheckFunction,ofc=self.UnCheckFunction,value=self.value)
         if(self.value):
             if self.args==[]:

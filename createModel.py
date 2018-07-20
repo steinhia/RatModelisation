@@ -20,10 +20,6 @@ def clearVariables(nameList=[]):
         string='joint'+str(i+1)
         if(cmds.objExists(string)):
             cmds.delete(string)   
-    #locatorList=cmds.ls('*locator*')
-    #for i in locatorList:
-    #    if(cmds.objExists(i)):
-    #        cmds.delete(i)
     CircleList=cmds.ls('*Circle')  
     for i in CircleList:
         if(cmds.objExists(i)):
@@ -42,14 +38,6 @@ def clearVariables(nameList=[]):
     for i in curveList:
         if cmds.objExists(i):
             cmds.delete(i)
-    #if(cmds.objExists('curve1')):
-    #    cmds.delete('curve1')  
-    #if(cmds.objExists('curve2')):
-    #    cmds.delete('curve2')  
-    #if(cmds.objExists('curve3')):
-    #    cmds.delete('curve3')  
-    #if(cmds.objExists('curve1insertedKnotCurve1')):
-    #    cmds.delete('curve1insertedKnotCurve1')
     nearestPointList=cmds.ls('*nearestPoint*')
     for i in nearestPointList:
         if(cmds.objExists(i)):
@@ -188,7 +176,6 @@ def createCurve(pointOnCurveList,nameList):
 
     minValue=cmds.getAttr("curve1.minValue")
     maxValue=cmds.getAttr("curve1.maxValue")
-    # peut etre pas besoin aleatoire si position ok, juste pas ws
     for i in range(100):
         param=minValue+(maxValue-minValue)*i/100
         cmds.insertKnotCurve( 'curve1.u['+str(param)+']', ch=True, rpo=True) 
@@ -200,23 +187,11 @@ def createCurve(pointOnCurveList,nameList):
             KeepList.append(ClosestPoint(curvePoint))
         if i==6 and curvePoint!=-1:
             KeepList.append(ClosestPoint(getPoint(getParameter(position(curvePoint)))))
-    #point=getPoint(getParameter(position(n2J('C0')))+0.2)
-    #KeepList.append(ClosestPoint(point))
     for i in range(maxCV-2,1,-1):
         newMaxCV=MaxCV()
         if(i not in KeepList and i!= newMaxCV):
             cmds.delete(curvei(i))
     cmds.delete('curve1.cv[1]')
-    #cmds.insertKnotCurve( 'curve1.u[15]', ch=True, rpo=True) 
-    #cmds.hardenPointCurve( 'curve1.cv[6]', ch=True, rpo=True, m=-2 )
-
-    ##cree point de multiplicite 2 au niveau de la tete
-    #paramTete=cmds.getAttr("curve1.maxValue")
-    #paramC0=getParameter(nearestPoint('C0'))
-    ##print "paramC0",paramC0
-    ##param=(paramTete+3.0*paramC0)/4.0
-    ##cmds.insertKnotCurve( 'curve1.u['+str(paramC0)+']', ch=True) 
-
     cmds.duplicate('curve1',n='curve2',rc=True)
     for i in range(MaxCV()):
         pos=position(curvei(i,'curve2'))
@@ -233,22 +208,6 @@ def createCurve(pointOnCurveList,nameList):
 
 
 
-
-
-
-def ReplacePoints(pointOnCurveList,nameList):
-    cmds.delete('curve1')
-    cmds.delete('ikHandle')
-    createCurve(pointOnCurveList,nameList)
-    createClusters(nameList)
-    defPivot()
     
-def createClusters(nameList):
-    cmds.select('curve1',r=1)   
-    cmds.cluster(curvei(n2N('C3')),n='ClusterC')
-    cmds.makeIdentity(a=1)
-    
-    cmds.cluster(curvei(n2N('T11')),n='ClusterL')
-    cmds.makeIdentity(a=1)
 
 

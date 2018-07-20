@@ -5,6 +5,7 @@ execfile(path+"Mouvements.py")
 execfile(path+"affichage.py")
 execfile(path+"Names.py")
 execfile(path+"placementManuel.py")
+execfile(path+"Short.py")
 
 class SliderGrp(object):
     def __init__(self,title,buttonList,checkBoxList,nameList,pointOnCurveList,locatorList,planesList,droites=[]):
@@ -16,38 +17,30 @@ class SliderGrp(object):
         self.locatorList=list(locatorList)
         self.window = cmds.window('window1',title =title,le=50,te=50,width=400,height=450)
         self.column = cmds.columnLayout()
-        cmds.text("\nParametres de courbure ")
-        cmds.rowColumnLayout(numberOfColumns=2,columnWidth=[(1,300),(2,300),(4,50),(5,50)])
-
-        for i in range(2):
-            buttonList[i].create()
-
-
-        cmds.setParent('..')
+  
         cmds.text("\nMouvement de la colonne")
         cmds.rowColumnLayout(numberOfColumns=4,columnWidth=[(1,300),(2,300),(4,50),(5,50),(6,50)])
 
         if self.droites==[]:
-            for i in range(2,10):
+            for i in range(0,8):
                 buttonList[i].create()
                 self.droites.append(buttonList[i].calcDroite())
         else :
-            for i in range(2,10):
+            for i in range(0,8):
                 buttonList[i].create()
                 buttonList[i].affectDroite(self.droites[i-2])
-        #checkParameters(param)
 
         cmds.setParent('..')
         cmds.text("\nParametres de la courbe")
         cmds.rowColumnLayout(numberOfColumns=5,columnWidth=[(1,1),(2,300),(3,50),(4,50),(5,50)])
-        for i in range(10,len(buttonList)):
+        for i in range(8,len(buttonList)):
             buttonList[i].create()
         cmds.setParent('..')
         cmds.rowColumnLayout(numberOfColumns=1,columnWidth=[(1,300)])
 
         # Planes
         cmds.setParent('..')
-        cmds.rowColumnLayout(numberOfColumns=1)#,columnWidth=[(1, 200),(2,500)])
+        cmds.rowColumnLayout(numberOfColumns=1)
 
         for buttonRadio in planesList:
             buttonRadio.create()
@@ -58,8 +51,8 @@ class SliderGrp(object):
         self.GuiButtonTTCV=cmds.button(label="TranslateToCV",command=partial(translateToCVGui,self.sliderList))
         self.GuiButtonTTCV=cmds.button(label="TranslateExtrema",command=partial(translateToExtremaGui,self.sliderList))
         self.GuiButtonS=cmds.button(label="ScaleSegment",command=partial(scaleGui,self.sliderList))
+        self.GuiButtonRedo=cmds.button(label="ScaleFactor",command=partial(scaleOffsetGui,self.sliderList))
         self.GuiButtonSCPOC=cmds.button(label="ScaleCPOC",command=partial(scaleCPOCGui,self.sliderList))
-        self.GuiButtonRedo=cmds.button(label="ScaleExtremities",command=partial(scaleExtremitiesGui,self.sliderList))
         self.GuiButtonRedo=cmds.button(label="ScaleComp",command=partial(scaleCompGui,self.sliderList))
         self.GuiButtonSelect=cmds.button(label="Select",command=selectGui)
         self.GuiButtonSelect=cmds.button(label="SelectCV",command=selectCVGui)
@@ -83,44 +76,34 @@ class SliderGrp(object):
 
     def string2num(self,string):
         string=string.lower()
-        if "courbure c" in string :
-            return 0
-        #if ("courbure d" in string) or ("courbure t" in string):
-        #    return [1]
-        if "courbure l" in string :
-            return 1
         if "rotcgd" in string :
-            return 2
+            return 0
         if "rotchb" in string :
-            return 3
-        #if "rotdgd" in string :
-        #    return 4
-        #if "rotdhb" in string :
-        #    return 5
+            return 1
         if "rotlgd" in string :
-            return 4
+            return 2
         if "rotlhb" in string :
-            return 5
+            return 3
         if "compression g" in string :
-            return 6
+            return 4
         if "comp" in string :
-            return 7
+            return 5
         if "rottgd" in string:
-            return 8
+            return 6
         if "rotthb" in string:
-            return 9
+            return 7
         if "x" in string :
-            return 10
+            return 8
         if "y" in string :
-            return 11
+            return 9
         if "z" in string :
-            return 12
+            return 10
         if "scale" in string :
-            return 13
+            return 11
         if "posture" in string :
-            return 14
+            return 12
         if "orientation" in string :
-            return 15
+            return 13
         else:
             print "mauvaise operation : ",string
 
@@ -137,14 +120,6 @@ def clearSliderVariables():
         cmds.deleteUI("window1") 
     if(cmds.objExists('sliderGrp')):
         cmds.delete('sliderGrp')
-
-def courbureGroup(sliderList,i,sliderName,min,max,min2,max2,value,step,influence,valueReset=0,getFunction=0,Cote="",CoteOpp=""):
-    getValue=getFunction()
-    action = SimpleAction(0,"t",0,2,0,influence,Cote=Cote,CoteOpp=CoteOpp,keepPosition=False,keepCurveLength=False)
-    slider=SliderOffset(sliderName,action,min,max,value,step,sliderList)
-    action2 = FunctionAction(getValue,setRot,args=slider,Cote=Cote,CoteOpp=CoteOpp,keepPosition=False,mvt=True,keepCurveLength=False)
-    slider2=SliderAbs(sliderName,action2,-100,100,getValue,step,sliderList)
-    return Group(sliderName,slider,sliderList,slider2)
 
 def postureGroup(sliderList,sliderName,min,max,keepPosition=True,keepCurveLength=True):
     functionSet=CurveNames.setFunction(sliderName)
@@ -172,12 +147,9 @@ def functionCheckBox(label,functionCheck,functionUnCheck,value,args=[]):
 def createWindows(nameList,pointOnCurveList,locatorList,droites=[]):
     clearSliderVariables()
 
-
     #liste des textes (courbures etc)
-    names=["courbure Cervicale ","courbure Lombaire ","CGD","CHB", \
-          "LGD","LHB","CompGD","CompHB","TGD","THB","X","Y","Z","Length","Posture","Orientation"]
-    fcts=[calcLordoseC,calcLordoseL]+[angleCrv for i in range(2,10)]+[getX,getY,getZ,getLength,getPosture,getOrientation]   
-    #setFcts=[Names.rotFunction(names[i]) for i in range(2,12)]+[setX,setY,setZ,setLength,setPosture,setOrientation]
+    names=OperationsList() # CGD CHB etc
+    fcts=[angleCrv for i in range(2,10)]+[getX,getY,getZ,getPosture,getOrientation,getLength]   
     
     #liste mise a jour a chaque modification
     sliderList=[]
@@ -185,49 +157,42 @@ def createWindows(nameList,pointOnCurveList,locatorList,droites=[]):
         sliderList.append(SliderDuo(name,fcts[i],[]))
 
     buttonList=[]
-    # courbures cervicale, dorsale et lombaire
-    buttonList.append(courbureGroup(sliderList,0,names[0],-1,1,-3,3,0,0.00000001,['curve1.cv[5]'],getFunction=fcts[0]))
-    buttonList.append(courbureGroup(sliderList,1,names[1],-3,3,-3,3,0,0.00001,['curve1.cv[1]'],getFunction=fcts[1]))
 
-    # TODO garder les 2 keep=False fait planter les tests
-    # cervicales GD HB TODO position tete par rapport  au sol ou aux dorsales (tenir tete droite) -> 2 fonctions align with et setstraight ?
-    buttonList.append(functionGroup(sliderList,names[2],-6,6,-60,60,0))
-    buttonList.append(functionGroup(sliderList,names[3],-5,5,-60,60,0))
+    # cervicales GD HB 
+    buttonList.append(functionGroup(sliderList,names[0],-8,8,-60,60,0))
+    buttonList.append(functionGroup(sliderList,names[1],-5,5,-60,60,0))
 
-    ## dorsales GD HB -> dorsales HB = dorsales + lombaires
-    #buttonList.append(functionGroup(sliderList,names[4],-8,8,-30,50,0))
-    #buttonList.append(functionGroup(sliderList,names[5],-8,8,-30,50,0))
 
     #lombaires
-    buttonList.append(functionGroup(sliderList,names[4],-5,5,-60,60,0))
-    buttonList.append(functionGroup(sliderList,names[5],0,5,-60,60,0))
+    buttonList.append(functionGroup(sliderList,names[2],-8,8,-60,60,0))
+    buttonList.append(functionGroup(sliderList,names[3],-8,8,-60,60,0))
 
     # compression
-    buttonList.append(functionGroup(sliderList,names[6],-10,10,-40,50,0))
-    buttonList.append(functionGroup(sliderList,names[7],0,6,0,80,0))
+    buttonList.append(functionGroup(sliderList,names[4],-15,15,-40,50,0))
+    buttonList.append(functionGroup(sliderList,names[5],0,10,0,80,0))
 
     #tete
-    buttonList.append(functionGroup(sliderList,names[8],-20,17,-90,90,0))
-    buttonList.append(functionGroup(sliderList,names[9],-20,17,-90,90,0)) 
+    buttonList.append(functionGroup(sliderList,names[6],-10,10,-90,90,0))
+    buttonList.append(functionGroup(sliderList,names[7],-10,10,-90,90,0)) 
 
 
     #crvInfos=[getLength(),getPosition(),getPosture(),getJointChainLength(),getCLen()]
     # position
+    buttonList.append(postureGroup(sliderList,names[8],-60,60,keepPosition=False,keepCurveLength=False))
+    buttonList.append(postureGroup(sliderList,names[9],-60,60,keepPosition=False,keepCurveLength=False))
     buttonList.append(postureGroup(sliderList,names[10],-60,60,keepPosition=False,keepCurveLength=False))
-    buttonList.append(postureGroup(sliderList,names[11],-60,60,keepPosition=False,keepCurveLength=False))
-    buttonList.append(postureGroup(sliderList,names[12],-60,60,keepPosition=False,keepCurveLength=False))
 
     # posture generale
-    buttonList.append(postureGroup(sliderList,names[14],-90,90,keepPosition=True,keepCurveLength=True))
-    buttonList.append(postureGroup(sliderList,names[15],-180,180,keepPosition=True,keepCurveLength=True))
+    buttonList.append(postureGroup(sliderList,names[11],-90,90,keepPosition=True,keepCurveLength=True))
+    buttonList.append(postureGroup(sliderList,names[12],-180,180,keepPosition=True,keepCurveLength=True))
     # scaling
-    buttonList.append(postureGroup(sliderList,names[13],1,30,keepCurveLength=False,keepPosition=True,))
+    buttonList.append(postureGroup(sliderList,names[13],1,30,keepCurveLength=False,keepPosition=True))
 
     # checkBox pour la gestion d'affichage
     checkBoxList=[]
-    checkBoxList.append(functionCheckBox('Hide rest of skeleton',HideRestOfSkeleton,ShowRestOfSkeleton,True))
-    checkBoxList.append(functionCheckBox('Hide head and tail',HideHeadAndTail,ShowHeadAndTail,True))
-    checkBoxList.append(functionCheckBox('Hide joints',HideSkeletonJoints,ShowSkeletonJoints,True))
+    HideRestOfSkeleton()
+    HideHeadAndTail()
+    HideSkeletonJoints()
     checkBoxList.append(functionCheckBox('Hide polygons',HidePolygons,ShowPolygons,True)) 
 
 

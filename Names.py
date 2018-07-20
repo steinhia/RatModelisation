@@ -3,7 +3,7 @@ class Names(object):
     @classmethod
     def getFunction(self,name):
         if "GD" in name or "HB" in name:
-            return eval("angle"+str(name))
+            return partial(eval("angleCrv"),name)
         return eval("get"+str(name))
 
     @classmethod
@@ -16,7 +16,9 @@ class Names(object):
 
     @classmethod
     def getFunctionLocator(self,name):
-        return eval("angle"+str(name)+"Loc")
+        if "GD" in name or "HB" in name:
+            return eval("angle"+str(name)+"Loc")
+        return eval("get"+str(name)+"Loc")
 
     @classmethod
     def setAngleFunction(self,name):
@@ -42,41 +44,23 @@ class Names(object):
     @classmethod
     def CoteOpp(self,name):
         prefix=name[0]
-        if prefix=="L" :
+        if prefix=="L":
             return "C"
-        if prefix=="C" or prefix=="T" or "Comp" in name:
+        if prefix=="C" or prefix=="T":# or "Comp" in name:
             return "L"
         return ""
 
 
     @classmethod
     def Numero(self,name):
-        dico={"CGD":2,"CHB":3,"LGD":4,"LHB":5,"CompGD":6,"CompHB":7,"TGD":8,"THB":9}
+        dico={"CGD":0,"CHB":1,"LGD":2,"LHB":3,"CompGD":4,"CompHB":5,"TGD":6,"THB":7,"X":8,"Y":9,"Z":10,"Posture":11,"Orientation":12,"Length":13}
         if name in dico :
             return dico[name]
         return -1
 
-class CurveNames(object):
 
-    @classmethod
-    def getFunction(self,name):
-        return eval("get"+str(name))
 
-    @classmethod
-    def getFunctionLoc(self,name):
-        return eval("get"+str(name)+"Loc")
 
-    @classmethod
-    def setFunction(self,name):
-        return eval("set"+str(name))
-
-    @classmethod
-    def Numero(self,name):
-        dico={"X":10,"Y":11,"Z":12,"Length":13,"Posture":14,"Orientation":15}
-        if name in dico :
-            return dico[name]
-        return -1
-        
 
 
 

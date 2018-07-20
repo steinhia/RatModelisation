@@ -54,7 +54,9 @@ nameList=['obj55_VertebreL6_Exterior','obj53_VertebreL5_Exterior','obj51_Vertebr
             'obj29_VertebreT3_Exterior','obj74_VertebreT2_Exterior','obj72_VertebreT1_Exterior',\
             'obj70_VertebreC7_Exterior','obj69_VertebreC6_Exterior','obj103_VertebreC5_Exterior','obj105_VertebreC4_Exterior', \
             'obj107_VertebreC3_Exterior','obj47_VertebreC2_Axis_Exterior','obj45_VertebreC1_Atlas_Exterior']
-pointOnCurveList=['L6','L4','T13','T8','T3','C4','C0','Tete'] 
+pointOnCurveList=['L6','L3','T13','T10','T4','C5','C0','Tete'] #200
+#pointOnCurveList=['L6','L3','T13','T8','T4','C6','C0','Tete'] #100
+#O pour image 100 pointOnCurveList=['L6','L2','T13','T8','T4','C5','C0','Tete'] 
 #pointOnCurveList=['L6','L4','T13','T8','T3','C5','C0','MilTete','Tete'] # mieux T13 sinon bosse T2 attention
 locatorList=[pointOnCurveList[i] for i in range(8) if i not in [1,3,5]]
 
@@ -73,7 +75,7 @@ jtParam=JointParameters()
 #setAllCurves()
 for i in range(0,1):
     t=time.time()
-    cmds.currentTime(100, edit=True )
+    cmds.currentTime(200, edit=True )
     resetCurve(length,CVpos,jtPos)
     sliderGrp=mainFct(pointOnCurveList,locatorList,reset=True,droites=droites)
     checkParameters(par,CVpos,jtPos,jtParam)
@@ -87,6 +89,13 @@ for i in range(0,1):
 
 #del pointOnCurveList
 #del locatorList
+#maya.mel.eval("NURBSSmoothnessFineOptions;")
+#maya.mel.eval("performDisplaySmoothnessFine 1;")
+#maya.mel.eval("displaySmoothnessFineCallback OptionBoxWindow|formLayout128|tabLayout9|formLayout130|tabLayout10|columnLayout62 1; hideOptionBox;")
+#maya.mel.eval("editMenuUpdate MayaWindow|mainEditMenu;")
+#maya.mel.eval("if (`window -exists OptionBoxWindow`) deleteUI -window OptionBoxWindow;")
+#maya.mel.eval("onCloseCommand;")
+#maya.mel.eval("saveOptionBoxSize();")
 
 
 
