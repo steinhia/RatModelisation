@@ -12,7 +12,8 @@ execfile(path+"mesures.py")
 execfile(path+"EvalClass.py")
 
 def createGraphicalElements(pointOnCurveList,nameList,tailList):
-    # position des points sur la courbe
+
+    """ crée les éléments graphiques, joints, courbe etc """
     pointOnCurveList=map(n2J,pointOnCurveList)
     createJointChain(nameList,tailList)
     bindSkeleton(nameList,tailList)
@@ -72,23 +73,17 @@ par=calcCVParameters()
 jtParam=JointParameters()
 
 
-#setAllCurves()
+#setAllCurves() # rétablit les anciennes courbes 
 for i in range(0,1):
     t=time.time()
-    cmds.currentTime(200, edit=True )
-    resetCurve(length,CVpos,jtPos)
-    sliderGrp=mainFct(pointOnCurveList,locatorList,reset=True,droites=droites)
-    checkParameters(par,CVpos,jtPos,jtParam)
-    #print getCLen()
-    Placement(sliderGrp.sliderList,length,CVpos,jtPos,save=True)
-    #print getCLen()
+    cmds.currentTime(200, edit=True ) # choisit la frame 
+    resetCurve(length,CVpos,jtPos) # rétablit la courbe dans sa position d'origine
+    sliderGrp=mainFct(pointOnCurveList,locatorList,reset=True,droites=droites) # crée les éléments graphiques du maillage et la Gui
+    checkParameters(par,CVpos,jtPos,jtParam) # vérifie la stabilité
+    Placement(sliderGrp.sliderList,length,CVpos,jtPos,save=True) # place la courbe 
     cmds.hide('curveShape2->arcLengthDimension2')
     cmds.hide('curveShape1->arcLengthDimension1')
-#sliderGrp.do("scale",10)
-#sliderGrp.do("z",-5)
 
-#del pointOnCurveList
-#del locatorList
 #maya.mel.eval("NURBSSmoothnessFineOptions;")
 #maya.mel.eval("performDisplaySmoothnessFine 1;")
 #maya.mel.eval("displaySmoothnessFineCallback OptionBoxWindow|formLayout128|tabLayout9|formLayout130|tabLayout10|columnLayout62 1; hideOptionBox;")

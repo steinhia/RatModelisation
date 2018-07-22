@@ -8,6 +8,7 @@ execfile(path+"placementManuel.py")
 execfile(path+"Short.py")
 
 class SliderGrp(object):
+    """ classe définissant la fenêtre de l'interface graphique """
     def __init__(self,title,buttonList,checkBoxList,nameList,pointOnCurveList,locatorList,planesList,droites=[]):
         self.buttonList=buttonList
         self.sliderList=self.buttonList[0].sliderList
@@ -21,6 +22,7 @@ class SliderGrp(object):
         cmds.text("\nMouvement de la colonne")
         cmds.rowColumnLayout(numberOfColumns=4,columnWidth=[(1,300),(2,300),(4,50),(5,50),(6,50)])
 
+        # opérations de rotation
         if self.droites==[]:
             for i in range(0,8):
                 buttonList[i].create()
@@ -33,6 +35,8 @@ class SliderGrp(object):
         cmds.setParent('..')
         cmds.text("\nParametres de la courbe")
         cmds.rowColumnLayout(numberOfColumns=5,columnWidth=[(1,1),(2,300),(3,50),(4,50),(5,50)])
+
+        # position etc
         for i in range(8,len(buttonList)):
             buttonList[i].create()
         cmds.setParent('..')
@@ -60,6 +64,7 @@ class SliderGrp(object):
         self.GuiButtonSelect=cmds.button(label="Place",command=partial(Placement,self.sliderList,length,CVpos,jtPos,False))
         self.GuiButtonSelect=cmds.button(label="Place And Save",command=partial(Placement,self.sliderList,length,CVpos,jtPos,True))
         self.GuiButtonUndo=cmds.button(label="Undo",command=partial(UndoGui,self.sliderList))
+        
         # CheckBox
         cmds.setParent('..')
         cmds.rowColumnLayout( numberOfColumns=2,columnWidth=[(1, 200),(2,200)])
@@ -69,12 +74,17 @@ class SliderGrp(object):
         cmds.showWindow(self.window)
         cmds.text("\n")
 
+    
     def do(self,string,value,updateText=True,nMax=30):
+        """ effectue la bonne opération (angles précis) 
+        string : opération ex CGD
+        value : paramètre à fixer """
         button=self.string2button(string)
         button.slider2.setValue(value)
         button.slider2.update(updateText,nMax=nMax)
 
     def string2num(self,string):
+        """ numéro de slider correspondant à l'opération """
         string=string.lower()
         if "rotcgd" in string :
             return 0
@@ -108,10 +118,12 @@ class SliderGrp(object):
             print "mauvaise operation : ",string
 
     def string2button(self,string):
+        """ slider correspondant à l'opération """
         return self.buttonList[self.string2num(string)]
 
 
-def clearSliderVariables(): 
+def clearSliderVariables():
+    """ clear objets résiduels """
     blinnList=cmds.ls('*blinn*')
     for i in blinnList:
         if(cmds.objExists(i)):
@@ -122,6 +134,7 @@ def clearSliderVariables():
         cmds.delete('sliderGrp')
 
 def postureGroup(sliderList,sliderName,min,max,keepPosition=True,keepCurveLength=True):
+    """ crée les boutons de paramètre de courbe """
     functionSet=CurveNames.setFunction(sliderName)
     value=CurveNames.getFunction(sliderName)()
     action2 = FunctionAction(value,functionSet,Cote="",CoteOpp="",keepPosition=keepPosition,keepCurveLength=keepCurveLength,args=[],mvt=True)
@@ -129,6 +142,7 @@ def postureGroup(sliderList,sliderName,min,max,keepPosition=True,keepCurveLength
     return Group(sliderName,-1,sliderList,slider2)
  
 def functionGroup(sliderList,sliderName,min,max,min2,max2,value,valueReset=0):
+    """ crée les boutons de rotation """
     getValue=angleCrv(sliderName)
     Cote=Names.Cote(sliderName)
     CoteOpp=Names.CoteOpp(sliderName)
@@ -139,12 +153,14 @@ def functionGroup(sliderList,sliderName,min,max,min2,max2,value,valueReset=0):
     return Group(sliderName,slider,sliderList,slider2)     
 
 def functionCheckBox(label,functionCheck,functionUnCheck,value,args=[]):
+    """ crée les checkbox """
     actionCheck=FunctionAction(value,functionCheck,Cote="",CoteOpp="",keepPosition=True,args=args,mvt=False)
     actionUnCheck=FunctionAction(not value,functionUnCheck,Cote="",CoteOpp="",keepPosition=True,args=args,mvt=False)
     return CheckBox(label,actionCheck,actionUnCheck,value,args=args)
 
        
 def createWindows(nameList,pointOnCurveList,locatorList,droites=[]):
+    """ crée la liste des boutons etc contenus dans l'interface graphique """
     clearSliderVariables()
 
     #liste des textes (courbures etc)
@@ -176,7 +192,6 @@ def createWindows(nameList,pointOnCurveList,locatorList,droites=[]):
     buttonList.append(functionGroup(sliderList,names[7],-10,10,-90,90,0)) 
 
 
-    #crvInfos=[getLength(),getPosition(),getPosture(),getJointChainLength(),getCLen()]
     # position
     buttonList.append(postureGroup(sliderList,names[8],-60,60,keepPosition=False,keepCurveLength=False))
     buttonList.append(postureGroup(sliderList,names[9],-60,60,keepPosition=False,keepCurveLength=False))

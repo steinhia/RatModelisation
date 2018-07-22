@@ -6,6 +6,7 @@ import time
 import sys
 
 def HideListRest(args=[]):
+    """ liste du corps du rat """
     HideList=[]
     HideList.append(cmds.ls('*Cote*',r=True))
     HideList.append(cmds.ls('*Costal*',r=True))
@@ -33,12 +34,12 @@ def HideListRest(args=[]):
     return HideList
 
 def HideListHead(args=[],*_):
+    """ liste des objets de la tete """
     HideList=['obj8_Crane_Exterior','obj181_Mandibule_Exterior','obj182_Mandibule_Crane','obj109_OsHyoide_Exterior']
-    #HideList.append(cmds.ls('*Caudale*',r=True))
-    #HideList.append(cmds.ls('*Sacrum*',r=True)) 
     return HideList  
                 
 def HideRestOfSkeleton(args=[],*_):
+    """ cache le reste du squelette non modélisé """
     HideList=HideListRest([])
     for i in HideList :
         cmds.hide(i)
@@ -46,51 +47,53 @@ def HideRestOfSkeleton(args=[],*_):
         cmds.showHidden("curve1",a=True)
         
 def ShowRestOfSkeleton(args=[],*_):
+    """ montre le reste du squelette non modélisé """
     HideList=HideListRest([])
     for i in HideList :
         cmds.showHidden(i,a=True)
     
 def HideHeadAndTail(args=[],*_):
+    """ cache la tete """
     HideList=HideListHead([])
     for i in HideList :
         cmds.hide(i)
 
 def ShowHeadAndTail(args=[],*_):
+    """ montre la tete """
     HideList=HideListHead([])
     for i in HideList :
         cmds.showHidden(i,a=True)      
     
 def HidePolygons(args=[],*_):
+    """ cache le maillage """
     HideList=cmds.ls('*obj*',r=True)
     for i in HideList :
         if('joint' not in i):
             cmds.hide(i)
-    #if(not cmds.checkBox(self.boxJoint,q = True, v = True)):
-        #   self.ShowSkeletonJoints()
    
 def ShowPolygons(args=[],*_):
+    """ montre le maillage """
     HideList=cmds.ls('*obj*',r=True)
     for i in HideList :
         cmds.showHidden(i,a=True)
     HideRestOfSkeleton(args)
-    #if(cmds.checkBox(boxHead,q = True, v = True)):
-    #    HideHeadAndTail()
          
           
 def HideSkeletonJoints(args=[],*_):
+    """ cache les joints """
     for i in range(56) :
         if(cmds.objExists('joint'+str(i+1))):
             cmds.hide('joint'+str(i+1)) 
     
 def ShowSkeletonJoints(args=[],*_):
+    """ montre les joints """
     HideList=cmds.ls('*joint*',r=True)
     for i in HideList :
         cmds.showHidden(i,a=True)
-    #if(cmds.checkBox(self.boxPoly,q = True, v = True)):
-        #   self.HidePolygons() 
 
 
 def colorSkeleton(nameList,*_):
+    """ colorie les mesh """
     mel.eval("shadingNode -asShader blinn -n blinn1;")
     mel.eval("sets -renderable true -noSurfaceShader true -empty -name blinn1SG;")
     mel.eval("connectAttr -f blinn1.outColor blinn1SG.surfaceShader;")
@@ -124,14 +127,12 @@ def colorSkeleton(nameList,*_):
     cmds.select( clear=True )  
 
 def HidePlane(*_):
-    #if cmds.objExists('locatorPlane'):
-    #    cmds.delete('locatorPlane')
-    #if cmds.objExists('curvePlane'):
-    #    cmds.delete('curvePlane')
+    """ supprime le plan pour le cacher """
     if cmds.objExists('PosturePlane'):
         cmds.delete('PosturePlane')
 
 def ShowPlane(paramList=[],*_):
+    """ montre le plan """
     if paramList!=[] and paramList[2]=="On":
         Cote=paramList[1]
         if paramList==[] or paramList[0]=="Curve":
@@ -140,30 +141,37 @@ def ShowPlane(paramList=[],*_):
             createLocatorPlane(Cote=Cote)
 
 def ShowPlaneOn(paramList,*_):
+    """ callback 'on' """
     paramList[2]="On"
     ShowPlane(paramList)
 
 def ClickCurve(paramList,*_):
+    """ callback 'curve' """
     paramList[0]="Curve"
     ShowPlane(paramList)
 
 def ClickLocator(paramList,*_):
+    """ callback 'locator' """
     paramList[0]="Locator"
     ShowPlane(paramList)
 
 def ClickN(paramList,*_):
+    """ callback Cote='' """
     paramList[1]=""
     ShowPlane(paramList)
 
 def ClickC(paramList,*_):
+    """ callback Cote='C' """
     paramList[1]="C"
     ShowPlane(paramList)
 
 def ClickL(paramList,*_):
+    """ callback Cote='N' """
     paramList[1]="L"
     ShowPlane(paramList)
 
 def ClickT(paramList,*_):
+    """ callback Cote='T' """
     paramList[1]="T"
     ShowPlane(paramList)
 

@@ -3,18 +3,12 @@ import numpy as np
 #sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
 
 
-objs=[]
-for i in range(1,6):
-    objs.append('locatorAngle'+str(i))
-
-for obj in objs :
-    print cmds.getAttr(obj+'.rpt')
-    cmds.setAttr(obj+'.rpt',0,0,0)
 
 path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"Short.py")
 
 def placeLocator(num=-1):
+    """ place le localisateur en 3D à partir des deux marqueurs sur les deux images """
     if num==-1:
         result = cmds.promptDialog(message='Num of Locator:',button=['OK', 'Cancel'],\
 		defaultButton='OK',cancelButton='Cancel',dismissString='Cancel')
@@ -36,6 +30,7 @@ def placeLocator(num=-1):
         M=sum(posC,pdt(q,dir1))
         cmds.select(locator(num))
         cmds.move(M[0],M[1],M[2],r=False)
+        # met une clé pour keyframer les lcoalisateurs
         string='setKeyframe -breakdown 0 -hierarchy none -controlPoints 0 -shape 0 {"locatorAngle'+str(num)+'"};'
         mel.eval(string)
     return num

@@ -10,9 +10,7 @@ path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"Short.py")
 execfile(path+"GeneralCalculs.py")
 
-#def Hor():
-#    return SubVector('locatorPlane2','locatorPlane1')
-
+""" calculs effectués sur les localisateurs : explications dans la classse GénéralCalculs """
 
 def getPostureVectorLoc(Cote=""):
     locatorList=locList()

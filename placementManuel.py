@@ -11,23 +11,26 @@ import inspect
 path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"mesures.py")
 
-
+# Alogs qui placent la courbe
 
 
 # ALGO DE CORRECTION
 
 def calcPosRelatifHB(locator,Cote="",nLocator=-1,exact=False):
+    """ calcul relatif vertical entre la courbe et le localisateur 
+    locator : position du localisateur
+    Cote : Cote sur lequel projeter
+    nLocator : numéro du localisateur
+    exact : boolean, pour la comparaison avec un point exact sur la courbe (cervicales) """
     if exact:
         locatorOnCurve=position('C1')
     else:
         parLocOnCurve=getParameter(locator)
         locatorOnCurve=getPoint(parLocOnCurve)
-    vect=sub(locator,locatorOnCurve)
+    #vect=sub(locator,locatorOnCurve)
     vectProj2D=projPlanPosture2DLocator(locatorOnCurve,locator,Cote)
-
-
     tan=normalize(getTangent(locatorOnCurve))
-    if nLocator==0:
+    if nLocator==0: # on prend l'ooposé de la tangente pour les lombaires car vecteur ne part pas du pivot mais l'inverse 
         tan=pdt(-1,tan)
     tanProj2D=projPlanPosture2DLocator(locatorOnCurve,sum(locatorOnCurve,tan),Cote)
     # angle du locator vers la courbe
@@ -40,6 +43,11 @@ def calcPosRelatifHB(locator,Cote="",nLocator=-1,exact=False):
 
 
 def calcPosRelatifGD(locatorPosition,Cote="",nLocator=-1,exact=False):
+    """ calcul relatif latéral entre la courbe projetée horizontalement et le localisateur projeté aussi
+    locatorPosition : position du localisateur
+    Cote : Cote sur lequel projeter
+    nLocator : numéro du localisateur
+    exact : boolean, pour la comparaison avec un point exact sur la courbe (cervicales) """
     par=getParameterProj(projHor3D(locatorPosition))
     locatorOnCurve=getPoint(par)
     tan=projHor(getTangent(locatorOnCurve))
@@ -51,13 +59,16 @@ def calcPosRelatifGD(locatorPosition,Cote="",nLocator=-1,exact=False):
     return [angle2D(tan,vect),norm(vect),string]
 
 def calcPosRelatifHBNum(numLocator,Cote=""):
+    """ calcul relatif vertical entre la courbe et le localisateur"""    
     return calcPosRelatifHB(position(locator(numLocator)),Cote,numLocator)
 
 def calcPosRelatifGDNum(numLocator,Cote=""):
+    """ calcul relatif latéral entre la courbe projetée horizontalement et le localisateur projeté aussi"""
     return calcPosRelatifGD(position(locator(numLocator)),Cote,numLocator)
 
-# garde en memoire le meilleur si marche pas bien
+
 def correctionRot(nGroup,nLocator,sliderList,HB,Croiss,Cote,nMax,precision,tour=0,coeff=0.5,exact=False):
+    """ corrige la rotation concernée pour que la courbe passe par le localisateur correspondant """
     locatorP=position(locator(nLocator))
     f = calcPosRelatifHB if HB  else calcPosRelatifGD
     if exact:
@@ -93,6 +104,7 @@ def correctionRot(nGroup,nLocator,sliderList,HB,Croiss,Cote,nMax,precision,tour=
 
 
 def correctionCompHB(sliderList):
+    """ correction de la compression fondée sur le minimum local de l'ordonnée, si le localisateur est placé sur le minimum local de la courbe idéal """
     locatorP=position(locator(2))
     Low=findLowestPointC()
     dist=distance(Low,locatorP)
@@ -152,6 +164,10 @@ def correctionCompHBTete(sliderList):
             maxi=mil
 
 def corr(sliderList,name,nMax=20,precision=0.01):
+    """ correction de la rotation de la courbe pour qu'elle passe par le localisateur
+    name : string, nom de l'opération
+    nMax : n max de tour de boucles
+    precision : pré ision recherchée """
     if name=="LHB":
         correctionRot(3,0,sliderList,True,False,"L",nMax,precision) 
     elif name=="LGD":
@@ -173,6 +189,8 @@ def corr(sliderList,name,nMax=20,precision=0.01):
         correctionRot(4,2,sliderList,False,False,"",nMax,precision)
 
 def CMalCorrige():
+    """ return boolean
+    est-ce que le point le plus proche sur la courbe du localisateur tete-cervicales est proche de C0 ? """
     POC=nearestPoint(locator(3))
     parPOC=getParameter(POC)
     parC0=getParameter(position('C0'))
@@ -183,6 +201,8 @@ def CMalCorrige():
 
 
 def isCorrectExtrema():
+    """ return boolean 
+    est-ce que déplacer la courbe pour que les extremas locaux correspondent aux localisateurs fait beaucoup bouger la courbe ? """
     res=True
     posCrv=getPosition()
     translateToHighestPointL()
@@ -197,6 +217,8 @@ def isCorrectExtrema():
     setPosition(posCrv)
 
 def isCorrectCV():
+    """ return boolean
+    est-ce que les localisateurs sont loin des points sur la courbes qui leur correspondent ? """
     res=True
     posCrv=getPosition()
     translateToCV(0,0)
@@ -219,8 +241,7 @@ def isCorrectCV():
 
 
 def Correction(sliderList):
-    ##t=time.time()
-    1
+    """ algorithme de correction """
     #G objectif utiliser HighestPoint/LowestPoint que si resultat mauvais ou utilise de toute facon pour ameliorer les resultats
 
     # pour replacer GD :
@@ -558,6 +579,7 @@ def Correction(sliderList):
 # PLACEMENT ANGLES
 
 def placeAnglesCalcules(sliderList,nBoucles=1):
+    """ algo qui place les angles calculés avec les localisateurs """
 
     oldParamC=getParameter(position(curvei(5)))
     oldParamD=getParameter(position(curvei(3)))
@@ -610,6 +632,7 @@ def placeAnglesCalcules(sliderList,nBoucles=1):
 # TRANSLATIONS
 
 def translateToLocator(numLocator):
+    """ translate la courbe le moins possible pour qu'elle passe pas un certain localisateur """
     posLoc=position(locator(numLocator))
     posLocOnCurve=nearestPoint(locator(numLocator))
     t=sub(posLoc,posLocOnCurve)
@@ -618,6 +641,7 @@ def translateToLocator(numLocator):
     clear()
 
 def translateToLocatorGui(sliderList,*_):
+    """ fonction Callback de translateToLocator """
     num=-1
     result = cmds.promptDialog(title="translateToLocator",message='Num of Locator:',button=['OK', 'Cancel'],\
 	defaultButton='OK',cancelButton='Cancel',dismissString='Cancel')
@@ -631,6 +655,9 @@ def translateToLocatorGui(sliderList,*_):
 
     
 def translateToCV(numCV,numLocator):
+    """ translate la courbe pour que le point de controle corresponde au localisateur voulu 
+    numCV : int, numéro du point de controle
+    numLocator : int, numéro du localisateur """
     posCV=nearestPoint(curvei(numCV))
     posCV=nearestPoint(position(POCList()[numCV]))
     posLoc=position(locator(numLocator))
@@ -641,6 +668,7 @@ def translateToCV(numCV,numLocator):
 
     
 def translateToCVGui(sliderList,*_):
+    """ callback de translateToCV """
     num=-1
     result = cmds.promptDialog(title="translateToCV",message='Num of Locator:',button=['OK', 'Cancel'],\
 	defaultButton='OK',cancelButton='Cancel',dismissString='Cancel')
@@ -661,6 +689,7 @@ def translateToCVGui(sliderList,*_):
         sliderList[i].update()
 
 def translateToExtremaGui(sliderList,*_):
+    """ fonction callback de translateToHighestPointL, translateToLowestPointC, translateToHighestPointT """
     res=-1
     result = cmds.promptDialog(title="translateExtrema",message='Choose between L, C and T:',button=['OK', 'Cancel'],\
 	defaultButton='OK',cancelButton='Cancel',dismissString='Cancel')
@@ -675,6 +704,7 @@ def translateToExtremaGui(sliderList,*_):
 
 
 def findHighestPointL():
+    """ trouve le maximum local des ordonnées autour des lombaires """
     t=time.time()
     minParam=getParameter(position('L4'))
     maxParam=getParameter(position('T11'))
@@ -691,6 +721,7 @@ def findHighestPointL():
     return getPoint(mil)
 
 def translateToHighestPointL():
+    """ fait coincider le localisateur lombaire avec le point calculé avec findHighestpointL """
     posLoc=position(locator(1))
     posCrv=findHighestPointL()
     t=sub(posLoc,posCrv)
@@ -699,6 +730,7 @@ def translateToHighestPointL():
     clear()
 
 def findLowestPointC():
+    """ trouve le minimum local des ordonnées autour du creux des cervicales """
     t=time.time()
     minParam=getParameter(position('T3'))
     maxParam=getParameter(position('C0'))
@@ -716,6 +748,7 @@ def findLowestPointC():
 
 
 def translateToLowestPointC():
+    """ fait coincider le localisateur lombaire avec le point calculé avec findLowestPointC """
     posLoc=position(locator(2))
     posCrv=findLowestPointC()
     t=sub(posLoc,posCrv)
@@ -725,6 +758,7 @@ def translateToLowestPointC():
 
 
 def findHighestPointT():
+    """ trouve le maximum local des ordonnées autour de la tete """
     t=time.time()
     minParam=getParameter(position('C2'))
     maxParam=(getParameter(position('Tete'))+2.0*getParameter(position('C0')))/3.0
@@ -741,6 +775,7 @@ def findHighestPointT():
     return getPoint(mil)
 
 def translateToHighestPointT():
+    """ fait coincider le localisateur lombaire avec le point calculé avec findHighestPointT """
     posLoc=position(locator(3))
     posCrv=findHighestPointT()
     t=sub(posLoc,posCrv)
@@ -750,6 +785,7 @@ def translateToHighestPointT():
 
 
 def setScaleLComp(sliderList=-1,*_):
+    """ trouve le scale nécessaire pour que le localisateur se rapproche du minimum local de la courbe """
     translateToLowestPointC()
     translateToLocator(1)
     dist=-1
@@ -770,22 +806,19 @@ def setScaleLComp(sliderList=-1,*_):
 
 
 def scaleTete(sliderList=-1,*_):
+    """ effectue scaling basé uniquement sur le segment de la tete """
     d1=distance(position(locator(3)),position(locator(4)))
     d2=distance(position(locator(3)),position(curvei(7)))
     sf=d1/d2*getLength()
     setLength(sf)
 
 def setScaleComp(sliderList=-1,*_):
+    """ effectue le scaling basé sur la fonction de calcul getScaleComp """  # TODO comparer deux version de sf
     sf=getScaleComp()
     setLength(sf)
 
-def setScaleTot(sliderList,*_):
-    sf=getScaleExtremities()
-    setLength(sf)
-
 def ajustePos():
-    # position des differents locators / CPOC
-    t=time.time()
+    """ ajuste la position pour minimiser la moyenne des erreurs (distance entre les localisaterus et la courbe)"""
     posLoc=map(position,locList())
     posLoc=[posLoc[i] for i in range(6) if i!=1]
     for i in range(5):

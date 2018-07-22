@@ -16,6 +16,7 @@ from scipy import stats
 
 
 class GuiObject(object):
+    """ classe des différents objets de l'interface graphique """
 
     def __init__(self,label,*_):
         self.label=label
@@ -26,25 +27,18 @@ class GuiObject(object):
     def update(self):
         raise NotImplementedError
 
-
-# on lui associe forcement un slider et un texte (courbure, orientation)
-# que des boutons reset
 class Group(GuiObject):
     
     def __init__(self,label,slider,sliderList,slider2=-1,corrArgs=[],*_):
         GuiObject.__init__(self, label)     
-        self.slider=slider
-        self.slider2=slider2
-        self.sliderList=sliderList
-        #self.indiceText=indiceText
-        #self.setOneFunction=setOneFunction
-        #self.functionCorr=functionCorr
+        self.slider=slider # slider commandant un mouvement absolu
+        self.slider2=slider2  # slider cherchant un angle par dichotomie en faisant bouger le premier slider
+        self.sliderList=sliderList # liste des autres groupes de sliders pour la mise à jour
         self.corrArgs=corrArgs
-        #self.functionSetAngle=functionSetAngle
 
       
     def create(self,*_):
-        if self.slider!=-1:
+        if self.slider!=-1: # certaines fonctions sont directes et ne nécessitent pas de premier slider
             self.slider.create()
         else:
             cmds.text(label="")
@@ -52,17 +46,18 @@ class Group(GuiObject):
             self.slider2.create()
             # on associe chaque texte a son slider
             self.sliderList[numSlider(self.label)].associate(self.slider,self.slider2)
-        if "HB" in self.label or "GD" in self.label:
+        if "HB" in self.label or "GD" in self.label: # bouton de correction et set angle calculé à partir des localisateurs
             self.GuiButtonCorr=cmds.button(label="Corr",command=partial(self.updateCorr,self.corrArgs))
             self.GuiButtonSetAngle=cmds.button(label="SetAngle",command=partial(setAngle,self.sliderList,self.label))
         # orientation et position
         elif numSlider(self.label)!=-1:
-            self.GuiButtonSetAngle=cmds.button(label="Set",command=partial(setParam,self.sliderList,self.label))
+            self.GuiButtonSetAngle=cmds.button(label="Set",command=partial(setParam,self.sliderList,self.label)) # calculés avec les loc.
             if self.label!="Length":
                 self.GuiButtonSetAngle=cmds.button(label="Set L",command=partial(setParam,self.sliderList,self.label,"L"))
                 self.GuiButtonSetAngle=cmds.button(label="Set C",command=partial(setParam,self.sliderList,self.label,"C"))
 
     def calcDroite(self,*_):
+        """ calcule une régression de l'angle en fct de la valeur du slider de gauche """
         slider=self.slider #slider1
         if slider!=-1:
             min=slider.minValue
@@ -71,14 +66,10 @@ class Group(GuiObject):
             x=[]
             y=[]
             for i in range(0,10):
-                val=min+(i+5)*(max-min)/20.0
+                val=min+(i+5)*(max-min)/20.0 # pas de valeurs extremes
                 slider.setValue(val)
-                slider.update(False,True) # attention False necessaire
-
-                # si ne veut pas actualiser, doit utiliser la fonction de calcul
+                slider.update(False,True)
                 valy=angleCrv(self.label)
-                # si aux extremes, prend pas en compte
-
                 slider2=self.sliderList[numSlider(self.label)].slider2
                 if (slider2!=-1 and valy<slider2.maxValue and valy>slider2.minValue) or True:
                     x.append(val)
@@ -93,49 +84,49 @@ class Group(GuiObject):
             else:
                 slider.dte=[]
             slider.setValue(valInit)
-            slider.update(False,True) # TODO le deuxieme false ?
+            slider.update(False,True) 
             return slider.dte
         else:
             return -1
 
     def affectDroite(self,droite):
+        """ affecte la droite dejà calculée précédemment """
         self.slider.dte=droite
 
 
     def updateCorr(self,updateText=True,*_):
+        """ callback du bouton de correction """
         if "HB" in self.label or "GD" in self.label:
             corr(self.sliderList,self.label)
             if updateText:
                 for i in self.sliderList :
                     i.update(True)
 
-    def reset(self):
-        self.update(self.valueReset,True)
-
-    def setTo(self):
-        self.update(self.valueSetTo,True)
-
     def sliderValue(self):
+        """ valeur du slider """
         return self.slider2.sliderValue()
 
     def calcValue(self):
+        """ calcul de l'angle correspondant au slider """
         return self.sliderList[numSlider(self.label)].fct(self.sliderList[numSlider(self.label)].args)
 
 
-# valeur d'un champ a partir d'une fonction (courbure etc)
 class SliderDuo(GuiObject):
+    """ groupement du slider de gauche et du slider de droite utilisé pour mettre à jour les sliders"""
     def __init__(self,label,fct,args,*_):
         GuiObject.__init__(self,label)
         self.fct=fct
-        #self.args=args
         self.slider=-1
         self.slider2=-1
 
     def associate(self,slider,slider2,*_):
+        """ associe les sliders à l'objet, car doit créer les sliderDuo avant les slider eux memes, 
+        pour pouvoir leur passer la lsite en argument """
         self.slider=slider
         self.slider2=slider2
 
-    def update(self,slider1Update=True,*_):  
+    def update(self,slider1Update=True,*_):
+        """ met à jour les 2 sliders """
         if "HB" in self.label or "GD" in self.label:
             value=angleCrv(self.label)
         else:
@@ -143,7 +134,7 @@ class SliderDuo(GuiObject):
         if self.slider2!=-1:
             self.slider2.setValue(value)
             self.slider2.value=value
-        if self.slider!=-1 and slider1Update: # TODO a verifier que sl1Upd pose pas de probleme
+        if self.slider!=-1 and slider1Update: 
             a=self.slider.f(value)
             if a!=[]:
                 self.slider.setValue(a)
@@ -159,7 +150,7 @@ class Slider(GuiObject):
         self.maxValue=maxValue
         self.value=value
         self.step=step
-        self.sliderList=sliderList
+        self.sliderList=sliderList # liste des autres sliderDuo pour la mise à jour
         self.dte=[]
 
         
@@ -176,9 +167,12 @@ class Slider(GuiObject):
         return cmds.floatSliderGrp(self.GuiSlider, q=True, v=True)
 
     def create(self,*_):
+        """ crée l'objet graphique """
         self.GuiSlider=cmds.floatSliderGrp(label=self.label, field=True,height=30, s=self.step, minValue=self.minValue, maxValue=self.maxValue, value=self.value , cc= partial(self.update,True,True,30)) # pas de dc car trop long      
 
     def f(self,x,*_):
+        """ approximation de la valeur du slider de gauche nécessaire pour obtenir l'angle voulu
+        x : float, valeur du paramètre cherchée """
         if self.dte==[]:
             return []
         elif self.dte[0] !=0 :
@@ -197,6 +191,9 @@ class SliderOffset(Slider):
         Slider.create(self)
         
     def update(self,updateText=True,ajust=True,*_):
+        """ effectue l'action et met tous les sliders à jour après un mouvement d'un slider 
+        updateText : boolean, met les sliders à jour
+        ajust : boolean, effectue les opérations d'ajustement ou pas """
         t=time.time()
         val=self.sliderValue()
         diff=self.value-val
@@ -211,7 +208,7 @@ class SliderOffset(Slider):
                         else:
                             i.update(False)
                             sl2=i.slider2
-                            # si depasse la valeur limite a droite, on l'affecte pour rester ok
+                            # si depasse la valeur limite a droite (angles) , on affecte l'angle limite, pas encore testé
                             val2=sl2.value
                             #if val2>=sl2.maxValue or val2<=sl2.minValue:
                             #    sl2.setValue(val2)
@@ -221,6 +218,7 @@ class SliderOffset(Slider):
         return Slider.sliderValue(self)
 
     def setActionWithoutMoving(self,testValue,ajust=True):
+        """ effectue l'action sans bouger les slider """
         self.action.offset=(self.value-testValue)
         self.value=testValue
         self.action.execute(ajust=ajust)
@@ -245,6 +243,7 @@ class SliderAbs(Slider):
 
      
     def update(self,updateText=True,ajust=True,nMax=10,*_):
+        """ fonction callback après mouvement du second slider """
         self.value=self.sliderValue()
         self.action.offset=self.value 
         self.action.execute(ajust,nMax)
@@ -269,7 +268,8 @@ class SliderAbs(Slider):
         return Slider.f(self,x)
 
 class CheckBox(GuiObject):
-
+    """ checkbox d'affichage """
+    
     def __init__(self,label,actionCheck,actionUnCheck,value,args=[],*_):
         GuiObject.__init__(self,label)
         self.actionCheck=actionCheck
@@ -305,12 +305,13 @@ class CheckBox(GuiObject):
 
 class RadioButtonGrp(GuiObject):
 
+    """ boutons utilisés pour choisir les paramètres d'affichage du plan """
+
     def __init__(self,label,actionList,labelArray,numberOfRadioButtons,paramList):
         GuiObject.__init__(self,label)
-        self.actionList=actionList
+        self.actionList=actionList # liste des actions à effectuer
         self.labelArray=labelArray
         self.numberOfRadioButtons=numberOfRadioButtons
-        self.paramList=paramList
 
     def create(self):
         if self.numberOfRadioButtons==2:

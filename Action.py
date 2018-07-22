@@ -6,9 +6,8 @@
 #import maya.cmds as cmds
 #import maya.mel as mel
 #import math
-#import maya
 import sys
-#import time
+import time
 
 sys.path.append("C:\Users\alexa\Documents\alexandra\scripts")
 
@@ -17,66 +16,63 @@ execfile(path+"Mouvements.py")
 execfile(path+"Short.py")
 
 class Action(object):
+    """ classe définissant les actions exécutées lors du mouvement d'un slider 
+    offset : float, offset du slider 
+    mvt : boolean -> pas de réajustement si pas de mouvement (checkbox)
+    keep... : boolean
+    function : fonction a exécuter
+    Cote : string parmi "C" (cervicales), "L" (lombaires), "" (aucun) , Coté où l'action s'exécute
+    CoteOpp : idem pour coté opposé """
 
     def __init__(self,offset,Cote,CoteOpp,keepPosition,keepCurveLength,mvt=True,*_):
-        self.offset=offset
-        #self.crvInfos=crvInfos #length position posture chainLength cLen
-        self.mvt=mvt
-        self.keepCurveLength=keepCurveLength
-        self.keepPosition=keepPosition
-        self.function=-1
-        self.Cote=Cote
-        self.CoteOpp=CoteOpp
+        self.offset=offset 
+        self.mvt=mvt 
+        self.keepCurveLength=keepCurveLength 
+        self.keepPosition=keepPosition 
+        self.function=-1 
+        self.Cote=Cote 
+        self.CoteOpp=CoteOpp 
 
     def execute(self,ajust=True,nMax=10,*_):
-        param=calcCVParameters()
-        #orientation=getOrientation(Cote=self.Cote)
+        """ effectue tous les ajustements nécessaires à chaque exécution d'action """ 
         orientationOpp=getOrientation(Cote=self.CoteOpp)
         pos=getPosition(Cote=self.CoteOpp)
-        posture=getPosture(Cote=self.CoteOpp)
         lenC=getLength()
         lenChain=getJointChainLength()
-        jtParam=JointParameters()
         clear()
         if self.mvt and ajust:
-            setOrientation(0,self.Cote)
+            setOrientation(0,self.Cote) # pour avoir un mouvement absolu qui ne dépende pas de la tangente
         clear()
-        #print getLLen(),getCLen(),getLLen()
         self.executeAction(nMax=nMax)
-        #print getLLen(),getCLen(),getLLen()
         clear()
         if self.function!=setOrientation and self.mvt and ajust:
-            setOrientation(orientationOpp,Cote=self.CoteOpp)
+            setOrientation(orientationOpp,Cote=self.CoteOpp) # orientation opposée ne doit pas avoir varié
         if self.mvt and ajust:
-            #keepJointParameters(jtParam)
             newPos=getPosition(Cote=self.CoteOpp)
-            newPosture=getPosture(Cote=self.CoteOpp)
             newLen=getLength()
             if self.keepCurveLength:
                 setLength(lenC)
-                keepChainLengthValue(lenChain)
+                keepChainLengthValue(lenChain) # joint chain décalée
             else:
-                cL=getLength()
+                cL=getLength() # TODO vérifier que pas besoin Joint Chain
                 rapport=cL/lenC
-                #keepChainLengthValue(lenChain*rapport)
             if self.keepPosition:        
-                setCurvePosition(pos,Cote=self.CoteOpp)
+                setCurvePosition(pos,Cote=self.CoteOpp) # posiiton du cote opposé doit rester fixe
         clear()
 
 
-
-
-
-
-
     def executeAction(self,nMax=10,*_):
+        """ simple exécution de la fonction concernée """
         raise NotImplementedError
 
 class SimpleAction(Action):
 
+    """ action simple de maya : translation, rotation ou scale
+        non utilisé finalement car actions complexifiées """
+
     def __init__(self,offset,type,x,y,z,listOfSelection,Cote,CoteOpp,keepPosition,keepCurveLength=True,pivot=-1,mvt=True,*_): # pivot = position du pivot
         Action.__init__(self,offset,Cote,CoteOpp,keepPosition,keepCurveLength) 
-        self.type=type
+        self.type=type # string : 't','r','s'
         self.x=x
         self.y=y
         self.z=z
@@ -100,10 +96,10 @@ class SimpleAction(Action):
                 cmds.rotate(self.offset,x=self.x,y=self.y,z=self.z,r=True,p=self.pivot)
         elif(self.type=='s'):
             cmds.scale(self.offset,x=self.x,y=self.y,z=self.z,r=True,pivot=getPosition()) # pivot ? 
-    
-
-# les arguments de la fonction doivent etre une unique liste        
+        
 class FunctionAction(Action):
+
+    """ actions définies par une fonction ayant un offset et eventuellement d'autres arguments """
 
     def __init__(self,offset,function,Cote,CoteOpp,keepPosition,keepCurveLength=True,args=[],mvt=True,*_):
         Action.__init__(self, offset,Cote,CoteOpp,keepPosition,keepCurveLength) 
@@ -112,7 +108,9 @@ class FunctionAction(Action):
         self.mvt=mvt
 
     def execute(self,ajust=True,nMax=10,*_):
-        Action.execute(self,ajust,nMax)# rajouter args?
+        """ ajuste : boolean
+            nMax : int, nombre max d'itérations (pour une fonction de type dichotomie) """
+        Action.execute(self,ajust,nMax)
 
     def executeAction(self,nMax=10,*_):
         if self.args==[] :

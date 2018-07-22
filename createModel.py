@@ -64,6 +64,7 @@ def clearVariables(nameList=[]):
 
 
 def placePlanes():
+    """ place les plans contenant les images : non nécessaire maintenant """
     v0=position('seq002_x1_tex.vtx[0]')
     v2=position('seq002_x1_tex.vtx[2]')
     v02=sub(v0,v2)
@@ -74,11 +75,9 @@ def placePlanes():
     cmds.rotate(angle*aA[0],angle*aA[1],angle*aA[2],r=True)
 
 
-def createJoint(center):
-    cmds.select(clear=True)
-    cmds.joint( p=(center[0], center[1], center[2]),scale=(0.6,0.6,0.6),radius=0.1)
 
 def ImportMesh():
+    """ importe le maillage dans la scène """
     maya.mel.eval('file -import -type "OBJ"  -ignoreVersion -ra true -mergeNamespacesOnClash false -namespace "Rat" -options "mo=1"  -pr  -importFrameRate true  -importTimeRange "override" "C:/Users/alexa/Documents/alexandra/ScenesMaya/Rat.obj";')
     # on renomme
     AllMeshes=cmds.ls('Rat:obj*')
@@ -116,26 +115,30 @@ def ImportMesh():
     cmds.rotate(angle*aA[0],angle*aA[1],angle*aA[2],r=True)
 
 
+def createJoint(center):
+    """ crée un joint à une certaine position """
+    cmds.select(clear=True)
+    cmds.joint( p=(center[0], center[1], center[2]),scale=(0.6,0.6,0.6),radius=0.1)
+
 def createJointChain(nameList,tailList):
+    """ crée la chaine de joints """
     posList=[]
     for name in nameList:
         posList.append(calcCentroid(name))
     # dernier joint (L6)
     createJoint(sum([0.0580408770842773, 0.003912234643060231, -1.3959898887303481],calcCentroid(nameList[0])))
-    #createJoint([-20.91, 33.43, -7.87]) 
     for i in range(25):
         center=pdt(0.5,sum(posList[i],posList[i+1]))
         createJoint(center)
         cmds.parent('joint'+str(i+2),'joint'+str(i+1))
-    #createJoint([-20.65, 31.59, 11.94])
     createJoint(sum(position('joint26'),[-0.048737799484715794, 0.1299700221483242, 0.48699161668587543]))
     cmds.parent('joint27','joint26')
     # tete
     createJoint(sum(position('joint26'),[-0.5374404169326112, 0.18825458232401004, 7.977467419599595]))
-    #createJoint([-21.187440416932613, 31.778254582324013, 19.917467419599596])
     cmds.parent('joint28','joint27')
        
 def bindSkeleton(nameList,tailList):
+    """ effectue le binf pour lier le squelette au maillage """
     cmds.select('joint1')
     for i in range(len(nameList)):
         cmds.select(nameList[i],add=True)
@@ -148,6 +151,7 @@ def bindSkeleton(nameList,tailList):
     cmds.bindSkin()
 
 def ClosestPoint(curvePoint):
+    """ trouve le point de controle le plus proche à un point dans l'espace """
     if isinstance(curvePoint,str):
         posi=position(curvePoint)
     else :
@@ -164,11 +168,12 @@ def ClosestPoint(curvePoint):
 
     
 def createCurve(pointOnCurveList,nameList):
+    """ crée la courbe """
     cmds.select('joint1','joint28', add=1)
     handle=cmds.ikHandle(n='ikHandle',ns=1, sol='ikSplineSolver',simplifyCurve=False)
     if('curve1' in cmds.listRelatives('objGroup')):
-        cmds.parent( 'curve1', world=True )  
-
+        cmds.parent( 'curve1', world=True )
+    # sert pour toutes les mesures, pour ne pas le créer à chaque fois 
     tmpArclenDim=cmds.arcLengthDimension( 'curveShape1.u[0]' )   
     npC = cmds.createNode("nearestPointOnCurve")
     cmds.connectAttr("curveShape1.worldSpace", npC + ".inputCurve")
@@ -182,6 +187,7 @@ def createCurve(pointOnCurveList,nameList):
     cmds.delete('curve1' , ch = 1)
     KeepList=[]
     maxCV = MaxCV()
+    # crée une courbe avec beaucoup de points de controle et ne garde que les intéressants
     for i,curvePoint in enumerate(pointOnCurveList) :
         if i!=6 and curvePoint!=-1:
             KeepList.append(ClosestPoint(curvePoint))
@@ -202,8 +208,7 @@ def createCurve(pointOnCurveList,nameList):
     npCHor = cmds.createNode("nearestPointOnCurve")
     cmds.connectAttr("curveShape2.worldSpace", npCHor + ".inputCurve")
     cmds.rename('nearestPointOnCurve1', 'nearestPointOnCurveHorGetParam')
-
-    #cmds.hide('curve2')
+    cmds.hide('curve2') # courbe projetée
 
 
 
