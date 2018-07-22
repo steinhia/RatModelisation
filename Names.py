@@ -11,10 +11,6 @@ class Names(object):
         return angleCrv(name)
 
     @classmethod
-    def getFunctionArgs(self,name):
-        return []
-
-    @classmethod
     def getFunctionLocator(self,name):
         if "GD" in name or "HB" in name:
             return eval("angle"+str(name)+"Loc")
@@ -30,10 +26,12 @@ class Names(object):
 
     @classmethod
     def corrFunction(self,name):
+        """ fonction de correction """
         return eval("corr"+name)
 
     @classmethod
     def Cote(self,name):
+        """ cote pour chaque opération """
         prefix=name[0]
         if prefix=="C" or prefix=="T":
             return "C"
@@ -43,6 +41,7 @@ class Names(object):
 
     @classmethod
     def CoteOpp(self,name):
+        """ cote opposé pour chaque opération """
         prefix=name[0]
         if prefix=="L":
             return "C"
@@ -53,6 +52,7 @@ class Names(object):
 
     @classmethod
     def Numero(self,name):
+        """ numéro du slider pour chaque opération """
         dico={"CGD":0,"CHB":1,"LGD":2,"LHB":3,"CompGD":4,"CompHB":5,"TGD":6,"THB":7,"X":8,"Y":9,"Z":10,"Posture":11,"Orientation":12,"Length":13}
         if name in dico :
             return dico[name]

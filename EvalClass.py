@@ -30,30 +30,6 @@ class Evaluate(object):
 
         for name in names2:
             L.append(angleLoc(name))
-        #L=[]
-        #L.append(getPosition())
-        #L.append(locatorCurveLength())
-        #L.append(calcPosture())
-        #L.append(angleCHB())
-        #L.append(angleCGD())
-        #L.append(angleDHB())
-        #L.append(angleDGD())
-        #L.append(angleLHB())
-        #L.append(angleLGD())
-        #L.append(angleComp())
-
-        ## mesure avec les locators
-        #l=[]
-        #l.append(getLocatorCurvePosition())
-        #l.append(locatorLength())
-        #l.append(locatorPosture())
-        #l.append(angleCHB())
-        #l.append(angleCGD())
-        #l.append(angleDHB())
-        #l.append(angleDGD())
-        #l.append(angleLHB())
-        #l.append(angleLGD())
-        #l.append(angleComp())
 
         totalDiff=0
         totalDiffPrec=0
