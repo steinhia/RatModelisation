@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
-import sys
-sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
 import time
 import maya.mel as mel
 import numpy as np
 
-path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"Short.py")
 
 
 
 class GeneralCalculs(object):
 
-""" Calculs généraux utilisés pour les localisateurs et la courbe 
-    liste : liste de strings des points utilisés, localisateurs ou vertebres sur la courbe """
+    """ Calculs généraux utilisés pour les localisateurs et la courbe 
+    liste : liste de strings des points utilisés, localisateurs ou vertebres sur la courbe 
+    """
 
 
     @classmethod
@@ -117,17 +115,17 @@ class GeneralCalculs(object):
         """ vecteur utilisé pour calculer les angles de chaque groupe de vertèbres 
             string : string, opération concernée, CGD pour cervicales gauche droite etc """
         if "Comp" in string: # compression, calcul différent pour les deux car pas assez de localisateurs
-            if 'locator' in liste[0] :
+            if 'locator' in liste[0]  :
                 return SubVector(liste[2],liste[1])
             else:
-                return SubVector(pointOnCurveList[4],pointOnCurveList[2]) # liste[2] a gauche
+                return SubVector(pointOnCurveList[5],pointOnCurveList[1])
         if "C" in string: # cervicales
             return SubVector(liste[3],liste[2])
         if "L" in string: # lombaires
             if 'locator' in liste[0] :
                 return SubVector(liste[1],liste[0])
             else:
-                return SubVector(pointOnCurveList[1],pointOnCurveList[0]) # liste[2] a gauche
+                return SubVector(pointOnCurveList[1],pointOnCurveList[0]) 
         if "T" in string: # tete
             return SubVector(liste[4],liste[3])
 
@@ -284,9 +282,9 @@ class GeneralCalculs(object):
 
 
 
-       @classmethod
+    @classmethod
     def HalfChainLengthL(cls,liste,*_):
-        """ calcule la longuer des segments vers les lombaires """
+        """ calcule la longueur des segments vers les lombaires """
         dL=map(position,liste)
         return distance(dL[2],dL[1])+distance(dL[1],dL[0])
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class Names(object):
     
     @classmethod
@@ -17,7 +18,7 @@ class Names(object):
         return eval("get"+str(name)+"Loc")
 
     @classmethod
-    def setAngleFunction(self,name):
+    def setFunction(self,name):
         return eval("setAngle"+name)
 
     @classmethod
@@ -45,7 +46,7 @@ class Names(object):
         prefix=name[0]
         if prefix=="L":
             return "C"
-        if prefix=="C" or prefix=="T":# or "Comp" in name:
+        if prefix=="C" or prefix=="T" or "Comp" in name:
             return "L"
         return ""
 
@@ -54,6 +55,27 @@ class Names(object):
     def Numero(self,name):
         """ numéro du slider pour chaque opération """
         dico={"CGD":0,"CHB":1,"LGD":2,"LHB":3,"CompGD":4,"CompHB":5,"TGD":6,"THB":7,"X":8,"Y":9,"Z":10,"Posture":11,"Orientation":12,"Length":13}
+        if name in dico :
+            return dico[name]
+        return -1
+
+class CurveNames(object):
+
+    @classmethod
+    def getFunction(self,name):
+        return eval("get"+str(name))
+ 
+    @classmethod
+    def getFunctionLoc(self,name):
+        return eval("get"+str(name)+"Loc")
+
+    @classmethod
+    def setFunction(self,name):
+        return eval("set"+str(name))
+ 
+    @classmethod
+    def Numero(self,name):
+        dico={"X":8,"Y":9,"Z":10,"Length":13,"Posture":11,"Orientation":12}
         if name in dico :
             return dico[name]
         return -1

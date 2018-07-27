@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
-  
-import sys
-sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
-
-
-
-path="C:/Users/alexa/Documents/alexandra/scripts/"
+def defPath():
+    return "C:/Users/alexa/Documents/alexandra/spine/"
+path=defPath()  
 execfile(path+"createModel.py")
 execfile(path+"SliderGrp.py")
 execfile(path+"mesures.py")
@@ -55,10 +51,7 @@ nameList=['obj55_VertebreL6_Exterior','obj53_VertebreL5_Exterior','obj51_Vertebr
             'obj29_VertebreT3_Exterior','obj74_VertebreT2_Exterior','obj72_VertebreT1_Exterior',\
             'obj70_VertebreC7_Exterior','obj69_VertebreC6_Exterior','obj103_VertebreC5_Exterior','obj105_VertebreC4_Exterior', \
             'obj107_VertebreC3_Exterior','obj47_VertebreC2_Axis_Exterior','obj45_VertebreC1_Atlas_Exterior']
-pointOnCurveList=['L6','L3','T13','T10','T4','C5','C0','Tete'] #200
-#pointOnCurveList=['L6','L3','T13','T8','T4','C6','C0','Tete'] #100
-#O pour image 100 pointOnCurveList=['L6','L2','T13','T8','T4','C5','C0','Tete'] 
-#pointOnCurveList=['L6','L4','T13','T8','T3','C5','C0','MilTete','Tete'] # mieux T13 sinon bosse T2 attention
+pointOnCurveList=['L6','L2','T12','T8','T3','C6','C0','Tete'] 
 locatorList=[pointOnCurveList[i] for i in range(8) if i not in [1,3,5]]
 
   
@@ -75,8 +68,7 @@ jtParam=JointParameters()
 
 #setAllCurves() # rétablit les anciennes courbes 
 for i in range(0,1):
-    t=time.time()
-    cmds.currentTime(200, edit=True ) # choisit la frame 
+    cmds.currentTime(110, edit=True ) # choisit la frame 
     resetCurve(length,CVpos,jtPos) # rétablit la courbe dans sa position d'origine
     sliderGrp=mainFct(pointOnCurveList,locatorList,reset=True,droites=droites) # crée les éléments graphiques du maillage et la Gui
     checkParameters(par,CVpos,jtPos,jtParam) # vérifie la stabilité
@@ -84,13 +76,8 @@ for i in range(0,1):
     cmds.hide('curveShape2->arcLengthDimension2')
     cmds.hide('curveShape1->arcLengthDimension1')
 
-#maya.mel.eval("NURBSSmoothnessFineOptions;")
-#maya.mel.eval("performDisplaySmoothnessFine 1;")
-#maya.mel.eval("displaySmoothnessFineCallback OptionBoxWindow|formLayout128|tabLayout9|formLayout130|tabLayout10|columnLayout62 1; hideOptionBox;")
-#maya.mel.eval("editMenuUpdate MayaWindow|mainEditMenu;")
-#maya.mel.eval("if (`window -exists OptionBoxWindow`) deleteUI -window OptionBoxWindow;")
-#maya.mel.eval("onCloseCommand;")
-#maya.mel.eval("saveOptionBoxSize();")
+
+cmds.displaySmoothness('curveShape1',full=True,du=2,dv=2,pw=16,ps=4)
 
 
 

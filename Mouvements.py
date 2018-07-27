@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import sys
-
-
-sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
-path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"Calculs.py")
 
 
@@ -19,28 +14,31 @@ def UndoGui(sliderList,*_):
 
 
 def scaleGui(sliderList,*_):
+    """ callback scaleSegment """
     sf=getScale()
     setLength(sf)
     sliderList[11].update()
 
 def scaleCPOCGui(sliderList,*_):
+    """ callback scaleCPOC """
     sf=getScaleCPOC()
     setLength(sf)
     sliderList[11].update()
 
 
 def scaleOffsetGui(sliderList,*_):
+    """ callback scaleOffset """
     num=-1
     result = cmds.promptDialog(title="scaleOffset",message='Enter the scale Factor : ',button=['OK', 'Cancel'],\
 	defaultButton='OK',cancelButton='Cancel',dismissString='Cancel')
     if result == 'OK' :
 	    num=float(cmds.promptDialog(query=True, text=True))
     if num>0.1 and num<5:
-        sf=getScale()
+        sf=getLength()
         setLength(sf*num)
         sliderList[11].update()
     else:
-        print "Please choose a number near 1"
+        print("Please choose a multiplicative scale Factor (a number near 1)")
 
 def scaleCompGui(sliderList,*_):
     sf=getScaleComp()
@@ -58,7 +56,8 @@ def setLength(newLengthvalue,*_):
     posInit=getPosition()
     L=cmds.arclen('curve1')
     scaleValue=newLengthvalue/L
-    cmds.select('joint1')
+    select('curve1')
+    cmds.select('joint1',add=True)
     cmds.scale(scaleValue,scaleValue,scaleValue,r=True,pivot=posInit)
     clear()
 
@@ -67,18 +66,29 @@ def setScale(newLengthvalue,*_):
     setLength(newLengthvalue)
 
 
-def keepChainLengthValue(newValue,L=[]):
+def keepChainLengthValue(newValue,*_):
     """ effectue un scaling sur la chaine de joints """
     Length=getJointChainLength()
     posInit=getPosition()
     cmds.select('joint1',r=1)
     scaleValue=newValue/Length
     cmds.scale(scaleValue,scaleValue,scaleValue,r=True,pivot=posInit)
+
+def keepJointParameters(param,*_):
+    jtPos=map(getPoint,param)
+    for i,pos in enumerate(jtPos):
+        cmds.select(joint(i+1))
+        mv(pos)
+    
+
+
+def setValue():
+    """ replace les joints au bon parmètre pour éviter le décalage le long de la courbe """
+    points=map(getPoint,param)
+    for i,pt in enumerate(points):
+        cmds.select(joint(i+1))
+        mv(pt)
  
-
-
-
-
 
 def setCurvePosition(pos,Cote=""):
     """ set la position correspondant à Cote
@@ -132,85 +142,85 @@ def setOrientation(ThetaVoulu,Cote=""):
 
 ## effectue les différents mouvements des lombaires etc
 
-def parabolicRotation(theta,list):
+def parabolicRotation(value,list):
     """ effectue la rotation 
-    theta : float, offset du slider """
-    t=time.time()
+    value : float, offset du slider """
     [pivotNum,begin,end,x,y,z]=list
     if begin<pivotNum:
-        dist=(abs(i-pivotNum))
-        angle=math.atan(dist)*5
-        cmds.select(curvei(i),add=True) 
         for i in range(begin,end+1):
+            dist=(abs(i-pivotNum))
+            angle=math.atan(dist)*5
+            cmds.select(curvei(i),add=True) 
             pivotPos=position(curvei(i+1))
-            cmds.rotate(theta*angle,r=True,p=pivotPos,x=x,y=y,z=z)
+            cmds.rotate(value*angle,r=True,p=pivotPos,x=x,y=y,z=z)
     else:
         for i in range(end,begin-1,-1):
+            #dist=(abs(i-pivotNum))
+            #angle=math.atan(dist)**(-1)*5
+            cmds.select(curvei(i),add=True) 
             pivotPos=position(curvei(i-1))
-            cmds.rotate(theta*5,r=True,p=pivotPos,x=x,y=y,z=z) #TODO vérifier que c'est la meme fonction à la fin
+            cmds.rotate(value*5,r=True,p=pivotPos,x=x,y=y,z=z) #TODO vérifier que c'est la meme fonction à la fin
 
-        # TODO revoir difference, pas si importante 
-def parabolicRotationGD(theta,list,*_):
+
+def parabolicRotationGD(value,list,*_):
     """ effectue la rotation latérale 
-    theta : float """
+    value : float """
     t=time.time()
     [pivotNum,begin,end,x,y,z]=list
     pivotPos=position(curvei(pivotNum))
     for i in range(end,begin-1,-1):
         dist=(abs(i-pivotNum))
-        angle=math.atan(dist)*5 
-        cmds.select(curvei(i)) 
-        cmds.rotate(theta*angle*0.5,r=True,p=pivotPos,x=x,y=y,z=y)
+        angle=3.0/dist#math.atan(dist)**(-2)
+        cmds.select(curvei(i),add=True) 
+        cmds.rotate(value*angle,r=True,p=pivotPos,x=x,y=y,z=y)
 
-def rot(theta,name,*_):
-    """ effectue le mouvement de rotation précisé par name et avec une intensité theta
-    theta : float, offset du slider
+
+
+def rot(value,name,*_):
+    """ effectue le mouvement de rotation précisé par name et avec une intensité value
+    value : float, offset du slider
     name : string parmi "CGD" etc """
     if name=="LHB":
-        parabolicRotation(theta*3,[1,0,0,1,0,0]) # 2 0 1 #TODO regarder si bon pivot ou harmoniser
+        parabolicRotation(value*1.5,[1,0,0,1,0,0]) 
     elif name=="LGD":
-        parabolicRotation(theta,[1,0,1,0,1,0])# 3 0 2
+        parabolicRotation(value*1.5,[1,0,1,0,1,0])
     elif name=="CHB":
-        parabolicRotation(theta,[4,5,7,1,0,0]) 
+        parabolicRotation(value*0.5,[4,5,7,1,0,0]) 
     elif name=="CGD":
-        parabolicRotation(theta,[4,5,7,0,1,0])
+        parabolicRotationGD(value*1.05,[4,5,7,0,1,0])
     elif name=="THB":
-        parabolicRotation(theta,[6,7,7,1,0,0])
+        parabolicRotation(value,[6,7,7,1,0,0])
     elif name=="TGD":
-        parabolicRotation(theta,[6,7,7,0,1,0])
+        parabolicRotationGD(value*1.7,[6,7,7,0,1,0])
     elif name=="CompHB":
-        rotCompHB(theta)
+        rotCompHB(value*1.2)
     elif name=="CompGD":
-        parabolicRotationGD(theta,[2,3,7,0,1,0])
-
+        parabolicRotationGD(value*0.5,[1,2,7,0,1,0])
+   
 
 def rotCompHB(value,*_):
     """ effectue la compression du rat
     value : float """
-    nPivot=1
-    pivot=position(curvei(nPivot))
 
     posB=position(curvei(4))
     posE=position(curvei(1))
 
-    pos3=position(curvei(3))
-    pos2=position(curvei(1))
+    cmds.select(curvei(2),curvei(3),curvei(4))
+    cmds.rotate(-value*5,0,0,pivot=position(curvei(1)))
 
-    parabolicRotation(-value,[1,2,4,1,0,0])
+    cmds.select(curvei(2))
+    cmds.rotate(value*2,0,0,pivot=position(curvei(1)))
+    cmds.select(curvei(3))
+    cmds.rotate(value*1,0,0,pivot=position(curvei(1)))
 
     #translation pour ramener les points extremes
     tB=sub(position(curvei(4)),posB)
-    cmds.select(curvei(5),curvei(6),curvei(6),curvei(7))
+    cmds.select(curvei(5),curvei(6),curvei(7))
     cmds.move(tB[0],tB[1],tB[2],r=True)
 
-    #tE=sub(position(curvei(3)),posE)
-    #cmds.select(curvei(0),curvei(1))
-    #cmds.move(tE[0],tE[1],tE[2],r=True)
-
-# TODO revoir l'idee de faire la rot lombaire en meme temps que la compression
-
-
-
+    tE=sub(position(curvei(1)),posE)
+    cmds.select(curvei(0))
+    cmds.move(tE[0],tE[1],tE[2],r=True)
 
 
 def setOneRot(valeur,test,slider,moveSlider=False):
@@ -222,7 +232,7 @@ def setOneRot(valeur,test,slider,moveSlider=False):
     fTest=setOneRotWithChangement(test,slider)
     if moveSlider :
         slider.setValue(valeur) 
-        slider.update(False,True)  # attention ne pas changer le false en true
+        slider.update(False,True)  
     else:
         setOneRotWithChangement(valeur,slider)
     return fTest
@@ -235,7 +245,7 @@ def setOneRotWithChangement(test,slider,moveSlider=True):
     if moveSlider :
         slider.setValue(test)
         t=time.time()
-        slider.update(False,True)
+        slider.update(False,True,False)
     else :
         # execute action sans changer la valeur du slider pour eviter les manipulations de Gui
         slider.setActionWithoutMoving(test)
@@ -245,11 +255,12 @@ def setOneRotWithChangement(test,slider,moveSlider=True):
 def isInside(theta,fMin,fMax):
     return (theta >=fMin and theta <=fMax) or (theta >=fMax and theta <=fMin)
 
-def setRot(theta,slider,nMax=30):
+def setRot2(theta,slider,nMax=30):
     """ effectue la rotation nécessaire pour atteindre un angle precis, par dichotomie
     slider : sliderOffset, slider qui effectue l'opération absolue 
     theta : float 
     nMax : int, nombre max d'itérations """
+    jointParam=JointParameters()
     minSlider=slider.minValue
     maxSlider=slider.maxValue
     fTest=100000.0
@@ -286,7 +297,7 @@ def setRot(theta,slider,nMax=30):
     if isInside(theta,fMin,fMax):
         i=0
         # début de la dichotomie
-        while abs(fTest-theta)>0.01 and i<nMax and abs(mini-maxi)>0.0001:
+        while abs(fTest-theta)>0.01 and i<nMax and abs(mini-maxi)>0.000001:
             i+=1
             test=float(mini+maxi)/2.0
             fTest=setOneRot(val,test,slider)
@@ -305,8 +316,60 @@ def setRot(theta,slider,nMax=30):
         test=maxi
         #print "en dehors des bornes! plus grand que le maximum",fMin,fMax,getFunction,theta
     # regarde si angle effectivement atteint
-    if(abs(theta-angleCrv(slider.label))>1 and test!=mini and test!=maxi):
-        print "FAIL SETROT", slider.label,abs(theta-angleCrv(slider.label))
+    if(abs(theta-angleCrv(slider.label))>2 and test!=mini and test!=maxi):
+        print("FAIL SETROT", slider.label,abs(theta-angleCrv(slider.label)))
+    keepJointParameters(jointParam)
+    return test
+
+#TODO revoir comp a gauche marche pas, bornes du slider ??
+def setRot(theta,slider,nMax=30):
+    """ effectue la rotation nécessaire pour atteindre un angle precis, par dichotomie
+    slider : sliderOffset, slider qui effectue l'opération absolue 
+    theta : float 
+    nMax : int, nombre max d'itérations """
+    jointParam=JointParameters()
+    minSlider=slider.minValue
+    maxSlider=slider.maxValue
+    distance=abs(theta-angleCrv(slider.label))
+    pas=0.1
+    if slider.dte!=[]:
+        a=slider.dte[0] # coefficient directeur
+    else:
+        a=1
+    fTest=100000.0
+    val=slider.sliderValue()
+
+    mini=max(val-pas*distance/a,slider.minValue)
+    maxi=min(val+pas*distance/a,slider.maxValue)
+    fMin=setOneRot(val,mini,slider)
+    fMax=setOneRot(val,maxi,slider)
+    i=0
+    # si jamais intervalle trop petit
+    while (not isInside(theta,fMin,fMax)) and (((minSlider<mini or maxSlider>maxi) and minSlider<maxSlider) or ((minSlider<maxi or maxSlider>mini) and minSlider>maxSlider)) and i<5:
+        i+=1
+        pas*=5
+        mini=max(val-pas*distance,slider.minValue)
+        maxi=min(val+pas*distance,slider.maxValue)
+        fMin=setOneRot(val,mini,slider)
+        fMax=setOneRot(val,maxi,slider)
+    if isInside(theta,fMin,fMax):
+        i=0
+        # début de la dichotomie
+        while abs(fTest-theta)>0.1 and i<nMax and abs(mini-maxi)>0.000001:
+            i+=1
+            test=float(mini+maxi)/2.0
+            fTest=setOneRot(val,test,slider)
+            if((fTest>theta and fMin<fMax) or (fTest<theta and fMin>fMax )):
+                maxi=test
+            else :
+                mini=test
+        # on garde la dernière valeur
+        setOneRotWithChangement(test,slider)
+    else:
+        test=-1
+        setOneRotWithChangement(val,slider)
+        print ("failRot",slider.label,theta,fMin,fMax,mini,maxi)
+    keepJointParameters(jointParam)
     return test
 
 
@@ -327,13 +390,13 @@ def setAngle(sliderList,name,offset=1,*_):
         sliderDuo.update()
     clear()
 
-def setValue(sliderList,name,param,*_):
+def setValue(sliderList,name,param,nMax=30,*_):
     """ applique la bonne rotation avec la valeur prise dans la liste de tous les paramètres à atteindre
     sliderList : liste des sliderDuo
     name : string, opération concernée ex "CGD"
     param : liste de tous les paramètres """
     if "HB" in name or "GD" in name:
-        setRot(param[numSlider(name)],sliderList[numSlider(name)].slider)
+        setRot(param[numSlider(name)],sliderList[numSlider(name)].slider,nMax)
     elif "Scale" in name:
         setLength(param[13])
     else:
@@ -342,7 +405,11 @@ def setValue(sliderList,name,param,*_):
         sliderDuo.update()
     clear()
 
-
+def setParam(sliderList,name,Cote="",*_):
+    CurveNames.setFunction(name)(CurveNames.getFunctionLoc(name)(Cote),Cote)
+    for sliderDuo in sliderList:
+        sliderDuo.update()
+    clear()
 
     
 

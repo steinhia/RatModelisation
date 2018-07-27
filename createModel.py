@@ -1,15 +1,10 @@
-# create Model
-
+# -*- coding: utf-8 -*-
 #from functools import partial
 #import maya.cmds as cmds
 #import maya.mel as mel
 #import math
 import sys
 
-sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
-
-
-path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"Calculs.py")
 
 def clearVariables(nameList=[]):
@@ -64,56 +59,20 @@ def clearVariables(nameList=[]):
 
 
 def placePlanes():
-    """ place les plans contenant les images : non nécessaire maintenant """
-    v0=position('seq002_x1_tex.vtx[0]')
-    v2=position('seq002_x1_tex.vtx[2]')
+    """ place les plans contenant les images """
+    v0=position('seq002_x2_tex.vtx[0]')
+    v2=position('seq002_x2_tex.vtx[2]')
     v02=sub(v0,v2)
-    # axe puis valeur
-    aA=cmds.angleBetween( v1=v02, v2=(1.0, 0.0, 0.0) )
-    angle=aA[-1]
+    aA=cmds.angleBetween( v1=v02, v2=(0.0, -1.0, 0.0), er=1 )
     cmds.select('camGroup')
-    cmds.rotate(angle*aA[0],angle*aA[1],angle*aA[2],r=True)
+    cmds.rotate(aA[0],aA[1],aA[2],r=1)
 
-
-
-def ImportMesh():
-    """ importe le maillage dans la scène """
-    maya.mel.eval('file -import -type "OBJ"  -ignoreVersion -ra true -mergeNamespacesOnClash false -namespace "Rat" -options "mo=1"  -pr  -importFrameRate true  -importTimeRange "override" "C:/Users/alexa/Documents/alexandra/ScenesMaya/Rat.obj";')
-    # on renomme
-    AllMeshes=cmds.ls('Rat:obj*')
-    AllMeshes=[obj for obj in AllMeshes if "Shape" not in obj]
-
-    # on cree objGroup
-    cmds.CreateEmptyGroup()
-    cmds.rename('null1','objGroup')
-
-    AllMeshes2=[]
-    for obj in AllMeshes:
-        cmds.rename(obj,obj[4:])
-        cmds.parent(obj[4:],'objGroup')
-        AllMeshes2.append(obj[4:])
-
-    for obj in AllMeshes2:
-        cmds.select(obj,add=True)
-    cmds.scale(0.002,0.002,0.002,r=True)
-
-    L6=cmds.ls('obj*L6_Exterior')[0]
-    posL6=calcCentroid(L6)
-
-    C1=cmds.ls('obj*C1*')[0]
-    posC1=calcCentroid(C1)
-
-    for obj in AllMeshes2:
-        cmds.select(obj,add=True)
-    mv(pdt(-1,posL6))
-
-
-    # on donne le bon angle
-    v=sub(posL6,posC1)
-    aA=cmds.angleBetween( v1=v, v2=(1.0, 0.0, 0.0) )
+    v0=position('seq002_x2_tex.vtx[0]')
+    v1=position('seq002_x2_tex.vtx[1]')
+    v01=sub(v0,v1)
+    aA=cmds.angleBetween( v1=v01, v2=(0.0, 0.0, -1.0), er=1 )
     cmds.select('camGroup')
-    cmds.rotate(angle*aA[0],angle*aA[1],angle*aA[2],r=True)
-
+    cmds.rotate(aA[0],aA[1],aA[2],r=1)
 
 def createJoint(center):
     """ crée un joint à une certaine position """

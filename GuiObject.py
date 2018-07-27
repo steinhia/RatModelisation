@@ -1,17 +1,8 @@
 # -*- coding: utf-8 -*-
-#import maya.cmds as cmds
-#import math
-import sys
-#import time
 
-sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
-
-
-path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"Action.py")
 import time
 import numpy as np
-from scipy import polyfit
 from scipy import stats
 
 
@@ -66,7 +57,7 @@ class Group(GuiObject):
             x=[]
             y=[]
             for i in range(0,10):
-                val=min+(i+5)*(max-min)/20.0 # pas de valeurs extremes
+                val=min+(i+20)*(max-min)/50.0 # pas de valeurs extremes
                 slider.setValue(val)
                 slider.update(False,True)
                 valy=angleCrv(self.label)
@@ -76,9 +67,9 @@ class Group(GuiObject):
                     y.append(valy)
             slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
             if abs(1.0-abs(r_value))>0.01 or abs(slope)<0.02:
-                print "pas de droite pour ",slider.label, r_value, slope, intercept
+                print("pas de droite pour ",slider.label, r_value, slope, intercept)
             else:
-                print "droite ok",slider.label, r_value, slope, intercept
+                print("droite ok",slider.label, r_value, slope, intercept)
             if abs(slope)>0.1:
                 slider.dte=[slope,intercept]
             else:
@@ -102,13 +93,14 @@ class Group(GuiObject):
                 for i in self.sliderList :
                     i.update(True)
 
+
     def sliderValue(self):
         """ valeur du slider """
         return self.slider2.sliderValue()
 
     def calcValue(self):
         """ calcul de l'angle correspondant au slider """
-        return self.sliderList[numSlider(self.label)].fct(self.sliderList[numSlider(self.label)].args)
+        return self.sliderList[numSlider(self.label)].fct(self.label)
 
 
 class SliderDuo(GuiObject):
@@ -136,6 +128,10 @@ class SliderDuo(GuiObject):
             self.slider2.value=value
         if self.slider!=-1 and slider1Update: 
             a=self.slider.f(value)
+            #if a>self.slider.maxValue: # décale pour la suite
+            #    a=self.slider.maxValue
+            #if a<self.slider.minValue:
+            #    a=self.slider.minValue              
             if a!=[]:
                 self.slider.setValue(a)
                 self.slider.value=a
@@ -178,7 +174,7 @@ class Slider(GuiObject):
         elif self.dte[0] !=0 :
             return (float(x)-float(self.dte[1]))/float(self.dte[0])
         else :
-            p("probleme polyfit",self.dte)
+            print("probleme polyfit",self.dte)
             return float(self.dte[1])
 
 
@@ -190,7 +186,7 @@ class SliderOffset(Slider):
     def create(self):
         Slider.create(self)
         
-    def update(self,updateText=True,ajust=True,*_):
+    def update(self,updateText=True,ajust=True,joint1Update=True,*_):
         """ effectue l'action et met tous les sliders à jour après un mouvement d'un slider 
         updateText : boolean, met les sliders à jour
         ajust : boolean, effectue les opérations d'ajustement ou pas """

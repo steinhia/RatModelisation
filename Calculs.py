@@ -1,13 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import maya.api.OpenMaya as om2
-#import maya.cmds as cmds
-#import maya
-#import math
-import sys
-sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
-
-path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"Short.py")
 execfile(path+"mesures.py")
 execfile(path+"GeneralCalculs.py")
@@ -42,11 +34,11 @@ def checkVolumes(nameList,volumeList):
 
 def vertexCmds():
     """ renvoie la liste des vertices d'un maillage sélectionné """
- selTemp = str(cmds.ls(selection=True))
- sel = selTemp.split("'")[1]
- vertPosTemp = cmds.xform(sel + '.vtx[*]', q=True, ws=True, t=True)
- vertPos = zip(*[iter(vertPosTemp)]*3)
- return vertPos
+    selTemp = str(cmds.ls(selection=True))
+    sel = selTemp.split("'")[1]
+    vertPosTemp = cmds.xform(sel + '.vtx[*]', q=True, ws=True, t=True)
+    vertPos = zip(*[iter(vertPosTemp)]*3)
+    return vertPos
 
 def calcCentroid(name):
     """ calcule la posiiton (le centre de masse) d'une vertèbre """
@@ -161,19 +153,7 @@ def angle2D(v1, v2):
 
 def angleHB(v1,PV=False):
     """ angle vertical d'un vecteur """
-    # TODO utilisé ,???
     return GeneralCalculs.angleHB(posList(),v1,PV)
-
-#TODO utilisé ??
-def angleHB2V(v1,v2):
-    cosinus=np.dot(v1,v2)/(np.linalg.norm(v1)*np.linalg.norm(v2))
-    angle=math.acos(cosinus)
-    aB=cmds.angleBetween(v1=v1, v2=v2)
-    v12=sub(v1,v2)
-    angle=aB[3]
-    angle*=np.sign(dotProduct(np.cross(v1,v2),[0,0,1]) )
-    return angle
-
 
 
 def angleGD(v1,v2):
@@ -244,17 +224,6 @@ def getLLen():
 
 
 
-# TODO je sais plus
-def getDist(v,factor,beginP,endP,tmpArclenDim):
-    cmds.move(factor*v[0],factor*v[1],factor*v[2],r=True)
-    # on calcule la difference
-    [crvLengthNew,distBegin,distEnd]=getLen(beginP,endP,tmpArclenDim)
-    cmds.move(-v[0],-v[1],-v[2],r=True)
-    return distBegin
-
-
-
-
 # CALCULS D' EVALUATION DU MODELE
 
 def calcParameters():
@@ -302,25 +271,24 @@ def HalfChainCurveLengthC():
     return GeneralCalculs.HalfChainLengthC(posList())
 
 def RapportChainCurveLength():
-    # TODO je sais plus
+    """ calcule les rapports entre les longueurs des segments du début et de la fin sur la courbe """
     return GeneralCalculs.RapportChainLength(posList())
 
-def RapportCurveLength():
-        # TODO je sais plus
-    return RapportChainCurveLength()/RapportChainLength()
+#def RapportCurveLength():
+#     """ compare les rapports de longueur de la courbe et des localisateurs """
+#    return RapportChainCurveLength()/RapportChainLength()
 
-def LRapport():
-        # TODO je sais plus
-    crv=distance(num2Name(0),num2Name(1))/distance(num2Name(1),num2Name(2))
-    loc=distance(locator(0),locator(1))/distance(locator(1),locator(2))
-    return crv/loc
+#def LRapport():
+#     """ rapport entre le premier et le deuxième segment des lombaires """
+#    crv=distance(num2Name(0),num2Name(1))/distance(num2Name(1),num2Name(2))
+#    loc=distance(locator(0),locator(1))/distance(locator(1),locator(2))
+#    return crv/loc
 
-def CRapport():
-        # TODO je sais plus
-    crv=distance(num2Name(3),num2Name(4))/distance(num2Name(2),num2Name(3))
-    loc=distance(locator(3),locator(4))/distance(locator(2),locator(3))
-    return crv/loc
-
+#def CRapport():
+#    """ rapport entre le premier et le deuxième segment des cervicales """
+#    crv=distance(num2Name(3),num2Name(4))/distance(num2Name(2),num2Name(3))
+#    loc=distance(locator(3),locator(4))/distance(locator(2),locator(3))
+#    return crv/loc
 
 def checkParameters(CVparam=[],CVpos=[],jtPos=[],jtParam=[],angles=[],printOK=False):
     """ vérification que les paramètres et positions des points de controle et des joints ainsi que les angles 
@@ -332,51 +300,51 @@ def checkParameters(CVparam=[],CVpos=[],jtPos=[],jtParam=[],angles=[],printOK=Fa
         for (cvparam,cvparamnew) in zip(CVparam,newCVparam):
             if abs(cvparam-cvparamnew)>0.001:
                 res=False
-                print "cv param bouge",cvparam,cvparamnew
+                print("cv param bouge"),cvparam,cvparamnew
             else:
                 if printOK:
-                    print "cv param ok"
+                    print("cv param ok")
     if CVpos!=[]:
         newCVpos=calcCVPositions()
         for (cvpos,cvposnew) in zip(CVpos,newCVpos):
             if distance(cvpos,cvposnew)>0.00001:
                 res=False
-                print "cv position bouge",cvpos,cvposnew
+                print("cv position bouge"),cvpos,cvposnew
             else:
                 if printOK:
-                    print "cv pos ok"
+                    print("cv pos ok")
     if jtPos!=[]:
         newJtpos=JointPositions()
         for (jtpos,jtposnew) in zip(jtPos,newJtpos):
             if distance(jtpos,jtposnew)>0.00001:
                 res=False
-                print "joint position bouge",jtpos,jtposnew
+                print("joint position bouge"),jtpos,jtposnew
             else:
                 if printOK:
-                    print "joint pos ok"
+                    print("joint pos ok")
     if jtParam!=[]:
         newJtparam=JointParameters()
         for (jtparam,jtparamnew) in zip(jtParam,newJtparam):
             if abs(jtparam-jtparamnew)>0.00001:
                 res=False
-                print "joint param bouge",jtparam,jtparamnew     
+                print("joint param bouge"),jtparam,jtparamnew     
             else:
                 if printOK:
-                    print "joint param ok"
+                    print("joint param ok")
     if angles!=[]:
         newAngles=calcAngles()
         for(i,j) in zip(angles,newAngles):
             if abs(i-j)>0.00001:
                 res=False
-                print "angles ont bouge",i,j
+                print("angles ont bouge"),i,j
             else:
                 if printOK:
-                    print "angles ok"
+                    print("angles ok")
      
     if not res:
-        print "Modele bouge avec le calcul"
+        print("Modele bouge avec le calcul")
     #else :
-    #    print "Modele semble stable"
+    #    print("Modele semble stable")
 
 
 def EvalPositionLocator():
@@ -387,48 +355,47 @@ def EvalPositionLocator():
     lr=LRapport()
     d1cr=abs(1-cr)
     d1lr=abs(1-lr)
-    p("cr",cr,"lr",lr,"rapport",rapport)
+    print("cr",cr,"lr",lr,"rapport",rapport)
     if d1r<0.05:
         if cr>1.1:
-            print "decaler T2 vers T8 " + str(cr)
+            print("decaler T2 vers T8 " + str(cr))
         elif cr<0.9:
-            print "decaler T2 vers C1 " + str(cr)
+            print("decaler T2 vers C1 " + str(cr))
         if lr>1.1:
-            print "decaler l3 vers T8 " +str(lr)
+            print("decaler l3 vers T8 " +str(lr))
         elif lr<0.9:
-            print "decaler l3 vers L6 " +str(lr)
+            print("decaler l3 vers L6 " +str(lr))
         if d1cr<0.1 and d1lr<0.1: 
-            print "placement ok " + str(rapport)
+            print("placement ok " + str(rapport))
     else: 
         if d1lr>0.1 or d1lr>d1cr:
             if rapport>1:
-                print "rallonger lombaires"
+                print("rallonger lombaires")
                 if lr<1:
-                    print "decaler T8 plus proche des cervicales " + str(lr)
+                    print("decaler T8 plus proche des cervicales " + str(lr))
                 else :
-                    print "decaler L6 vers l'exterieur du squelette " + str(lr)
+                    print("decaler L6 vers l'exterieur du squelette " + str(lr))
 
             else:
-                print "raccourcir lombaires"
+                print("raccourcir lombaires")
                 if lr<1:
-                    print "decaler L6 vers l'interieur du squelette " + str(lr)
+                    print("decaler L6 vers l'interieur du squelette " + str(lr))
                 else :
-                    print "decaler T8 plus proche des lombaires " + str(lr)
+                    print("decaler T8 plus proche des lombaires " + str(lr))
         if d1cr>0.1 or d1cr>d1lr:
             if rapport<1:
-                print "rallonger cervicales"
+                print("rallonger cervicales")
                 if cr<1:
-                    print "decaler t8 plus proche des lombaires " + str(cr)
+                    print("decaler t8 plus proche des lombaires " + str(cr))
                 else :
-                    print "decaler C1 a l'exterieur du squelette " + str(cr)
+                    print("decaler C1 a l'exterieur du squelette " + str(cr))
 
             else:
-                print "raccourcir cervicales"
+                print("raccourcir cervicales")
                 if cr<1:
-                    print "decaler C1 vers l'interieur du squelette " + str(cr)
+                    print("decaler C1 vers l'interieur du squelette " + str(cr))
                 else :
-                    print "decaler T8 plus proche des cervicales " + str(cr)
-
+                    print("decaler T8 plus proche des cervicales " + str(cr))
 
     
 

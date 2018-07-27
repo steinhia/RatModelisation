@@ -9,9 +9,6 @@
 import sys
 import time
 
-sys.path.append("C:\Users\alexa\Documents\alexandra\scripts")
-
-path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"Mouvements.py")
 execfile(path+"Short.py")
 
@@ -33,12 +30,13 @@ class Action(object):
         self.Cote=Cote 
         self.CoteOpp=CoteOpp 
 
-    def execute(self,ajust=True,nMax=10,*_):
+    def execute(self,ajust=True,nMax=10,jointUpdate=False,*_):
         """ effectue tous les ajustements nécessaires à chaque exécution d'action """ 
         orientationOpp=getOrientation(Cote=self.CoteOpp)
         pos=getPosition(Cote=self.CoteOpp)
         lenC=getLength()
         lenChain=getJointChainLength()
+        jointParam=JointParameters()
         clear()
         if self.mvt and ajust:
             setOrientation(0,self.Cote) # pour avoir un mouvement absolu qui ne dépende pas de la tangente
@@ -51,13 +49,15 @@ class Action(object):
             newPos=getPosition(Cote=self.CoteOpp)
             newLen=getLength()
             if self.keepCurveLength:
-                setLength(lenC)
-                keepChainLengthValue(lenChain) # joint chain décalée
+                setLength(lenC)   
+                #keepChainLengthValue(lenChain)   
             else:
                 cL=getLength() # TODO vérifier que pas besoin Joint Chain
-                rapport=cL/lenC
+                rapport=cL/lenC        
             if self.keepPosition:        
                 setCurvePosition(pos,Cote=self.CoteOpp) # posiiton du cote opposé doit rester fixe
+        if jointUpdate:
+            keepJointParameters(jointParam)
         clear()
 
 

@@ -1,10 +1,9 @@
 import sys
 import numpy as np
-#sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
 
 
 
-path="C:/Users/alexa/Documents/alexandra/scripts/"
+
 execfile(path+"Short.py")
 
 def placeLocator(num=-1):

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"GuiObject.py")
 execfile(path+"Mouvements.py")
 execfile(path+"affichage.py")
@@ -26,11 +25,13 @@ class SliderGrp(object):
         if self.droites==[]:
             for i in range(0,8):
                 buttonList[i].create()
-                self.droites.append(buttonList[i].calcDroite())
+                if i!=6 or True:
+                    self.droites.append(buttonList[i].calcDroite())
         else :
             for i in range(0,8):
                 buttonList[i].create()
-                buttonList[i].affectDroite(self.droites[i-2])
+                if i!=6 or True:
+                    buttonList[i].affectDroite(self.droites[i-2])
 
         cmds.setParent('..')
         cmds.text("\nParametres de la courbe")
@@ -64,6 +65,7 @@ class SliderGrp(object):
         self.GuiButtonSelect=cmds.button(label="Place",command=partial(Placement,self.sliderList,length,CVpos,jtPos,False))
         self.GuiButtonSelect=cmds.button(label="Place And Save",command=partial(Placement,self.sliderList,length,CVpos,jtPos,True))
         self.GuiButtonUndo=cmds.button(label="Undo",command=partial(UndoGui,self.sliderList))
+        self.GuiButtonUndo=cmds.button(label="ApproxCurve",command=ApproxGui)
         
         # CheckBox
         cmds.setParent('..')
@@ -75,14 +77,6 @@ class SliderGrp(object):
         cmds.text("\n")
 
     
-    def do(self,string,value,updateText=True,nMax=30):
-        """ effectue la bonne opération (angles précis) 
-        string : opération ex CGD
-        value : paramètre à fixer """
-        button=self.string2button(string)
-        button.slider2.setValue(value)
-        button.slider2.update(updateText,nMax=nMax)
-
     def string2num(self,string):
         """ numéro de slider correspondant à l'opération """
         string=string.lower()
@@ -115,7 +109,7 @@ class SliderGrp(object):
         if "orientation" in string :
             return 13
         else:
-            print "mauvaise operation : ",string
+            print("mauvaise operation : ",string)
 
     def string2button(self,string):
         """ slider correspondant à l'opération """
@@ -135,8 +129,8 @@ def clearSliderVariables():
 
 def postureGroup(sliderList,sliderName,min,max,keepPosition=True,keepCurveLength=True):
     """ crée les boutons de paramètre de courbe """
-    functionSet=CurveNames.setFunction(sliderName)
-    value=CurveNames.getFunction(sliderName)()
+    functionSet=eval("set"+sliderName)
+    value=Names.getFunction(sliderName)()
     action2 = FunctionAction(value,functionSet,Cote="",CoteOpp="",keepPosition=keepPosition,keepCurveLength=keepCurveLength,args=[],mvt=True)
     slider2=SliderAbs(sliderName,action2,min,max,value,0.00000001,sliderList)
     return Group(sliderName,-1,sliderList,slider2)
@@ -175,21 +169,21 @@ def createWindows(nameList,pointOnCurveList,locatorList,droites=[]):
     buttonList=[]
 
     # cervicales GD HB 
-    buttonList.append(functionGroup(sliderList,names[0],-8,8,-60,60,0))
-    buttonList.append(functionGroup(sliderList,names[1],-5,5,-60,60,0))
+    buttonList.append(functionGroup(sliderList,names[0],-30,30,-30,30,0))
+    buttonList.append(functionGroup(sliderList,names[1],-30,30,-40,40,0))
 
 
     #lombaires
-    buttonList.append(functionGroup(sliderList,names[2],-8,8,-60,60,0))
-    buttonList.append(functionGroup(sliderList,names[3],-8,8,-60,60,0))
+    buttonList.append(functionGroup(sliderList,names[2],-30,30,-30,30,0))
+    buttonList.append(functionGroup(sliderList,names[3],-30,30,-40,40,0))
 
     # compression
-    buttonList.append(functionGroup(sliderList,names[4],-15,15,-40,50,0))
-    buttonList.append(functionGroup(sliderList,names[5],0,10,0,80,0))
+    buttonList.append(functionGroup(sliderList,names[4],-30,30,-5,5,0))
+    buttonList.append(functionGroup(sliderList,names[5],0,15,0,70,0))
 
     #tete
-    buttonList.append(functionGroup(sliderList,names[6],-10,10,-90,90,0))
-    buttonList.append(functionGroup(sliderList,names[7],-10,10,-90,90,0)) 
+    buttonList.append(functionGroup(sliderList,names[6],-30,30,-90,90,0))
+    buttonList.append(functionGroup(sliderList,names[7],-30,30,-50,50,0)) 
 
 
     # position
@@ -222,6 +216,15 @@ def createWindows(nameList,pointOnCurveList,locatorList,droites=[]):
     sliderGrp1=SliderGrp("Modelisation de la colonne du rat",buttonList,checkBoxList,nameList,pointOnCurveList,locatorList,planesList,droites)
     colorSkeleton(nameList)
     return sliderGrp1
+
+def do(sliderList,string,value,updateText=True,nMax=30):
+    """ effectue la bonne opération (angles précis) 
+    string : opération ex CGD
+    value : paramètre à fixer """
+    sl=sliderList[numSlider(string)]
+    sl.slider2.setValue(value)
+    sl.slider2.update(updateText,nMax=nMax)
+
 
 
 

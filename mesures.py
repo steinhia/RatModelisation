@@ -4,9 +4,6 @@ import maya.mel as mel
 import math
 import sys
 
-sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
-
-path="C:/Users/alexa/Documents/alexandra/scripts/"
 execfile(path+"Short.py")
 execfile(path+"GeneralCalculs.py")
 

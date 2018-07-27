@@ -6,12 +6,9 @@ import maya.cmds as cmds
 import maya.mel as mel
 import math
 import time
-import sys
-import inspect
+import numpy as np
 
-sys.path.append("C:/Users/alexa/Documents/alexandra/scripts")
 
-path="C:/Users/alexa/Documents/alexandra/scripts/"
 
 
 # NAMES / NUM
@@ -65,13 +62,13 @@ def name2Num(name):
     else:
         return -1
 
-def paramList():
+def OperationsList():
     """ liste des paramètres/opérations à effectuer """
     return ['CGD','CHB','LGD','LHB','CompGD','CompHB','TGD','THB','X','Y','Z','Posture','Orientation','Length']
 
 def numSlider(name):
     """ numéro du slider effectuant l'opération indiquée par name """
-    l=paramList()
+    l=OperationsList()
     return l.index(name)
 
 
@@ -123,7 +120,7 @@ def selectGui(*_):
     """ fonction callback pour sélectionner une vertèbre le long de la courbe """
     res = cmds.promptDialog(message='Name of vertebrate:',button=['OK', 'Cancel'],\
 	defaultButton='OK',cancelButton='Cancel',dismissString='Cancel')
-    print res
+    print(res)
     if res=='OK':
         name=cmds.promptDialog(query=True, text=True)
         select(name)
@@ -140,7 +137,7 @@ def select(name):
             param=getParameter(pos)
             maya.mel.eval('doMenuNURBComponentSelection("curve1", "curveParameterPoint");')
             cmds.select('curve1.u['+str(param)+']',r=1)
-            print "select "+name
+            print("select "+name)
 
 def selectCVGui(*_):
     """ fonction callback pour sélectionner un point de controle """
@@ -156,12 +153,7 @@ def selectCV(name):
     if num>-1 and num<MaxCV():
         maya.mel.eval('doMenuNURBComponentSelection("curve1", "controlVertex");')
         cmds.select('curve1.cv['+str(num)+']',r=1)
-        print "select curve1.cv["+str(num)+"]"
-
-def ex(name):
-    """ execute un fichier """
-    path="C:/Users/alexa/Documents/alexandra/scripts/"
-    execfile(path+name)
+        print("select curve1.cv["+str(num)+"]")
 
 def mv(v,rel=False):
     """ place l'objet sélectionné à l'endroit sélectionné 
@@ -270,7 +262,6 @@ def distLocCrv(num):
     CPOC=nearestPoint(locator(num))
     return distance(posLoc,CPOC)
 
-# peut pas prendre une distance a cause du scale, plutot parametre
 def distCVV():
     """ liste des différences de paramètre  entre les point les plus proche à la courbe des points de controle et les vertèbre qu'ils sont censés représenter """
     res=[]
@@ -279,6 +270,16 @@ def distCVV():
         vertPos=position(num2NameCV(i))
         res.append(abs(getParameter(cvPosCPOC)-getParameter(vertPos)))
     return [norm(res),res]
+
+def fMoins1(sliderList,operation,x):
+    numS=numSlider(operation)
+    return sliderList[numS].slider.f(x)
+
+def droite(sliderList,operation):
+    numS=numSlider(operation)
+    return sliderList[numS].slider.dte
+    
+    
 
 
 
@@ -361,47 +362,4 @@ def projHor(v):
 
 def projHor3D(v):
     return [v[0],0,v[2]]
-
-def p(string,value1=[],value2=[],value3=[],value4=[],value5=[],value6=[]):
-    res=str(string)
-    if value1!=[]:
-        res+=" "
-        res+=str(value1)
-    if value2!=[]:
-        res+=" "
-        res+=str(value2)
-    if value3!=[]:
-        res+=" "
-        res+=str(value3)
-    if value4!=[]:
-        res+=" "
-        res+=str(value4)
-    if value5!=[]:
-        res+=" "
-        res+=str(value5)
-    if value6!=[]:
-        res+=" "
-        res+=str(value6)
-    print res
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-        
 
